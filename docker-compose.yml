@@ -1,0 +1,217 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# SUBTH - Docker Setup (Full Stack)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Docker Services:
+#   - api: Go Fiber API Server (port 8080)
+#   - frontend: Next.js Customer Site (port 3000)
+#   - admin: Vite Admin Panel (port 3001)
+#   - postgres: PostgreSQL + pgvector
+#   - pgbouncer: Connection Pooler
+#   - redis: Cache
+#
+# Usage:
+#   docker-compose up -d                    # Start all services
+#   docker-compose up -d postgres redis     # Start DB only (for local dev)
+#   docker-compose up -d --build            # Rebuild & Start
+#   docker-compose down                     # Stop all services
+#   docker-compose logs -f api              # View API logs
+#
+# Endpoints (Local):
+#   - API: http://localhost:8080
+#   - Frontend: http://localhost:3000
+#   - Admin: http://localhost:3001
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: subth
+
+services:
+  # ═══════════════════════════════════════════════════════════
+  # PostgreSQL + pgvector - Main Database
+  # ═══════════════════════════════════════════════════════════
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: subth-postgres
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-subth}
+    volumes:
+      - subth_postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - subth-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-subth}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ═══════════════════════════════════════════════════════════
+  # PgBouncer - Connection Pooler
+  # ═══════════════════════════════════════════════════════════
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: subth-pgbouncer
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-subth}
+      - POOL_MODE=transaction
+      - MAX_CLIENT_CONN=1000
+      - DEFAULT_POOL_SIZE=20
+      - MIN_POOL_SIZE=5
+      - RESERVE_POOL_SIZE=5
+      - AUTH_TYPE=md5
+    ports:
+      - "${PGBOUNCER_PORT:-6432}:5432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - subth-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "5432"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # ═══════════════════════════════════════════════════════════
+  # Redis - Cache
+  # ═══════════════════════════════════════════════════════════
+  redis:
+    image: redis:7-alpine
+    container_name: subth-redis
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - subth_redis_data:/data
+    networks:
+      - subth-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # ═══════════════════════════════════════════════════════════
+  # API Server - Go Fiber
+  # ═══════════════════════════════════════════════════════════
+  api:
+    build:
+      context: ./gofiber_subth
+      dockerfile: Dockerfile
+    container_name: subth-api
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENV=production
+      - APP_PORT=8080
+      # Database (via PgBouncer)
+      - DB_HOST=pgbouncer
+      - DB_PORT=5432
+      - DB_USER=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - DB_NAME=${POSTGRES_DB:-subth}
+      # Redis
+      - REDIS_URL=redis://redis:6379
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      # R2/S3 Storage
+      - R2_ACCOUNT_ID=${R2_ACCOUNT_ID}
+      - R2_ACCESS_KEY=${R2_ACCESS_KEY}
+      - R2_SECRET_KEY=${R2_SECRET_KEY}
+      - R2_BUCKET=${R2_BUCKET}
+      # CDN
+      - CDN_URL=${CDN_URL:-https://files.subth.com}
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - subth-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ═══════════════════════════════════════════════════════════
+  # Frontend - Next.js (Customer Site)
+  # ═══════════════════════════════════════════════════════════
+  frontend:
+    build:
+      context: ./nextjs_subth
+      dockerfile: Dockerfile
+      args:
+        - API_URL=${API_URL:-http://api:8080}
+        - NEXT_PUBLIC_CDN_URL=${CDN_URL:-https://files.subth.com}
+    container_name: subth-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://api:8080
+    depends_on:
+      - api
+    networks:
+      - subth-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # ═══════════════════════════════════════════════════════════
+  # Admin Panel - Vite + React
+  # ═══════════════════════════════════════════════════════════
+  admin:
+    build:
+      context: ./vite_subth
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-https://api.subth.com}
+    container_name: subth-admin
+    ports:
+      - "3001:80"
+    networks:
+      - subth-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+volumes:
+  subth_postgres_data:
+    name: subth_postgres_data
+  subth_redis_data:
+    name: subth_redis_data
+
+networks:
+  subth-network:
+    driver: bridge

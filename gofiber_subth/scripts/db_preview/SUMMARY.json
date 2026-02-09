@@ -1,0 +1,34 @@
+{
+  "description": "Database Preview - All 140,000++ records",
+  "generated_at": "2026-01-24T02:09:22.062082",
+  "statistics": {
+    "total_videos": 143465,
+    "total_video_translations": 143465,
+    "total_video_casts": 167616,
+    "total_video_tags": 748059,
+    "unique_categories": 1,
+    "unique_makers": 498,
+    "unique_casts": 6571,
+    "unique_tags": 285
+  },
+  "schema_notes": {
+    "videos": "Main video table - NO code field, code extracted from title when needed",
+    "video_translations": "Multi-language titles (en, th, ja) - title includes code",
+    "video_casts": "Many-to-many: videos <-> casts",
+    "video_tags": "Many-to-many: videos <-> tags",
+    "categories": "Lookup table for categories",
+    "makers": "Lookup table for makers",
+    "casts": "Lookup table for cast members",
+    "tags": "Lookup table for tags"
+  },
+  "files_generated": [
+    "categories.json",
+    "makers.json",
+    "casts.json",
+    "tags.json",
+    "videos_01.json ... videos_15.json",
+    "video_translations_01.json ... video_translations_15.json",
+    "video_casts.json",
+    "video_tags.json"
+  ]
+}

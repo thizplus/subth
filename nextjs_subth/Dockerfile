@@ -19,10 +19,10 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build-time environment variables
-ARG API_URL
+ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_CDN_URL
 
-ENV API_URL=$API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_CDN_URL=$NEXT_PUBLIC_CDN_URL
 
 # Build with standalone output

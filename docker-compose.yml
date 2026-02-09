@@ -166,14 +166,13 @@ services:
       context: ./nextjs_subth
       dockerfile: Dockerfile
       args:
-        - API_URL=${API_URL:-http://api:8080}
+        - NEXT_PUBLIC_API_URL=${API_URL:-https://api.subth.com}
         - NEXT_PUBLIC_CDN_URL=${CDN_URL:-https://files.subth.com}
     container_name: subth-frontend
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - API_URL=http://api:8080
     depends_on:
       - api
     networks:
@@ -194,6 +193,10 @@ services:
       dockerfile: Dockerfile
       args:
         - VITE_API_URL=${VITE_API_URL:-https://api.subth.com}
+        - VITE_CDN_URL=${CDN_URL:-https://files.subth.com}
+        - VITE_APP_TITLE=${VITE_APP_TITLE:-SUBTH ADMIN}
+        - VITE_APP_DESCRIPTION=${VITE_APP_DESCRIPTION:-ระบบหลังบ้านซับไทย}
+        - VITE_APP_VERSION=${VITE_APP_VERSION:-1.0}
     container_name: subth-admin
     ports:
       - "3001:80"

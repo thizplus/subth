@@ -34,18 +34,6 @@ export function UserProfile({ user }: UserProfileProps) {
             <p className="text-muted-foreground text-sm">บทบาท</p>
             <p className="font-medium">{ROLE_LABELS[user.role]}</p>
           </div>
-          {user.phone && (
-            <div>
-              <p className="text-muted-foreground text-sm">เบอร์โทร</p>
-              <p className="font-medium">{user.phone}</p>
-            </div>
-          )}
-          {user.department && (
-            <div>
-              <p className="text-muted-foreground text-sm">แผนก</p>
-              <p className="font-medium">{user.department}</p>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

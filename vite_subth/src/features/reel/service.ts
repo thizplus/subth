@@ -31,7 +31,7 @@ export const reelService = {
   },
 
   async delete(id: string): Promise<void> {
-    return apiClient.deleteVoid(REEL_ROUTES.BY_ID(id))
+    return apiClient.delete(REEL_ROUTES.BY_ID(id))
   },
 
   async syncFromSuekk(payload: SyncReelRequest): Promise<Reel> {

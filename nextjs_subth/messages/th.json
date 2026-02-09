@@ -1,0 +1,66 @@
+{
+  "common": {
+    "search": "ค้นหา",
+    "home": "หน้าแรก",
+    "videos": "วิดีโอ",
+    "casts": "นักแสดง",
+    "tags": "แท็ก",
+    "makers": "ค่าย",
+    "loading": "กำลังโหลด...",
+    "error": "เกิดข้อผิดพลาด",
+    "noResults": "ไม่พบผลลัพธ์",
+    "noData": "ไม่มีข้อมูล",
+    "viewAll": "ดูทั้งหมด",
+    "back": "กลับ",
+    "smartMode": "โหมดอัจฉริยะ"
+  },
+  "home": {
+    "title": "SubTH",
+    "subtitle": "ค้นหาวิดีโอที่คุณชอบ",
+    "featured": "วิดีโอแนะนำ",
+    "latest": "ล่าสุด",
+    "totalVideos": "วิดีโอ",
+    "topCasts": "นักแสดงยอดนิยม",
+    "topTags": "แท็กยอดนิยม"
+  },
+  "video": {
+    "code": "รหัส",
+    "cast": "นักแสดง",
+    "tags": "แท็ก",
+    "maker": "ค่าย",
+    "releaseDate": "วันที่ออก",
+    "related": "วิดีโอที่เกี่ยวข้อง",
+    "similar": "วิดีโอคล้ายกัน"
+  },
+  "cast": {
+    "videos": "วิดีโอ",
+    "noVideos": "ไม่พบวิดีโอ"
+  },
+  "tag": {
+    "videos": "วิดีโอ",
+    "noVideos": "ไม่พบวิดีโอ"
+  },
+  "maker": {
+    "videos": "วิดีโอ",
+    "noVideos": "ไม่พบวิดีโอ"
+  },
+  "search": {
+    "placeholder": "ค้นหาวิดีโอ, นักแสดง, แท็ก...",
+    "ai": "ค้นหาอัจฉริยะ",
+    "aiDescription": "ระบบค้นหาอัจฉริยะ",
+    "aiPlaceholder": "อธิบายสิ่งที่อยากดู...",
+    "aiExamples": "ตัวอย่าง:",
+    "orUploadImage": "หรือค้นหาด้วยรูปภาพ",
+    "dropImage": "วางรูปที่นี่"
+  },
+  "theme": {
+    "toggle": "เปลี่ยนธีม",
+    "light": "สว่าง",
+    "dark": "มืด"
+  },
+  "language": {
+    "select": "เลือกภาษา",
+    "th": "ไทย",
+    "en": "English"
+  }
+}

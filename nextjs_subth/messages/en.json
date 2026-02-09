@@ -1,0 +1,66 @@
+{
+  "common": {
+    "search": "Search",
+    "home": "Home",
+    "videos": "Videos",
+    "casts": "Casts",
+    "tags": "Tags",
+    "makers": "Makers",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "noResults": "No results found",
+    "noData": "No data available",
+    "viewAll": "View All",
+    "back": "Back",
+    "smartMode": "Smart Mode"
+  },
+  "home": {
+    "title": "SubTH",
+    "subtitle": "Find videos you love",
+    "featured": "Featured Videos",
+    "latest": "Latest",
+    "totalVideos": "videos",
+    "topCasts": "Top Casts",
+    "topTags": "Top Tags"
+  },
+  "video": {
+    "code": "Code",
+    "cast": "Cast",
+    "tags": "Tags",
+    "maker": "Maker",
+    "releaseDate": "Release Date",
+    "related": "Related Videos",
+    "similar": "Similar Videos"
+  },
+  "cast": {
+    "videos": "Videos",
+    "noVideos": "No videos found"
+  },
+  "tag": {
+    "videos": "Videos",
+    "noVideos": "No videos found"
+  },
+  "maker": {
+    "videos": "Videos",
+    "noVideos": "No videos found"
+  },
+  "search": {
+    "placeholder": "Search videos, casts, tags...",
+    "ai": "AI Search",
+    "aiDescription": "Smart Search System",
+    "aiPlaceholder": "Describe what you want to watch...",
+    "aiExamples": "Examples:",
+    "orUploadImage": "Or search by image",
+    "dropImage": "Drop image here"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "select": "Select language",
+    "th": "Thai",
+    "en": "English"
+  }
+}

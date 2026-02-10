@@ -145,6 +145,26 @@ services:
       - R2_BUCKET=${R2_BUCKET}
       # CDN
       - CDN_URL=${CDN_URL:-https://files.subth.com}
+      # Google OAuth
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URL:-https://api.subth.com/api/v1/auth/google/callback}
+      - FRONTEND_URL=${FRONTEND_URL:-https://admin.subth.com}
+      - ALLOWED_REDIRECT_URLS=${ALLOWED_REDIRECT_URLS:-https://subth.com,https://admin.subth.com}
+      # Gemini AI
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.0-flash}
+      # AI Services
+      - CLIP_SERVICE_URL=${CLIP_SERVICE_URL:-https://clip.subth.com}
+      - RAG_SERVICE_URL=${RAG_SERVICE_URL:-https://rag.subth.com}
+      # CORS
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://subth.com,https://admin.subth.com}
+      # iDrive (Reel Sync)
+      - IDRIVE_ENDPOINT=${IDRIVE_ENDPOINT}
+      - IDRIVE_ACCESS_KEY=${IDRIVE_ACCESS_KEY}
+      - IDRIVE_SECRET_KEY=${IDRIVE_SECRET_KEY}
+      - IDRIVE_BUCKET=${IDRIVE_BUCKET}
+      - IDRIVE_REGION=${IDRIVE_REGION:-ap-southeast-1}
     depends_on:
       pgbouncer:
         condition: service_healthy

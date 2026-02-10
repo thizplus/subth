@@ -1,0 +1,56 @@
+# ═══════════════════════════════════════════════════════════
+# SUBTH - Nginx Reverse Proxy Configuration
+# ═══════════════════════════════════════════════════════════
+# Copy to: /etc/nginx/sites-available/subth-stream
+# Enable:  ln -sf /etc/nginx/sites-available/subth-stream /etc/nginx/sites-enabled/
+# Test:    nginx -t
+# Reload:  systemctl reload nginx
+# ═══════════════════════════════════════════════════════════
+
+# 1. API Server (Port 8080)
+# CORS is handled by Go Fiber - do NOT add CORS headers here
+server {
+    listen 80;
+    server_name api.subth.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+
+        # WebSocket support (if needed)
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+
+# 2. Customer Frontend (Port 3000)
+server {
+    listen 80;
+    server_name subth.com player.subth.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+    }
+}
+
+# 3. Admin Panel (Port 3001)
+server {
+    listen 80;
+    server_name admin.subth.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+    }
+}

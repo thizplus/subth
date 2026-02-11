@@ -5,7 +5,7 @@ export interface VideoListItem {
   id: string;
   title: string;
   thumbnail?: string;
-  category?: string;
+  categories?: string[]; // Category slugs (multi-category)
   releaseDate?: string | null;
   maker?: string; // maker name as string in list
   casts?: CastListItem[];
@@ -22,7 +22,7 @@ export interface Video {
   translations?: Record<string, string>; // { en: "...", th: "...", ja: "..." }
   thumbnail?: string;
   embedUrl?: string;
-  category?: string;
+  categories?: Category[]; // Multi-category support
   releaseDate?: string | null;
   maker?: Maker;
   casts?: Cast[];

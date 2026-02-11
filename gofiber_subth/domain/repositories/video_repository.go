@@ -41,6 +41,8 @@ type VideoRepository interface {
 	// Many-to-many associations
 	AddCasts(ctx context.Context, videoID uuid.UUID, casts []models.Cast) error
 	AddTags(ctx context.Context, videoID uuid.UUID, tags []models.Tag) error
+	AddCategories(ctx context.Context, videoID uuid.UUID, categories []models.Category) error
+	ReplaceCategories(ctx context.Context, videoID uuid.UUID, categories []models.Category) error
 
 	// Reel queries (for public feed/reels pages)
 	GetWithReels(ctx context.Context, limit int, offset int) ([]models.Video, int64, error)

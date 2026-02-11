@@ -25,7 +25,7 @@ type VideoListRequest struct {
 type CreateVideoRequest struct {
 	Thumbnail   string            `json:"thumbnail"`
 	EmbedURL    string            `json:"embed_url"`
-	Category    string            `json:"category"`
+	Categories  []string          `json:"categories"` // Multi-category: ["onlyfans", "homemade"]
 	ReleaseDate string            `json:"release_date"`
 	MakerName   string            `json:"maker"`
 	CastNames   []string          `json:"cast"`
@@ -36,7 +36,7 @@ type CreateVideoRequest struct {
 type UpdateVideoRequest struct {
 	Thumbnail   *string           `json:"thumbnail"`
 	EmbedURL    *string           `json:"embed_url"`
-	Category    *string           `json:"category"`
+	Categories  []string          `json:"categories"` // Multi-category: ["onlyfans", "homemade"]
 	ReleaseDate *string           `json:"release_date"`
 	MakerName   *string           `json:"maker"`
 	CastNames   []string          `json:"cast"`
@@ -72,7 +72,7 @@ type VideoResponse struct {
 	Translations map[string]string   `json:"translations,omitempty"`
 	Thumbnail    string              `json:"thumbnail,omitempty"`
 	EmbedURL     string              `json:"embedUrl,omitempty"`
-	Category     string              `json:"category,omitempty"`
+	Categories   []CategoryResponse  `json:"categories,omitempty"` // Multi-category
 	ReleaseDate  string              `json:"releaseDate,omitempty"` // Format: YYYY-MM-DD
 	Maker        *MakerResponse      `json:"maker,omitempty"`
 	Casts        []CastResponse      `json:"casts,omitempty"`
@@ -87,7 +87,7 @@ type VideoListItemResponse struct {
 	Title       string                 `json:"title"`
 	TitleTh     string                 `json:"titleTh,omitempty"`
 	Thumbnail   string                 `json:"thumbnail,omitempty"`
-	Category    string                 `json:"category,omitempty"`
+	Categories  []string               `json:"categories,omitempty"` // Category slugs
 	ReleaseDate string                 `json:"releaseDate,omitempty"` // Format: YYYY-MM-DD
 	MakerName   string                 `json:"maker,omitempty"`
 	Casts       []CastListItemResponse `json:"casts,omitempty"`

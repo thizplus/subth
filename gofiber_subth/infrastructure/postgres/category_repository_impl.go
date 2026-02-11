@@ -57,22 +57,30 @@ func (r *CategoryRepositoryImpl) GetByName(ctx context.Context, name string) (*m
 	return &category, nil
 }
 
-func (r *CategoryRepositoryImpl) GetOrCreate(ctx context.Context, name string) (*models.Category, error) {
-	if name == "" {
+func (r *CategoryRepositoryImpl) GetOrCreate(ctx context.Context, nameOrSlug string) (*models.Category, error) {
+	if nameOrSlug == "" {
 		return nil, nil
 	}
 
-	slugStr := slug.Make(name)
+	// Try to find existing category by slug first, then by name
+	var existing models.Category
+	err := r.db.WithContext(ctx).First(&existing, "slug = ? OR name = ?", nameOrSlug, nameOrSlug).Error
+	if err == nil {
+		return &existing, nil
+	}
+
+	// Not found - create new category
+	slugStr := slug.Make(nameOrSlug)
 	category := &models.Category{
 		ID:   uuid.New(),
-		Name: name,
+		Name: nameOrSlug,
 		Slug: slugStr,
 	}
 
 	// Upsert: create or get existing
-	err := r.db.WithContext(ctx).
+	err = r.db.WithContext(ctx).
 		Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "name"}},
+			Columns:   []clause.Column{{Name: "slug"}},
 			DoNothing: true,
 		}).
 		Create(category).Error
@@ -81,8 +89,7 @@ func (r *CategoryRepositoryImpl) GetOrCreate(ctx context.Context, name string) (
 	}
 
 	// Get the actual record (might be existing)
-	var existing models.Category
-	err = r.db.WithContext(ctx).First(&existing, "name = ?", name).Error
+	err = r.db.WithContext(ctx).First(&existing, "slug = ?", slugStr).Error
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +117,7 @@ func (r *CategoryRepositoryImpl) Delete(ctx context.Context, id uuid.UUID) error
 func (r *CategoryRepositoryImpl) UpdateVideoCount(ctx context.Context, id uuid.UUID) error {
 	return r.db.WithContext(ctx).Exec(`
 		UPDATE categories SET video_count = (
-			SELECT COUNT(*) FROM videos WHERE videos.category_id = categories.id
+			SELECT COUNT(*) FROM video_categories WHERE video_categories.category_id = categories.id
 		) WHERE id = ?
 	`, id).Error
 }

@@ -71,16 +71,19 @@ func (s *VideoServiceImpl) CreateVideo(ctx context.Context, req *dto.CreateVideo
 		makerID = &maker.ID
 	}
 
-	// Get or create category
-	var categoryID *uuid.UUID
-	if req.Category != "" {
-		category, err := s.categoryRepo.GetOrCreate(ctx, req.Category)
+	// Get or create categories (multi-category support)
+	var categories []models.Category
+	for _, catName := range req.Categories {
+		if catName == "" {
+			continue
+		}
+		category, err := s.categoryRepo.GetOrCreate(ctx, catName)
 		if err != nil {
-			logger.ErrorContext(ctx, "Failed to get/create category", "category", req.Category, "error", err)
-			return nil, err
+			logger.WarnContext(ctx, "Failed to get/create category", "category", catName, "error", err)
+			continue
 		}
 		if category != nil {
-			categoryID = &category.ID
+			categories = append(categories, *category)
 		}
 	}
 
@@ -88,7 +91,6 @@ func (s *VideoServiceImpl) CreateVideo(ctx context.Context, req *dto.CreateVideo
 	video := &models.Video{
 		Thumbnail:   req.Thumbnail,
 		EmbedURL:    req.EmbedURL,
-		CategoryID:  categoryID,
 		ReleaseDate: releaseDate,
 		MakerID:     makerID,
 	}
@@ -96,6 +98,17 @@ func (s *VideoServiceImpl) CreateVideo(ctx context.Context, req *dto.CreateVideo
 	if err := s.videoRepo.Create(ctx, video); err != nil {
 		logger.ErrorContext(ctx, "Failed to create video", "error", err)
 		return nil, err
+	}
+
+	// Add categories
+	if len(categories) > 0 {
+		if err := s.videoRepo.AddCategories(ctx, video.ID, categories); err != nil {
+			logger.WarnContext(ctx, "Failed to add categories to video", "error", err)
+		}
+		// Update video counts for each category
+		for _, cat := range categories {
+			_ = s.categoryRepo.UpdateVideoCount(ctx, cat.ID)
+		}
 	}
 
 	// Create translations
@@ -147,11 +160,6 @@ func (s *VideoServiceImpl) CreateVideo(ctx context.Context, req *dto.CreateVideo
 	// Increment maker video count
 	if makerID != nil {
 		_ = s.makerRepo.IncrementVideoCount(ctx, *makerID)
-	}
-
-	// Increment category video count
-	if categoryID != nil {
-		_ = s.categoryRepo.UpdateVideoCount(ctx, *categoryID)
 	}
 
 	logger.InfoContext(ctx, "Video created", "video_id", video.ID)
@@ -217,15 +225,18 @@ func (s *VideoServiceImpl) createVideoInternal(ctx context.Context, req *dto.Cre
 		makerID = &maker.ID
 	}
 
-	// Get or create category
-	var categoryID *uuid.UUID
-	if req.Category != "" {
-		category, err := s.categoryRepo.GetOrCreate(ctx, req.Category)
+	// Get or create categories (multi-category support)
+	var categories []models.Category
+	for _, catName := range req.Categories {
+		if catName == "" {
+			continue
+		}
+		category, err := s.categoryRepo.GetOrCreate(ctx, catName)
 		if err != nil {
-			return nil, err
+			continue
 		}
 		if category != nil {
-			categoryID = &category.ID
+			categories = append(categories, *category)
 		}
 	}
 
@@ -233,13 +244,20 @@ func (s *VideoServiceImpl) createVideoInternal(ctx context.Context, req *dto.Cre
 	video := &models.Video{
 		Thumbnail:   req.Thumbnail,
 		EmbedURL:    req.EmbedURL,
-		CategoryID:  categoryID,
 		ReleaseDate: releaseDate,
 		MakerID:     makerID,
 	}
 
 	if err := s.videoRepo.Create(ctx, video); err != nil {
 		return nil, err
+	}
+
+	// Add categories
+	if len(categories) > 0 {
+		_ = s.videoRepo.AddCategories(ctx, video.ID, categories)
+		for _, cat := range categories {
+			_ = s.categoryRepo.UpdateVideoCount(ctx, cat.ID)
+		}
 	}
 
 	// Create translations
@@ -287,11 +305,6 @@ func (s *VideoServiceImpl) createVideoInternal(ctx context.Context, req *dto.Cre
 		_ = s.makerRepo.IncrementVideoCount(ctx, *makerID)
 	}
 
-	// Increment category video count
-	if categoryID != nil {
-		_ = s.categoryRepo.UpdateVideoCount(ctx, *categoryID)
-	}
-
 	return video, nil
 }
 
@@ -310,7 +323,7 @@ func (s *VideoServiceImpl) GetVideo(ctx context.Context, id uuid.UUID, lang stri
 
 
 func (s *VideoServiceImpl) UpdateVideo(ctx context.Context, id uuid.UUID, req *dto.UpdateVideoRequest) (*dto.VideoResponse, error) {
-	video, err := s.videoRepo.GetByID(ctx, id)
+	video, err := s.videoRepo.GetWithRelations(ctx, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("video not found")
@@ -318,20 +331,14 @@ func (s *VideoServiceImpl) UpdateVideo(ctx context.Context, id uuid.UUID, req *d
 		return nil, err
 	}
 
-	// Track old category for video count update
-	oldCategoryID := video.CategoryID
+	// Track old categories for video count update
+	oldCategories := video.Categories
 
 	if req.Thumbnail != nil {
 		video.Thumbnail = *req.Thumbnail
 	}
 	if req.EmbedURL != nil {
 		video.EmbedURL = *req.EmbedURL
-	}
-	if req.Category != nil {
-		category, err := s.categoryRepo.GetOrCreate(ctx, *req.Category)
-		if err == nil && category != nil {
-			video.CategoryID = &category.ID
-		}
 	}
 	if req.ReleaseDate != nil {
 		t, err := time.Parse("2006-01-02", *req.ReleaseDate)
@@ -351,6 +358,32 @@ func (s *VideoServiceImpl) UpdateVideo(ctx context.Context, id uuid.UUID, req *d
 		return nil, err
 	}
 
+	// Update categories if provided
+	if len(req.Categories) > 0 {
+		var newCategories []models.Category
+		for _, catName := range req.Categories {
+			if catName == "" {
+				continue
+			}
+			category, err := s.categoryRepo.GetOrCreate(ctx, catName)
+			if err == nil && category != nil {
+				newCategories = append(newCategories, *category)
+			}
+		}
+		// Replace categories
+		if err := s.videoRepo.ReplaceCategories(ctx, id, newCategories); err != nil {
+			logger.WarnContext(ctx, "Failed to replace categories", "error", err)
+		}
+		// Update old category counts
+		for _, cat := range oldCategories {
+			_ = s.categoryRepo.UpdateVideoCount(ctx, cat.ID)
+		}
+		// Update new category counts
+		for _, cat := range newCategories {
+			_ = s.categoryRepo.UpdateVideoCount(ctx, cat.ID)
+		}
+	}
+
 	// Update translations
 	for lang, title := range req.Titles {
 		trans, err := s.videoRepo.GetTranslation(ctx, id, lang)
@@ -366,18 +399,6 @@ func (s *VideoServiceImpl) UpdateVideo(ctx context.Context, id uuid.UUID, req *d
 			// Update existing
 			trans.Title = title
 			_ = s.videoRepo.UpdateTranslation(ctx, trans)
-		}
-	}
-
-	// Update category video counts if category changed
-	if req.Category != nil {
-		// Update old category count
-		if oldCategoryID != nil {
-			_ = s.categoryRepo.UpdateVideoCount(ctx, *oldCategoryID)
-		}
-		// Update new category count
-		if video.CategoryID != nil {
-			_ = s.categoryRepo.UpdateVideoCount(ctx, *video.CategoryID)
 		}
 	}
 
@@ -399,8 +420,8 @@ func (s *VideoServiceImpl) DeleteVideo(ctx context.Context, id uuid.UUID) error 
 	if video.MakerID != nil {
 		_ = s.makerRepo.DecrementVideoCount(ctx, *video.MakerID)
 	}
-	if video.CategoryID != nil {
-		_ = s.categoryRepo.UpdateVideoCount(ctx, *video.CategoryID)
+	for _, cat := range video.Categories {
+		_ = s.categoryRepo.UpdateVideoCount(ctx, cat.ID)
 	}
 	for _, cast := range video.Casts {
 		_ = s.castRepo.DecrementVideoCount(ctx, cast.ID)
@@ -714,17 +735,23 @@ func (s *VideoServiceImpl) toVideoResponse(ctx context.Context, video *models.Vi
 		}
 	}
 
-	// Get category name
-	categoryName := ""
-	if video.Category != nil {
-		categoryName = video.Category.Name
+	// Build category responses
+	categoryResponses := make([]dto.CategoryResponse, 0, len(video.Categories))
+	for _, cat := range video.Categories {
+		catName := cat.Name
 		// Check for translation
-		for _, t := range video.Category.Translations {
+		for _, t := range cat.Translations {
 			if t.Lang == lang {
-				categoryName = t.Name
+				catName = t.Name
 				break
 			}
 		}
+		categoryResponses = append(categoryResponses, dto.CategoryResponse{
+			ID:         cat.ID,
+			Name:       catName,
+			Slug:       cat.Slug,
+			VideoCount: cat.VideoCount,
+		})
 	}
 
 	releaseDate := ""
@@ -738,7 +765,7 @@ func (s *VideoServiceImpl) toVideoResponse(ctx context.Context, video *models.Vi
 		Translations: translations,
 		Thumbnail:    video.Thumbnail,
 		EmbedURL:     video.EmbedURL,
-		Category:     categoryName,
+		Categories:   categoryResponses,
 		ReleaseDate:  releaseDate,
 		Maker:        maker,
 		Casts:        casts,
@@ -780,9 +807,10 @@ func (s *VideoServiceImpl) toVideoListItemResponses(videos []models.Video, lang 
 			makerName = v.Maker.Name
 		}
 
-		categoryName := ""
-		if v.Category != nil {
-			categoryName = v.Category.Name
+		// Build category slugs
+		categorySlugs := make([]string, 0, len(v.Categories))
+		for _, cat := range v.Categories {
+			categorySlugs = append(categorySlugs, cat.Slug)
 		}
 
 		releaseDate := ""
@@ -809,7 +837,7 @@ func (s *VideoServiceImpl) toVideoListItemResponses(videos []models.Video, lang 
 			Title:       title,
 			TitleTh:     titleTh,
 			Thumbnail:   v.Thumbnail,
-			Category:    categoryName,
+			Categories:  categorySlugs,
 			ReleaseDate: releaseDate,
 			MakerName:   makerName,
 			Casts:       casts,

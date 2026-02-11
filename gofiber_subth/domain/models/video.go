@@ -12,7 +12,6 @@ type Video struct {
 	Thumbnail   string         `gorm:"size:255"` // เก็บแค่ path เช่น /thumbnails/AAA-001.jpg
 	SourceURL   string         `gorm:"size:255"` // URL ต้นทาง เช่น https://supjav.com/136849.html
 	EmbedURL    string         `gorm:"size:255"` // Embed player URL เช่น https://player.suekk.com/embed/xxx
-	CategoryID  *uuid.UUID     `gorm:"type:uuid"`
 	ReleaseDate *time.Time     `gorm:"type:date"`
 	MakerID     *uuid.UUID     `gorm:"type:uuid"`
 	Views       int            `gorm:"default:0"`
@@ -25,9 +24,9 @@ type Video struct {
 	HasReel      bool   `gorm:"default:false" json:"has_reel"`  // มี reel หรือยัง
 
 	// Relations
-	Category     *Category          `gorm:"foreignKey:CategoryID"`
 	Maker        *Maker             `gorm:"foreignKey:MakerID"`
 	Translations []VideoTranslation `gorm:"foreignKey:VideoID"`
+	Categories   []Category         `gorm:"many2many:video_categories"` // Multi-category support
 	Casts        []Cast             `gorm:"many2many:video_casts"`
 	Tags         []Tag              `gorm:"many2many:video_tags"`
 

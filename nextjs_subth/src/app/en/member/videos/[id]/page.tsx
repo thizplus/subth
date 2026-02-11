@@ -79,10 +79,17 @@ export default async function VideoDetailPage({ params }: PageProps) {
             {video.releaseDate && (
               <span>{formatEnglishDate(video.releaseDate)}</span>
             )}
-            {video.category && (
+            {video.categories && video.categories.length > 0 && (
               <>
                 <span>•</span>
-                <span>{video.category}</span>
+                {video.categories.map((cat, idx) => (
+                  <span key={cat.id}>
+                    <Link href={`/en/member/category/${cat.slug}`} className="hover:underline">
+                      {cat.name}
+                    </Link>
+                    {idx < video.categories!.length - 1 && ", "}
+                  </span>
+                ))}
               </>
             )}
           </div>

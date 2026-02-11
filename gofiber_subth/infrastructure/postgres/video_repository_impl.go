@@ -44,8 +44,8 @@ func (r *videoRepositoryImpl) Delete(ctx context.Context, id uuid.UUID) error {
 func (r *videoRepositoryImpl) GetWithRelations(ctx context.Context, id uuid.UUID) (*models.Video, error) {
 	var video models.Video
 	err := r.db.WithContext(ctx).
-		Preload("Category").
-		Preload("Category.Translations").
+		Preload("Categories").
+		Preload("Categories.Translations").
 		Preload("Maker").
 		Preload("Translations").
 		Preload("Casts").
@@ -67,11 +67,12 @@ func (r *videoRepositoryImpl) List(ctx context.Context, params repositories.Vide
 
 	// Filters
 	if params.Category != "" {
-		// Join with categories table to filter by slug or name
-		subQuery := r.db.Model(&models.Category{}).
-			Select("id").
-			Where("slug = ? OR name = ?", params.Category, params.Category)
-		query = query.Where("category_id IN (?)", subQuery)
+		// Filter by category slug using many2many join table
+		subQuery := r.db.Table("video_categories").
+			Select("video_categories.video_id").
+			Joins("JOIN categories ON categories.id = video_categories.category_id").
+			Where("categories.slug = ? OR categories.name = ?", params.Category, params.Category)
+		query = query.Where("id IN (?)", subQuery)
 	}
 	if params.MakerID != nil {
 		query = query.Where("maker_id = ?", params.MakerID)
@@ -117,7 +118,7 @@ func (r *videoRepositoryImpl) List(ctx context.Context, params repositories.Vide
 	query = query.Offset(params.Offset).Limit(params.Limit)
 
 	// Preload relations
-	query = query.Preload("Category").Preload("Maker").Preload("Translations").Preload("Casts").Preload("Casts.Translations")
+	query = query.Preload("Categories").Preload("Maker").Preload("Translations").Preload("Casts").Preload("Casts.Translations")
 
 	err := query.Find(&videos).Error
 	return videos, total, err
@@ -149,7 +150,7 @@ func (r *videoRepositoryImpl) UpdateTranslation(ctx context.Context, trans *mode
 func (r *videoRepositoryImpl) GetRandom(ctx context.Context, limit int) ([]models.Video, error) {
 	var videos []models.Video
 	err := r.db.WithContext(ctx).
-		Preload("Category").
+		Preload("Categories").
 		Preload("Maker").
 		Preload("Translations").
 		Order("RANDOM()").
@@ -183,7 +184,7 @@ func (r *videoRepositoryImpl) SearchByTitle(ctx context.Context, query string, l
 	q.Count(&total)
 
 	err := q.
-		Preload("Category").
+		Preload("Categories").
 		Preload("Maker").
 		Preload("Translations").
 		Order("created_at DESC").
@@ -202,7 +203,7 @@ func (r *videoRepositoryImpl) GetByMakerID(ctx context.Context, makerID uuid.UUI
 	q.Count(&total)
 
 	err := q.
-		Preload("Category").
+		Preload("Categories").
 		Preload("Maker").
 		Preload("Translations").
 		Order("created_at DESC").
@@ -223,7 +224,7 @@ func (r *videoRepositoryImpl) GetByCastID(ctx context.Context, castID uuid.UUID,
 	q.Count(&total)
 
 	err := q.
-		Preload("Category").
+		Preload("Categories").
 		Preload("Maker").
 		Preload("Translations").
 		Order("created_at DESC").
@@ -244,7 +245,7 @@ func (r *videoRepositoryImpl) GetByTagID(ctx context.Context, tagID uuid.UUID, l
 	q.Count(&total)
 
 	err := q.
-		Preload("Category").
+		Preload("Categories").
 		Preload("Maker").
 		Preload("Translations").
 		Order("created_at DESC").
@@ -263,7 +264,7 @@ func (r *videoRepositoryImpl) GetByAutoTags(ctx context.Context, tags []string, 
 	q.Count(&total)
 
 	err := q.
-		Preload("Category").
+		Preload("Categories").
 		Preload("Maker").
 		Preload("Translations").
 		Order("created_at DESC").
@@ -306,4 +307,15 @@ func (r *videoRepositoryImpl) GetWithReels(ctx context.Context, limit int, offse
 		Find(&videos).Error
 
 	return videos, total, err
+}
+
+func (r *videoRepositoryImpl) AddCategories(ctx context.Context, videoID uuid.UUID, categories []models.Category) error {
+	if len(categories) == 0 {
+		return nil
+	}
+	return r.db.WithContext(ctx).Model(&models.Video{ID: videoID}).Association("Categories").Append(categories)
+}
+
+func (r *videoRepositoryImpl) ReplaceCategories(ctx context.Context, videoID uuid.UUID, categories []models.Category) error {
+	return r.db.WithContext(ctx).Model(&models.Video{ID: videoID}).Association("Categories").Replace(categories)
 }

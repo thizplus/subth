@@ -526,10 +526,10 @@ func createVideos(db *gorm.DB, items []ScrapedItem, makerMap, castMap, tagMap, c
 					makerID = &id
 				}
 
-				// Get category ID
-				var categoryID *uuid.UUID
+				// Get category (for multi-category support)
+				var categories []models.Category
 				if id, exists := categoryMap[item.Category]; exists {
-					categoryID = &id
+					categories = append(categories, models.Category{ID: id})
 				}
 
 				// Get thumbnail path (เก็บแค่ path ไม่รวม domain)
@@ -544,7 +544,6 @@ func createVideos(db *gorm.DB, items []ScrapedItem, makerMap, castMap, tagMap, c
 					ID:          uuid.New(),
 					Thumbnail:   thumbnail,
 					SourceURL:   item.URL, // เก็บ URL ต้นทาง
-					CategoryID:  categoryID,
 					ReleaseDate: releaseDate,
 					MakerID:     makerID,
 					Views:       item.Views,
@@ -558,6 +557,11 @@ func createVideos(db *gorm.DB, items []ScrapedItem, makerMap, castMap, tagMap, c
 				}
 				videoID := video.ID
 				atomic.AddInt64(&created, 1)
+
+				// Add categories
+				if len(categories) > 0 {
+					db.Model(&models.Video{ID: videoID}).Association("Categories").Replace(categories)
+				}
 
 				// Add casts
 				var casts []models.Cast

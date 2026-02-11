@@ -2,6 +2,7 @@
 import type { Maker } from '@/features/maker'
 import type { Cast } from '@/features/cast'
 import type { Tag, AutoTag } from '@/features/tag'
+import type { Category } from '@/features/category'
 
 export interface Video {
   id: string
@@ -9,7 +10,7 @@ export interface Video {
   titleTh?: string // ชื่อไทย (ถ้ามี)
   titleEn?: string // ชื่อ EN (ถ้ามี)
   thumbnail?: string
-  category?: string
+  categories?: string[] // Category slugs (multi-category)
   releaseDate?: string
   maker?: string // maker name for list view
   casts?: { name: string }[]
@@ -19,7 +20,7 @@ export interface VideoDetail {
   id: string
   title: string
   thumbnail?: string
-  category?: string
+  categories?: Category[] // Multi-category support
   releaseDate?: string
   translations?: Record<string, string> // { "en": "...", "th": "...", "ja": "..." }
   embedUrl?: string
@@ -49,7 +50,7 @@ export interface VideoListParams {
 export interface CreateVideoPayload {
   thumbnail?: string
   embed_url?: string
-  category?: string
+  categories?: string[] // Category slugs (multi-category)
   release_date?: string
   maker?: string // maker name
   cast?: string[] // cast names
@@ -60,7 +61,7 @@ export interface CreateVideoPayload {
 export interface UpdateVideoPayload {
   thumbnail?: string
   embed_url?: string
-  category?: string
+  categories?: string[] // Category slugs (multi-category)
   release_date?: string
   maker?: string
   cast?: string[]

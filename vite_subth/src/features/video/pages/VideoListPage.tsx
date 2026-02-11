@@ -127,7 +127,7 @@ export function VideoListPage() {
   const [formTitleJa, setFormTitleJa] = useState('')
   const [formThumbnail, setFormThumbnail] = useState('')
   const [formEmbedUrl, setFormEmbedUrl] = useState('')
-  const [formCategory, setFormCategory] = useState('')
+  const [formCategories, setFormCategories] = useState<string[]>([])
   const [formReleaseDate, setFormReleaseDate] = useState('')
   const [formMaker, setFormMaker] = useState('')
   const [formCasts, setFormCasts] = useState<SelectOption[]>([])
@@ -176,7 +176,7 @@ export function VideoListPage() {
     setFormTitleJa('')
     setFormThumbnail('')
     setFormEmbedUrl('')
-    setFormCategory('')
+    setFormCategories([])
     setFormReleaseDate('')
     setFormMaker('')
     setFormCasts([])
@@ -205,7 +205,7 @@ export function VideoListPage() {
         titles,
         thumbnail: formThumbnail.trim() || undefined,
         embed_url: formEmbedUrl.trim() || undefined,
-        category: formCategory || undefined,
+        categories: formCategories.length > 0 ? formCategories : undefined,
         release_date: formReleaseDate || undefined,
         maker: formMaker.trim() || undefined,
         cast: formCasts.length > 0 ? formCasts.map((c) => c.name) : undefined,
@@ -233,7 +233,7 @@ export function VideoListPage() {
           titles,
           thumbnail: formThumbnail.trim() || undefined,
           embed_url: formEmbedUrl.trim() || undefined,
-          category: formCategory || undefined,
+          categories: formCategories.length > 0 ? formCategories : undefined,
           release_date: formReleaseDate || undefined,
           maker: formMaker.trim() || undefined,
           cast: formCasts.length > 0 ? formCasts.map((c) => c.name) : undefined,
@@ -270,7 +270,7 @@ export function VideoListPage() {
     setFormTitleJa(editingVideo.translations?.ja || '')
     setFormThumbnail(editingVideo.thumbnail || '')
     setFormEmbedUrl(editingVideo.embedUrl || '')
-    setFormCategory(editingVideo.category || '')
+    setFormCategories(editingVideo.categories?.map(c => typeof c === 'string' ? c : c.slug) || [])
     setFormReleaseDate(editingVideo.releaseDate?.split('T')[0] || '')
     setFormMaker(typeof editingVideo.maker === 'object' ? editingVideo.maker?.name || '' : editingVideo.maker || '')
     setFormCasts(editingVideo.casts?.map((c) => ({ id: c.id || c.name, name: c.name })) || [])
@@ -344,22 +344,24 @@ export function VideoListPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Category & Date & Maker */}
+      {/* Categories & Date */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label>หมวดหมู่</Label>
-          <Select value={formCategory} onValueChange={setFormCategory}>
-            <SelectTrigger>
-              <SelectValue placeholder="เลือกหมวดหมู่" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories?.map((cat) => (
-                <SelectItem key={cat.id} value={cat.name}>
-                  {cat.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label>หมวดหมู่ (เลือกได้หลายรายการ)</Label>
+          <MultiSelectAutocomplete
+            selected={formCategories.map(slug => {
+              const cat = categories?.find(c => c.slug === slug || c.name === slug)
+              return { id: cat?.id || slug, name: cat?.name || slug }
+            })}
+            onChange={(opts) => setFormCategories(opts.map(o => {
+              const cat = categories?.find(c => c.name === o.name)
+              return cat?.slug || o.name
+            }))}
+            options={categories?.map((c) => ({ id: c.id, name: c.name })) || []}
+            onSearch={() => {}}
+            placeholder="เลือกหมวดหมู่..."
+            minSearchLength={0}
+          />
         </div>
         <div className="space-y-2">
           <Label>วันที่เผยแพร่</Label>
@@ -661,10 +663,19 @@ export function VideoListPage() {
                     </span>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell p-2">
-                    {item.category ? (
-                      <Badge variant="secondary" className="font-normal text-xs">
-                        {item.category}
-                      </Badge>
+                    {item.categories && item.categories.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {item.categories.slice(0, 2).map((cat) => (
+                          <Badge key={cat} variant="secondary" className="font-normal text-xs">
+                            {cat}
+                          </Badge>
+                        ))}
+                        {item.categories.length > 2 && (
+                          <Badge variant="outline" className="font-normal text-xs">
+                            +{item.categories.length - 2}
+                          </Badge>
+                        )}
+                      </div>
                     ) : (
                       <span className="text-muted-foreground text-sm">-</span>
                     )}

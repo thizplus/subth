@@ -32,7 +32,8 @@ func NewDatabase(config DatabaseConfig) (*gorm.DB, error) {
 }
 
 func Migrate(db *gorm.DB) error {
-	return db.AutoMigrate(
+	// Run AutoMigrate first
+	if err := db.AutoMigrate(
 		&models.User{},
 		&models.Task{},
 		&models.File{},
@@ -62,5 +63,41 @@ func Migrate(db *gorm.DB) error {
 		&models.VideoView{},
 		// Activity logs
 		&models.ActivityLog{},
-	)
+	); err != nil {
+		return err
+	}
+
+	// Run custom migrations
+	return migrateVideoCategories(db)
+}
+
+// migrateVideoCategories - Migrate from single category_id to many2many video_categories
+func migrateVideoCategories(db *gorm.DB) error {
+	// Check if category_id column exists in videos table
+	var columnExists bool
+	db.Raw("SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'videos' AND column_name = 'category_id')").Scan(&columnExists)
+
+	if !columnExists {
+		// Column doesn't exist, nothing to migrate
+		return nil
+	}
+
+	// Migrate existing category_id to video_categories
+	result := db.Exec(`
+		INSERT INTO video_categories (video_id, category_id)
+		SELECT id, category_id FROM videos
+		WHERE category_id IS NOT NULL
+		ON CONFLICT DO NOTHING
+	`)
+	if result.Error != nil {
+		return fmt.Errorf("failed to migrate video categories: %v", result.Error)
+	}
+
+	// Drop the old category_id column
+	result = db.Exec("ALTER TABLE videos DROP COLUMN IF EXISTS category_id")
+	if result.Error != nil {
+		return fmt.Errorf("failed to drop category_id column: %v", result.Error)
+	}
+
+	return nil
 }

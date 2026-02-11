@@ -26,6 +26,7 @@ type VideoRepository interface {
 	GetTranslation(ctx context.Context, videoID uuid.UUID, lang string) (*models.VideoTranslation, error)
 	UpdateTranslation(ctx context.Context, trans *models.VideoTranslation) error
 	DeleteTranslations(ctx context.Context, videoID uuid.UUID) error
+	ClearAssociations(ctx context.Context, videoID uuid.UUID) error
 
 	// Random
 	GetRandom(ctx context.Context, limit int) ([]models.Video, error)

@@ -151,6 +151,23 @@ func (r *videoRepositoryImpl) DeleteTranslations(ctx context.Context, videoID uu
 	return r.db.WithContext(ctx).Where("video_id = ?", videoID).Delete(&models.VideoTranslation{}).Error
 }
 
+func (r *videoRepositoryImpl) ClearAssociations(ctx context.Context, videoID uuid.UUID) error {
+	video := &models.Video{ID: videoID}
+	db := r.db.WithContext(ctx)
+
+	// Clear all many2many associations
+	if err := db.Model(video).Association("Categories").Clear(); err != nil {
+		return err
+	}
+	if err := db.Model(video).Association("Casts").Clear(); err != nil {
+		return err
+	}
+	if err := db.Model(video).Association("Tags").Clear(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *videoRepositoryImpl) GetRandom(ctx context.Context, limit int) ([]models.Video, error) {
 	var videos []models.Video
 	err := r.db.WithContext(ctx).

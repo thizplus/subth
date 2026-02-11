@@ -449,6 +449,11 @@ func (s *VideoServiceImpl) DeleteVideo(ctx context.Context, id uuid.UUID) error 
 		logger.WarnContext(ctx, "Failed to delete translations", "video_id", id, "error", err)
 	}
 
+	// ลบ many2many associations (video_casts, video_tags, video_categories)
+	if err := s.videoRepo.ClearAssociations(ctx, id); err != nil {
+		logger.WarnContext(ctx, "Failed to clear associations", "video_id", id, "error", err)
+	}
+
 	if err := s.videoRepo.Delete(ctx, id); err != nil {
 		logger.ErrorContext(ctx, "Failed to delete video", "video_id", id, "error", err)
 		return err

@@ -147,6 +147,10 @@ func (r *videoRepositoryImpl) UpdateTranslation(ctx context.Context, trans *mode
 	return r.db.WithContext(ctx).Save(trans).Error
 }
 
+func (r *videoRepositoryImpl) DeleteTranslations(ctx context.Context, videoID uuid.UUID) error {
+	return r.db.WithContext(ctx).Where("video_id = ?", videoID).Delete(&models.VideoTranslation{}).Error
+}
+
 func (r *videoRepositoryImpl) GetRandom(ctx context.Context, limit int) ([]models.Video, error) {
 	var videos []models.Video
 	err := r.db.WithContext(ctx).

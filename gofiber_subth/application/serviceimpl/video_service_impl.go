@@ -444,6 +444,11 @@ func (s *VideoServiceImpl) DeleteVideo(ctx context.Context, id uuid.UUID) error 
 		}
 	}
 
+	// ลบ translations ก่อน (foreign key constraint)
+	if err := s.videoRepo.DeleteTranslations(ctx, id); err != nil {
+		logger.WarnContext(ctx, "Failed to delete translations", "video_id", id, "error", err)
+	}
+
 	if err := s.videoRepo.Delete(ctx, id); err != nil {
 		logger.ErrorContext(ctx, "Failed to delete video", "video_id", id, "error", err)
 		return err

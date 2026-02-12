@@ -15,7 +15,7 @@ export function VideoGrid({
 }: VideoGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {Array.from({ length: skeletonCount }).map((_, i) => (
           <VideoCardSkeleton key={i} />
         ))}
@@ -32,7 +32,7 @@ export function VideoGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
       {videos.map((video) => (
         <VideoCard key={video.id} video={video} />
       ))}

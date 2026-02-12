@@ -17,6 +17,9 @@ type CategoryRepository interface {
 	Update(ctx context.Context, category *models.Category) error
 	Delete(ctx context.Context, id uuid.UUID) error
 	UpdateVideoCount(ctx context.Context, id uuid.UUID) error
+	IncrementVideoCount(ctx context.Context, id uuid.UUID) error
+	DecrementVideoCount(ctx context.Context, id uuid.UUID) error
+	RefreshAllVideoCounts(ctx context.Context) error
 
 	// Translations
 	CreateTranslation(ctx context.Context, trans *models.CategoryTranslation) error

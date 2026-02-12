@@ -320,3 +320,21 @@ func (h *CategoryHandler) DeleteCategory(c *fiber.Ctx) error {
 	logger.InfoContext(ctx, "Category deleted", "category_id", id)
 	return utils.SuccessResponse(c, fiber.Map{"message": "Category deleted successfully"})
 }
+
+// RefreshVideoCounts godoc
+// @Summary Refresh video counts for all categories
+// @Tags categories
+// @Produce json
+// @Success 200 {object} utils.Response
+// @Router /api/v1/categories/refresh-counts [post]
+func (h *CategoryHandler) RefreshVideoCounts(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	if err := h.categoryRepo.RefreshAllVideoCounts(ctx); err != nil {
+		logger.ErrorContext(ctx, "Failed to refresh video counts", "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	logger.InfoContext(ctx, "Category video counts refreshed")
+	return utils.SuccessResponse(c, fiber.Map{"message": "Video counts refreshed successfully"})
+}

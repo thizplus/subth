@@ -105,9 +105,9 @@ func (s *VideoServiceImpl) CreateVideo(ctx context.Context, req *dto.CreateVideo
 		if err := s.videoRepo.AddCategories(ctx, video.ID, categories); err != nil {
 			logger.WarnContext(ctx, "Failed to add categories to video", "error", err)
 		}
-		// Update video counts for each category
+		// Increment video counts for each category
 		for _, cat := range categories {
-			_ = s.categoryRepo.UpdateVideoCount(ctx, cat.ID)
+			_ = s.categoryRepo.IncrementVideoCount(ctx, cat.ID)
 		}
 	}
 
@@ -256,7 +256,7 @@ func (s *VideoServiceImpl) createVideoInternal(ctx context.Context, req *dto.Cre
 	if len(categories) > 0 {
 		_ = s.videoRepo.AddCategories(ctx, video.ID, categories)
 		for _, cat := range categories {
-			_ = s.categoryRepo.UpdateVideoCount(ctx, cat.ID)
+			_ = s.categoryRepo.IncrementVideoCount(ctx, cat.ID)
 		}
 	}
 
@@ -416,29 +416,19 @@ func (s *VideoServiceImpl) DeleteVideo(ctx context.Context, id uuid.UUID) error 
 		return err
 	}
 
-	// Decrement counts
-	if video.MakerID != nil {
-		_ = s.makerRepo.DecrementVideoCount(ctx, *video.MakerID)
-	}
-	for _, cat := range video.Categories {
-		_ = s.categoryRepo.UpdateVideoCount(ctx, cat.ID)
-	}
-	for _, cast := range video.Casts {
-		_ = s.castRepo.DecrementVideoCount(ctx, cast.ID)
-	}
-	for _, tag := range video.Tags {
-		_ = s.tagRepo.DecrementVideoCount(ctx, tag.ID)
+	// เก็บ IDs ไว้ก่อนลบ associations
+	categoryIDs := make([]uuid.UUID, len(video.Categories))
+	for i, cat := range video.Categories {
+		categoryIDs[i] = cat.ID
 	}
 
 	// ลบ thumbnail จาก R2 (ถ้ามี)
 	logger.InfoContext(ctx, "Checking thumbnail for deletion", "video_id", id, "thumbnail", video.Thumbnail, "storage_nil", s.storage == nil)
 	if video.Thumbnail != "" && s.storage != nil {
-		// ตัด / นำหน้าออก เช่น /thumbnails/JUX-865.jpg -> thumbnails/JUX-865.jpg
 		thumbnailPath := strings.TrimPrefix(video.Thumbnail, "/")
 		logger.InfoContext(ctx, "Deleting thumbnail from storage", "video_id", id, "path", thumbnailPath)
 		if err := s.storage.Delete(ctx, thumbnailPath); err != nil {
 			logger.WarnContext(ctx, "Failed to delete thumbnail from storage", "video_id", id, "path", thumbnailPath, "error", err)
-			// ไม่ return error เพราะยังต้องลบ video record
 		} else {
 			logger.InfoContext(ctx, "Thumbnail deleted from storage", "video_id", id, "path", thumbnailPath)
 		}
@@ -454,9 +444,24 @@ func (s *VideoServiceImpl) DeleteVideo(ctx context.Context, id uuid.UUID) error 
 		logger.WarnContext(ctx, "Failed to clear associations", "video_id", id, "error", err)
 	}
 
+	// ลบ video record
 	if err := s.videoRepo.Delete(ctx, id); err != nil {
 		logger.ErrorContext(ctx, "Failed to delete video", "video_id", id, "error", err)
 		return err
+	}
+
+	// Update counts หลังลบ associations แล้ว
+	if video.MakerID != nil {
+		_ = s.makerRepo.DecrementVideoCount(ctx, *video.MakerID)
+	}
+	for _, catID := range categoryIDs {
+		_ = s.categoryRepo.DecrementVideoCount(ctx, catID)
+	}
+	for _, cast := range video.Casts {
+		_ = s.castRepo.DecrementVideoCount(ctx, cast.ID)
+	}
+	for _, tag := range video.Tags {
+		_ = s.tagRepo.DecrementVideoCount(ctx, tag.ID)
 	}
 
 	logger.InfoContext(ctx, "Video deleted", "video_id", id)

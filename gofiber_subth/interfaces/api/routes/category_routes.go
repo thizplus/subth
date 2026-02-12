@@ -15,6 +15,7 @@ func SetupCategoryRoutes(router fiber.Router, h *handlers.Handlers) {
 
 	// Admin routes (protected)
 	categories.Post("/", middleware.Protected(), middleware.AdminOnly(), h.CategoryHandler.CreateCategory)
+	categories.Post("/refresh-counts", middleware.Protected(), middleware.AdminOnly(), h.CategoryHandler.RefreshVideoCounts)
 	categories.Put("/:id", middleware.Protected(), middleware.AdminOnly(), h.CategoryHandler.UpdateCategory)
 	categories.Delete("/:id", middleware.Protected(), middleware.AdminOnly(), h.CategoryHandler.DeleteCategory)
 }

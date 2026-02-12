@@ -122,6 +122,36 @@ func (r *CategoryRepositoryImpl) UpdateVideoCount(ctx context.Context, id uuid.U
 	`, id).Error
 }
 
+func (r *CategoryRepositoryImpl) IncrementVideoCount(ctx context.Context, id uuid.UUID) error {
+	return r.db.WithContext(ctx).Exec(`
+		UPDATE categories SET video_count = video_count + 1 WHERE id = ?
+	`, id).Error
+}
+
+func (r *CategoryRepositoryImpl) DecrementVideoCount(ctx context.Context, id uuid.UUID) error {
+	return r.db.WithContext(ctx).Exec(`
+		UPDATE categories SET video_count = GREATEST(video_count - 1, 0) WHERE id = ?
+	`, id).Error
+}
+
+// RefreshAllVideoCounts นับ video_count ใหม่ทุก category (ลบ orphan records ด้วย)
+func (r *CategoryRepositoryImpl) RefreshAllVideoCounts(ctx context.Context) error {
+	// ลบ orphan records จาก video_categories (video ถูกลบไปแล้ว)
+	if err := r.db.WithContext(ctx).Exec(`
+		DELETE FROM video_categories
+		WHERE video_id NOT IN (SELECT id FROM videos)
+	`).Error; err != nil {
+		return err
+	}
+
+	// Update video_count ทุก category
+	return r.db.WithContext(ctx).Exec(`
+		UPDATE categories SET video_count = (
+			SELECT COUNT(*) FROM video_categories WHERE video_categories.category_id = categories.id
+		)
+	`).Error
+}
+
 func (r *CategoryRepositoryImpl) CreateTranslation(ctx context.Context, trans *models.CategoryTranslation) error {
 	return r.db.WithContext(ctx).Create(trans).Error
 }

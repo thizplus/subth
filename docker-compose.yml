@@ -75,6 +75,8 @@ services:
       - POSTGRESQL_USERNAME=${POSTGRES_USER:-postgres}
       - POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - POSTGRESQL_DATABASE=${POSTGRES_DB:-subth}
+      # PgBouncer exposed database name (must match what client connects to)
+      - PGBOUNCER_DATABASE=${POSTGRES_DB:-subth}
       # Pool Settings
       - PGBOUNCER_POOL_MODE=transaction
       - PGBOUNCER_MAX_CLIENT_CONN=1000

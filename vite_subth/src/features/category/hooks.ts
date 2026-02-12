@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { categoryService } from './service'
-import type { CategoryListParams, CreateCategoryPayload, UpdateCategoryPayload } from './types'
+import type { CategoryListParams, CreateCategoryPayload, UpdateCategoryPayload, ReorderCategoriesPayload } from './types'
 
 export const categoryKeys = {
   all: ['categories'] as const,
@@ -53,6 +53,17 @@ export function useDeleteCategory() {
 
   return useMutation({
     mutationFn: (id: string) => categoryService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: categoryKeys.all })
+    },
+  })
+}
+
+export function useReorderCategories() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: ReorderCategoriesPayload) => categoryService.reorder(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.all })
     },

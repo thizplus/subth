@@ -5,6 +5,7 @@ export {
   useCreateCategory,
   useUpdateCategory,
   useDeleteCategory,
+  useReorderCategories,
   categoryKeys,
 } from './hooks'
 export { categoryService } from './service'
@@ -14,6 +15,7 @@ export type {
   CategoryListParams,
   CreateCategoryPayload,
   UpdateCategoryPayload,
+  ReorderCategoriesPayload,
 } from './types'
 
 // Pages

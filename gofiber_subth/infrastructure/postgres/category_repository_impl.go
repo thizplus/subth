@@ -101,7 +101,7 @@ func (r *CategoryRepositoryImpl) List(ctx context.Context) ([]*models.Category, 
 	var categories []*models.Category
 	err := r.db.WithContext(ctx).
 		Preload("Translations").
-		Order("video_count DESC").
+		Order("sort_order ASC, video_count DESC").
 		Find(&categories).Error
 	return categories, err
 }
@@ -150,6 +150,20 @@ func (r *CategoryRepositoryImpl) RefreshAllVideoCounts(ctx context.Context) erro
 			SELECT COUNT(*) FROM video_categories WHERE video_categories.category_id = categories.id
 		)
 	`).Error
+}
+
+func (r *CategoryRepositoryImpl) Reorder(ctx context.Context, categoryIDs []uuid.UUID) error {
+	// Update sort_order ตามลำดับใน slice
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		for i, id := range categoryIDs {
+			if err := tx.Model(&models.Category{}).
+				Where("id = ?", id).
+				Update("sort_order", i).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (r *CategoryRepositoryImpl) CreateTranslation(ctx context.Context, trans *models.CategoryTranslation) error {

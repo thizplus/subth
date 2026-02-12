@@ -1,6 +1,23 @@
 import { useState } from 'react'
-import { Plus, Pencil, Trash2, FolderOpen, Loader2, MoreHorizontal } from 'lucide-react'
+import { Plus, Pencil, Trash2, FolderOpen, Loader2, MoreHorizontal, GripVertical } from 'lucide-react'
 import { toast } from 'sonner'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -47,6 +64,7 @@ import {
   useCreateCategory,
   useUpdateCategory,
   useDeleteCategory,
+  useReorderCategories,
   type Category,
 } from '@/features/category'
 
@@ -74,6 +92,82 @@ function MetricItem({ label, value, icon, isLoading }: MetricItemProps) {
   )
 }
 
+// Sortable Row Component
+interface SortableRowProps {
+  item: Category
+  onEdit: (category: Category) => void
+  onDelete: (category: Category) => void
+}
+
+function SortableRow({ item, onEdit, onDelete }: SortableRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <TableRow
+      ref={setNodeRef}
+      style={style}
+      className="group hover:bg-muted/50 transition-colors"
+    >
+      <TableCell className="w-[50px]">
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
+        >
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
+        </button>
+      </TableCell>
+      <TableCell className="font-medium truncate max-w-0" title={item.name}>
+        {item.name}
+      </TableCell>
+      <TableCell className="text-muted-foreground truncate max-w-0">
+        {item.slug}
+      </TableCell>
+      <TableCell className="text-right tabular-nums">
+        {item.videoCount.toLocaleString()}
+      </TableCell>
+      <TableCell>
+        <div className="flex justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onEdit(item)}>
+                <Pencil className="mr-2 h-4 w-4" />
+                แก้ไข
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete(item)}
+                disabled={item.videoCount > 0}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                ลบ
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </TableCell>
+    </TableRow>
+  )
+}
+
 export function CategoryListPage() {
   // Dialogs
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -91,6 +185,34 @@ export function CategoryListPage() {
   const createCategory = useCreateCategory()
   const updateCategory = useUpdateCategory()
   const deleteCategory = useDeleteCategory()
+  const reorderCategories = useReorderCategories()
+
+  // DnD Sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id || !categories) return
+
+    const oldIndex = categories.findIndex((c) => c.id === active.id)
+    const newIndex = categories.findIndex((c) => c.id === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+
+    const newOrder = arrayMove(categories, oldIndex, newIndex)
+    const categoryIds = newOrder.map((c) => c.id)
+
+    try {
+      await reorderCategories.mutateAsync({ categoryIds })
+      toast.success('จัดเรียงลำดับสำเร็จ')
+    } catch {
+      toast.error('เกิดข้อผิดพลาดในการจัดเรียง')
+    }
+  }
 
   const resetForm = () => {
     setFormName('')
@@ -229,80 +351,63 @@ export function CategoryListPage() {
 
       {/* Table - Categories มักมีไม่เยอะ ไม่ต้อง pagination */}
       <div className="rounded-md border overflow-hidden">
-        <Table className="table-fixed">
-          <TableHeader>
-            <TableRow className="bg-muted/50">
-              <TableHead className="w-[40%]">ชื่อ</TableHead>
-              <TableHead className="w-[30%]">Slug</TableHead>
-              <TableHead className="w-[15%] text-right">จำนวนวิดีโอ</TableHead>
-              <TableHead className="w-[15%] text-right">จัดการ</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              [...Array(5)].map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-full" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
-                  <TableCell><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
-                </TableRow>
-              ))
-            ) : categories?.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="h-32 text-center">
-                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                    <FolderOpen className="h-8 w-8" />
-                    <p>ไม่พบข้อมูล Category</p>
-                    <Button size="sm" onClick={() => setIsCreateOpen(true)}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      เพิ่ม Category
-                    </Button>
-                  </div>
-                </TableCell>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <Table className="table-fixed">
+            <TableHeader>
+              <TableRow className="bg-muted/50">
+                <TableHead className="w-[50px]" />
+                <TableHead className="w-[35%]">ชื่อ</TableHead>
+                <TableHead className="w-[25%]">Slug</TableHead>
+                <TableHead className="w-[15%] text-right">จำนวนวิดีโอ</TableHead>
+                <TableHead className="w-[15%] text-right">จัดการ</TableHead>
               </TableRow>
-            ) : (
-              categories?.map((item) => (
-                <TableRow key={item.id} className="group hover:bg-muted/50 transition-colors">
-                  <TableCell className="font-medium truncate max-w-0" title={item.name}>
-                    {item.name}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground truncate max-w-0">
-                    {item.slug}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {item.videoCount.toLocaleString()}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex justify-end">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openEdit(item)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            แก้ไข
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => setDeletingCategory(item)}
-                            disabled={item.videoCount > 0}
-                            className="text-destructive focus:text-destructive"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            ลบ
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                [...Array(5)].map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell><Skeleton className="h-4 w-4" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-full" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
+                    <TableCell><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
+                  </TableRow>
+                ))
+              ) : categories?.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-32 text-center">
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <FolderOpen className="h-8 w-8" />
+                      <p>ไม่พบข้อมูล Category</p>
+                      <Button size="sm" onClick={() => setIsCreateOpen(true)}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        เพิ่ม Category
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                <SortableContext
+                  items={categories?.map((c) => c.id) || []}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {categories?.map((item) => (
+                    <SortableRow
+                      key={item.id}
+                      item={item}
+                      onEdit={openEdit}
+                      onDelete={setDeletingCategory}
+                    />
+                  ))}
+                </SortableContext>
+              )}
+            </TableBody>
+          </Table>
+        </DndContext>
       </div>
 
       {/* Create Dialog */}

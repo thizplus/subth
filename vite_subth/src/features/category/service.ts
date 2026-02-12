@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api-client'
 import { CATEGORY_ROUTES } from '@/constants/api-routes'
-import type { Category, CategoryDetail, CategoryListParams, CreateCategoryPayload, UpdateCategoryPayload } from './types'
+import type { Category, CategoryDetail, CategoryListParams, CreateCategoryPayload, UpdateCategoryPayload, ReorderCategoriesPayload } from './types'
 
 export const categoryService = {
   // Category ใช้ List แบบไม่มี pagination (ไม่เยอะ)
@@ -23,5 +23,9 @@ export const categoryService = {
 
   async delete(id: string): Promise<void> {
     return apiClient.delete(CATEGORY_ROUTES.BY_ID(id))
+  },
+
+  async reorder(payload: ReorderCategoriesPayload): Promise<void> {
+    return apiClient.put(CATEGORY_ROUTES.REORDER, payload)
   },
 }

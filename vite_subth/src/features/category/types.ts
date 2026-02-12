@@ -4,6 +4,7 @@ export interface Category {
   id: string
   name: string // แปลตาม lang
   slug: string
+  sortOrder: number
   videoCount: number
 }
 
@@ -24,4 +25,8 @@ export interface CreateCategoryPayload {
 export interface UpdateCategoryPayload {
   name?: string
   translations?: Record<string, string>
+}
+
+export interface ReorderCategoriesPayload {
+  categoryIds: string[]
 }

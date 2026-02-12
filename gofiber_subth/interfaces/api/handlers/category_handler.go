@@ -58,6 +58,7 @@ func (h *CategoryHandler) ListCategories(c *fiber.Ctx) error {
 			ID:         cat.ID,
 			Name:       name,
 			Slug:       cat.Slug,
+			SortOrder:  cat.SortOrder,
 			VideoCount: cat.VideoCount,
 		})
 	}
@@ -337,4 +338,36 @@ func (h *CategoryHandler) RefreshVideoCounts(c *fiber.Ctx) error {
 
 	logger.InfoContext(ctx, "Category video counts refreshed")
 	return utils.SuccessResponse(c, fiber.Map{"message": "Video counts refreshed successfully"})
+}
+
+// ReorderCategories godoc
+// @Summary Reorder categories
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param body body dto.ReorderCategoriesRequest true "Category IDs in new order"
+// @Success 200 {object} utils.Response
+// @Router /api/v1/categories/reorder [put]
+func (h *CategoryHandler) ReorderCategories(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	var req dto.ReorderCategoriesRequest
+	if err := c.BodyParser(&req); err != nil {
+		logger.WarnContext(ctx, "Invalid request body", "error", err)
+		return utils.BadRequestResponse(c, "Invalid request body")
+	}
+
+	if err := utils.ValidateStruct(&req); err != nil {
+		errs := utils.GetValidationErrors(err)
+		logger.WarnContext(ctx, "Validation failed", "errors", errs)
+		return utils.ValidationErrorResponse(c, errs)
+	}
+
+	if err := h.categoryRepo.Reorder(ctx, req.CategoryIDs); err != nil {
+		logger.ErrorContext(ctx, "Failed to reorder categories", "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	logger.InfoContext(ctx, "Categories reordered", "count", len(req.CategoryIDs))
+	return utils.SuccessResponse(c, fiber.Map{"message": "Categories reordered successfully"})
 }

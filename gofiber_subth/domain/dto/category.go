@@ -14,12 +14,18 @@ type UpdateCategoryRequest struct {
 	Translations map[string]string `json:"translations"` // จะแทนที่ทั้งหมด
 }
 
+type ReorderCategoriesRequest struct {
+	// List ของ category IDs เรียงตาม order ใหม่
+	CategoryIDs []uuid.UUID `json:"categoryIds" validate:"required,min=1"`
+}
+
 // === Responses ===
 
 type CategoryResponse struct {
 	ID         uuid.UUID `json:"id"`
 	Name       string    `json:"name"`
 	Slug       string    `json:"slug"`
+	SortOrder  int       `json:"sortOrder"`
 	VideoCount int       `json:"videoCount"`
 }
 

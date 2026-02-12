@@ -21,6 +21,9 @@ type CategoryRepository interface {
 	DecrementVideoCount(ctx context.Context, id uuid.UUID) error
 	RefreshAllVideoCounts(ctx context.Context) error
 
+	// Reorder
+	Reorder(ctx context.Context, categoryIDs []uuid.UUID) error
+
 	// Translations
 	CreateTranslation(ctx context.Context, trans *models.CategoryTranslation) error
 	DeleteTranslationsByCategoryID(ctx context.Context, categoryID uuid.UUID) error

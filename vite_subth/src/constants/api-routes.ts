@@ -62,6 +62,7 @@ export const TAG_ROUTES = {
 export const CATEGORY_ROUTES = {
   LIST: '/api/v1/categories',
   BY_ID: (id: string) => `/api/v1/categories/${id}`,
+  REORDER: '/api/v1/categories/reorder',
 }
 
 export const STATS_ROUTES = {

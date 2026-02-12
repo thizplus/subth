@@ -12,7 +12,7 @@ export default async function EnglishHomePage() {
 
   try {
     categoryGroups = await videoService.getByCategories({
-      limit: 4,
+      limit: 10,
       categories: 3,
       lang: "en",
     });

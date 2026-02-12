@@ -6,7 +6,7 @@ import { getDictionary } from "@/lib/i18n/dictionaries";
 import { Pagination } from "@/components/ui/pagination";
 import { notFound, redirect } from "next/navigation";
 
-const ITEMS_PER_PAGE = 24;
+const ITEMS_PER_PAGE = 30;
 
 // Generate color from string
 function stringToColor(str: string): string {

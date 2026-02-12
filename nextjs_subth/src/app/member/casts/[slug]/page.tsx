@@ -7,7 +7,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { notFound } from "next/navigation";
 import { PageActivityLogger } from "@/features/activity";
 
-const ITEMS_PER_PAGE = 24;
+const ITEMS_PER_PAGE = 30;
 
 // สร้างสีจาก string
 function stringToColor(str: string): string {

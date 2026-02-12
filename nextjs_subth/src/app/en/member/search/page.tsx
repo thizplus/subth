@@ -5,7 +5,7 @@ import { getDictionary } from "@/lib/i18n/dictionaries";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 
-const ITEMS_PER_PAGE = 24;
+const ITEMS_PER_PAGE = 30;
 
 interface PageProps {
   searchParams: Promise<{ q?: string }>;

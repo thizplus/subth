@@ -6,7 +6,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 import { PageActivityLogger } from "@/features/activity";
 
-const ITEMS_PER_PAGE = 24;
+const ITEMS_PER_PAGE = 30;
 
 interface PageProps {
   searchParams: Promise<{ q?: string }>;

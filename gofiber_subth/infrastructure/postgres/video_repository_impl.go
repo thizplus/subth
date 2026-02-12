@@ -152,17 +152,16 @@ func (r *videoRepositoryImpl) DeleteTranslations(ctx context.Context, videoID uu
 }
 
 func (r *videoRepositoryImpl) ClearAssociations(ctx context.Context, videoID uuid.UUID) error {
-	video := &models.Video{ID: videoID}
 	db := r.db.WithContext(ctx)
 
-	// Clear all many2many associations
-	if err := db.Model(video).Association("Categories").Clear(); err != nil {
+	// ลบ many2many โดยตรงจาก join tables
+	if err := db.Exec("DELETE FROM video_categories WHERE video_id = ?", videoID).Error; err != nil {
 		return err
 	}
-	if err := db.Model(video).Association("Casts").Clear(); err != nil {
+	if err := db.Exec("DELETE FROM video_casts WHERE video_id = ?", videoID).Error; err != nil {
 		return err
 	}
-	if err := db.Model(video).Association("Tags").Clear(); err != nil {
+	if err := db.Exec("DELETE FROM video_tags WHERE video_id = ?", videoID).Error; err != nil {
 		return err
 	}
 	return nil

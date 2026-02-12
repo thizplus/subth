@@ -34,7 +34,8 @@ services:
     image: pgvector/pgvector:pg16
     container_name: subth-postgres
     ports:
-      - "${POSTGRES_PORT:-5433}:5432"
+      # Bind to localhost only for security (prevent external attacks)
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -78,7 +79,7 @@ services:
       # PgBouncer exposed database name (must match what client connects to)
       - PGBOUNCER_DATABASE=${POSTGRES_DB:-subth}
       # Auth type (plain for internal Docker network)
-      - PGBOUNCER_AUTH_TYPE=plain
+      - PGBOUNCER_AUTH_TYPE=scram-sha-256
       # Pool Settings
       - PGBOUNCER_POOL_MODE=transaction
       - PGBOUNCER_MAX_CLIENT_CONN=1000

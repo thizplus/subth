@@ -39,6 +39,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-subth}
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "shared_buffers=256MB"
     volumes:
       - subth_postgres_data:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
@@ -57,21 +63,39 @@ services:
         max-file: "3"
 
   # ═══════════════════════════════════════════════════════════
-  # PgBouncer - Connection Pooler
+  # PgBouncer - Connection Pooler (Bitnami - Self-healing)
   # ═══════════════════════════════════════════════════════════
   pgbouncer:
-    image: edoburu/pgbouncer:latest
+    image: bitnami/pgbouncer:latest
     container_name: subth-pgbouncer
     environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-subth}
-      - POOL_MODE=transaction
-      - MAX_CLIENT_CONN=1000
-      - DEFAULT_POOL_SIZE=20
-      - MIN_POOL_SIZE=5
-      - RESERVE_POOL_SIZE=5
-      - AUTH_TYPE=plain
+      # Database Connection
+      - POSTGRESQL_HOST=postgres
+      - POSTGRESQL_PORT=5432
+      - POSTGRESQL_USERNAME=${POSTGRES_USER:-postgres}
+      - POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRESQL_DATABASE=${POSTGRES_DB:-subth}
+      # Pool Settings
+      - PGBOUNCER_POOL_MODE=transaction
+      - PGBOUNCER_MAX_CLIENT_CONN=1000
+      - PGBOUNCER_DEFAULT_POOL_SIZE=25
+      - PGBOUNCER_MIN_POOL_SIZE=5
+      - PGBOUNCER_RESERVE_POOL_SIZE=5
+      # Self-healing: Timeout & Retry Settings
+      - PGBOUNCER_SERVER_IDLE_TIMEOUT=300
+      - PGBOUNCER_SERVER_LIFETIME=1800
+      - PGBOUNCER_SERVER_CONNECT_TIMEOUT=15
+      - PGBOUNCER_QUERY_TIMEOUT=120
+      - PGBOUNCER_CLIENT_IDLE_TIMEOUT=300
+      # Connection Reset
+      - PGBOUNCER_SERVER_RESET_QUERY=DISCARD ALL
+      - PGBOUNCER_IGNORE_STARTUP_PARAMETERS=extra_float_digits
+      # Logging
+      - PGBOUNCER_LOG_CONNECTIONS=1
+      - PGBOUNCER_LOG_DISCONNECTIONS=1
+      - PGBOUNCER_LOG_POOLER_ERRORS=1
     ports:
-      - "${PGBOUNCER_PORT:-6432}:5432"
+      - "${PGBOUNCER_PORT:-6432}:6432"
     depends_on:
       postgres:
         condition: service_healthy
@@ -79,7 +103,7 @@ services:
       - subth-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "5432"]
+      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "6432"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -129,7 +153,7 @@ services:
       - APP_PORT=8080
       # Database (via PgBouncer)
       - DB_HOST=pgbouncer
-      - DB_PORT=5432
+      - DB_PORT=6432
       - DB_USER=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - DB_NAME=${POSTGRES_DB:-subth}

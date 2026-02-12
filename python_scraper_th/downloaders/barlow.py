@@ -57,12 +57,14 @@ class BarlowDownloader:
                 '-i', m3u8_url,
                 '-c', 'copy',
                 '-movflags', '+faststart',
+                '-stats',  # Show progress
                 str(output_file)
             ]
 
+            # capture_output=False to show ffmpeg progress in real-time
             result = subprocess.run(
                 cmd,
-                capture_output=True,
+                capture_output=False,
                 timeout=600  # 10 minutes timeout
             )
 
@@ -72,10 +74,7 @@ class BarlowDownloader:
                 print(f"\n✓ Done: {output_file} ({size_mb:.1f} MB)")
                 return True
             else:
-                print(f"\n✗ Failed!")
-                if result.stderr:
-                    error_msg = result.stderr.decode('utf-8', errors='ignore')[-500:]
-                    print(f"  Error: {error_msg}")
+                print(f"\n✗ Failed! (code: {result.returncode})")
                 return False
 
         except subprocess.TimeoutExpired:

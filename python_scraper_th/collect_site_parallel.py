@@ -13,23 +13,23 @@ from threading import Lock
 
 # Import adapters
 from sites.taknai import TaknaiAdapter
-from sites.ponhub import PonhubAdapter
 from sites.yeddee import YeddeeAdapter
-from sites.madoohee import MadooheeAdapter
 from sites.scglit import ScglitAdapter
 from sites.badems import BademsAdapter
 from sites.heehorm import HeehormAdapter
 from sites.leahee import LeaheeAdapter
+from sites.joodgangtad import JoodgangtadAdapter
+from sites.jedyub import JedyubAdapter
 
 ADAPTERS = {
     'taknai': TaknaiAdapter,
-    'ponhub': PonhubAdapter,
     'yeddee': YeddeeAdapter,
-    'madoohee': MadooheeAdapter,
     'scglit': ScglitAdapter,
     'badems': BademsAdapter,
     'heehorm': HeehormAdapter,
     'leahee': LeaheeAdapter,
+    'joodgangtad': JoodgangtadAdapter,
+    'jedyub': JedyubAdapter,
 }
 
 # Lock for file writing

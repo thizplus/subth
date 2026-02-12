@@ -135,8 +135,8 @@ func LoadConfig() (*Config, error) {
 		},
 		R2: R2Config{
 			AccountID:       getEnv("R2_ACCOUNT_ID", ""),
-			AccessKeyID:     getEnv("R2_ACCESS_KEY_ID", ""),
-			SecretAccessKey: getEnv("R2_SECRET_ACCESS_KEY", ""),
+			AccessKeyID:     getEnvWithFallback("R2_ACCESS_KEY_ID", "R2_ACCESS_KEY", ""),
+			SecretAccessKey: getEnvWithFallback("R2_SECRET_ACCESS_KEY", "R2_SECRET_KEY", ""),
 			Bucket:          getEnv("R2_BUCKET", ""),
 			PublicURL:       getEnv("R2_PUBLIC_URL", ""),
 		},
@@ -185,6 +185,17 @@ func getEnv(key, defaultValue string) string {
 		return defaultValue
 	}
 	return value
+}
+
+// getEnvWithFallback ลอง key แรก ถ้าไม่มีให้ลอง fallbackKey
+func getEnvWithFallback(key, fallbackKey, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	if value := os.Getenv(fallbackKey); value != "" {
+		return value
+	}
+	return defaultValue
 }
 
 func getEnvList(key, defaultValue string) []string {

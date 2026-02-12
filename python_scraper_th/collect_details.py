@@ -34,14 +34,6 @@ SITES_CONFIG = {
         'port': 9224,
         'player': 'auto',  # จะ detect จาก page HTML (bananaloves)
     },
-    'madoohee': {
-        'port': 9227,
-        'player': 'auto',  # จะ detect จาก page HTML (cyberpor)
-    },
-    'ponhub': {
-        'port': 9228,
-        'player': 'auto',  # จะ detect จาก page HTML (cyberpor)
-    },
     'yeddee': {
         'port': 9229,
         'player': 'auto',  # จะ detect จาก page HTML (bananaloves v2)
@@ -53,6 +45,14 @@ SITES_CONFIG = {
     'scglit': {
         'port': 9231,
         'player': 'auto',  # จะ detect จาก page HTML (scglit player.php)
+    },
+    'joodgangtad': {
+        'port': 9232,
+        'player': 'auto',  # จะ detect จาก page HTML
+    },
+    'jedyub': {
+        'port': 9233,
+        'player': 'auto',  # จะ detect จาก page HTML
     },
 }
 

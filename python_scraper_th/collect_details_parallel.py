@@ -21,14 +21,14 @@ except ImportError:
 
 # ============ CONFIG ============
 SITES_CONFIG = {
-    'badems': {'port': 9225},
     'heehorm': {'port': 9226},
     'leahee': {'port': 9224},
-    'madoohee': {'port': 9227},
-    'ponhub': {'port': 9228},
-    'yeddee': {'port': 9229},
+    'badems': {'port': 9225},
+    'joodgangtad': {'port': 9232},
+    'jedyub': {'port': 9233},
     'taknai': {'port': 9230},
     'scglit': {'port': 9231},
+    'yeddee': {'port': 9229},
 }
 
 BASE_DIR = Path(__file__).parent

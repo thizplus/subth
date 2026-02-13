@@ -446,12 +446,9 @@ func (h *VideoHandler) GetVideosByCategories(c *fiber.Ctx) error {
 		return utils.BadRequestResponse(c, "Invalid query parameters")
 	}
 
-	// Set defaults
+	// Set defaults (CategoryCount = 0 means all categories)
 	if req.LimitPerCategory <= 0 {
 		req.LimitPerCategory = 4
-	}
-	if req.CategoryCount <= 0 {
-		req.CategoryCount = 3
 	}
 	if req.Lang == "" {
 		req.Lang = "th"

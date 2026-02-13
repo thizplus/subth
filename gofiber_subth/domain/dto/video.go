@@ -107,7 +107,7 @@ type AutoTagResponse struct {
 
 type VideosByCategoriesRequest struct {
 	LimitPerCategory int    `query:"limit" validate:"min=1,max=20"`
-	CategoryCount    int    `query:"categories" validate:"min=1,max=10"`
+	CategoryCount    int    `query:"categories" validate:"omitempty,min=0,max=100"`
 	Lang             string `query:"lang" validate:"omitempty,oneof=en th ja"`
 }
 

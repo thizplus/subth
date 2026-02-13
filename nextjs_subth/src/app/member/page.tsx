@@ -4,6 +4,7 @@ import type { CategoryWithVideos } from "@/features/video/types";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 export default async function HomePage() {
   const dict = await getDictionary("th");
@@ -12,8 +13,7 @@ export default async function HomePage() {
 
   try {
     categoryGroups = await videoService.getByCategories({
-      limit: 10,
-      categories: 3,
+      limit: 6,
       lang: "th",
     });
   } catch (e) {
@@ -21,9 +21,10 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="space-y-8">
-      {categoryGroups.map((group) => (
+    <div className="space-y-6">
+      {categoryGroups.map((group, index) => (
         <section key={group.category.id}>
+          {index > 0 && <Separator className="mb-6" />}
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold">
               {group.category.name}{" "}
@@ -39,7 +40,7 @@ export default async function HomePage() {
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
-          <VideoGrid videos={group.videos} />
+          <VideoGrid videos={group.videos} cols={6} />
         </section>
       ))}
 

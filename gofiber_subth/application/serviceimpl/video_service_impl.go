@@ -591,24 +591,21 @@ func (s *VideoServiceImpl) GetVideosByCategories(ctx context.Context, req *dto.V
 	if limitPerCategory <= 0 {
 		limitPerCategory = 4
 	}
-	categoryCount := req.CategoryCount
-	if categoryCount <= 0 {
-		categoryCount = 3
-	}
+	categoryCount := req.CategoryCount // 0 = all categories
 	lang := req.Lang
 	if lang == "" {
 		lang = "th"
 	}
 
-	// Get all categories sorted by video count
+	// Get all categories sorted by sort_order
 	categories, err := s.categoryRepo.List(ctx)
 	if err != nil {
 		logger.ErrorContext(ctx, "Failed to get categories", "error", err)
 		return nil, err
 	}
 
-	// Limit to requested category count
-	if len(categories) > categoryCount {
+	// Limit to requested category count (0 = no limit, show all)
+	if categoryCount > 0 && len(categories) > categoryCount {
 		categories = categories[:categoryCount]
 	}
 

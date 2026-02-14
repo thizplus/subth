@@ -121,19 +121,21 @@ services:
 
   # ═══════════════════════════════════════════════════════════
   # Redis - Cache
+  # SECURITY: ต้องตั้ง REDIS_PASSWORD ใน .env
   # ═══════════════════════════════════════════════════════════
   redis:
     image: redis:7-alpine
     container_name: subth-redis
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru --requirepass ${REDIS_PASSWORD}
+    # ไม่เปิด port สู่ภายนอก - ใช้ internal network เท่านั้น
+    # ports:
+    #   - "${REDIS_PORT:-6379}:6379"
     volumes:
       - subth_redis_data:/data
     networks:
       - subth-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -163,9 +165,10 @@ services:
       - DB_USER=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - DB_NAME=${POSTGRES_DB:-subth}
-      # Redis
+      # Redis (with password)
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       # JWT
       - JWT_SECRET=${JWT_SECRET:-your-secret-key}
       # R2/S3 Storage

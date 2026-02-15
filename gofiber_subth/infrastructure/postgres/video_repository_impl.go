@@ -92,6 +92,15 @@ func (r *videoRepositoryImpl) List(ctx context.Context, params repositories.Vide
 		query = query.Where("id IN (?)", subQuery)
 	}
 
+	// Filter videos without Thai title
+	if params.MissingTh {
+		subQuery := r.db.Model(&models.VideoTranslation{}).
+			Select("video_id").
+			Where("lang = 'th'").
+			Where("title IS NOT NULL AND title != ''")
+		query = query.Where("id NOT IN (?)", subQuery)
+	}
+
 	// Count
 	query.Count(&total)
 

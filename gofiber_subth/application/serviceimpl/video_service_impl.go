@@ -492,15 +492,16 @@ func (s *VideoServiceImpl) ListVideos(ctx context.Context, req *dto.VideoListReq
 	}
 
 	params := repositories.VideoListParams{
-		Limit:    req.Limit,
-		Offset:   (req.Page - 1) * req.Limit,
-		Lang:     req.Lang,
-		Search:   searchQuery,
-		Category: req.Category,
-		MakerID:  makerID,
-		AutoTags: autoTags,
-		SortBy:   req.SortBy,
-		Order:    req.Order,
+		Limit:     req.Limit,
+		Offset:    (req.Page - 1) * req.Limit,
+		Lang:      req.Lang,
+		Search:    searchQuery,
+		Category:  req.Category,
+		MakerID:   makerID,
+		AutoTags:  autoTags,
+		SortBy:    req.SortBy,
+		Order:     req.Order,
+		MissingTh: req.MissingTh,
 	}
 
 	videos, total, err := s.videoRepo.List(ctx, params)

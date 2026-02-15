@@ -9,17 +9,18 @@ import (
 // === Requests ===
 
 type VideoListRequest struct {
-	Page     int    `query:"page" validate:"min=1"`
-	Limit    int    `query:"limit" validate:"min=1,max=100"`
-	Lang     string `query:"lang" validate:"omitempty,oneof=en th ja"`
-	Search   string `query:"search"`
-	MakerID  string `query:"maker_id"`
-	CastID   string `query:"cast_id"`
-	TagID    string `query:"tag_id"`
-	AutoTags string `query:"auto_tags"` // comma separated: glasses,short_hair
-	Category string `query:"category"`
-	SortBy   string `query:"sort_by" validate:"omitempty,oneof=date created_at"`
-	Order    string `query:"order" validate:"omitempty,oneof=asc desc"`
+	Page      int    `query:"page" validate:"min=1"`
+	Limit     int    `query:"limit" validate:"min=1,max=100"`
+	Lang      string `query:"lang" validate:"omitempty,oneof=en th ja"`
+	Search    string `query:"search"`
+	MakerID   string `query:"maker_id"`
+	CastID    string `query:"cast_id"`
+	TagID     string `query:"tag_id"`
+	AutoTags  string `query:"auto_tags"` // comma separated: glasses,short_hair
+	Category  string `query:"category"`
+	SortBy    string `query:"sort_by" validate:"omitempty,oneof=date created_at"`
+	Order     string `query:"order" validate:"omitempty,oneof=asc desc"`
+	MissingTh bool   `query:"missing_th"` // Filter videos without Thai title
 }
 
 type CreateVideoRequest struct {

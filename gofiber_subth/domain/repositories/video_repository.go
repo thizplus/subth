@@ -51,15 +51,16 @@ type VideoRepository interface {
 }
 
 type VideoListParams struct {
-	Limit    int
-	Offset   int
-	Lang     string
-	Search   string
-	MakerID  *uuid.UUID
-	CastID   *uuid.UUID
-	TagID    *uuid.UUID
-	AutoTags []string
-	Category string
-	SortBy   string
-	Order    string
+	Limit     int
+	Offset    int
+	Lang      string
+	Search    string
+	MakerID   *uuid.UUID
+	CastID    *uuid.UUID
+	TagID     *uuid.UUID
+	AutoTags  []string
+	Category  string
+	SortBy    string
+	Order     string
+	MissingTh bool // Filter videos without Thai title
 }

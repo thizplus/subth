@@ -5,7 +5,6 @@ import { formatDistanceToNow } from "date-fns";
 import { th } from "date-fns/locale";
 import { MessageCircle, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { engagementService } from "../service";
 import type { RecentComment } from "../types";
 
@@ -14,7 +13,7 @@ interface RecentCommentsProps {
   limit?: number;
 }
 
-export function RecentComments({ locale = "th", limit = 15 }: RecentCommentsProps) {
+export function RecentComments({ locale = "th", limit = 5 }: RecentCommentsProps) {
   const [comments, setComments] = useState<RecentComment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -58,76 +57,57 @@ export function RecentComments({ locale = "th", limit = 15 }: RecentCommentsProp
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border bg-card p-4">
-        <h3 className="font-semibold mb-3 flex items-center gap-2">
+      <div className="px-2">
+        <h3 className="font-semibold mb-3 text-sm flex items-center gap-2 text-muted-foreground">
           <MessageCircle className="h-4 w-4" />
           {title}
         </h3>
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        <div className="flex items-center justify-center py-4">
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
         </div>
       </div>
     );
   }
 
   if (comments.length === 0) {
-    return (
-      <div className="rounded-lg border bg-card p-4">
-        <h3 className="font-semibold mb-3 flex items-center gap-2">
-          <MessageCircle className="h-4 w-4" />
-          {title}
-        </h3>
-        <p className="text-sm text-muted-foreground text-center py-4">
-          {locale === "th" ? "ยังไม่มีความคิดเห็น" : "No comments yet"}
-        </p>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="rounded-lg border bg-card">
-      <div className="p-4 border-b">
-        <h3 className="font-semibold flex items-center gap-2">
-          <MessageCircle className="h-4 w-4" />
-          {title}
-        </h3>
-      </div>
-      <ScrollArea className="h-[400px]">
-        <div className="p-3 space-y-3">
-          {comments.map((comment) => (
-            <div key={comment.id} className="flex gap-2.5 p-2 rounded-lg hover:bg-muted/50 transition-colors">
-              <Avatar className="h-8 w-8 flex-shrink-0 rounded-lg">
-                <AvatarImage src={comment.user?.avatar} />
-                <AvatarFallback className="text-xs rounded-lg">
-                  {getInitials(comment)}
-                </AvatarFallback>
-              </Avatar>
+    <div className="px-2">
+      <h3 className="font-semibold mb-3 text-sm flex items-center gap-2 text-muted-foreground">
+        <MessageCircle className="h-4 w-4" />
+        {title}
+      </h3>
+      <div className="space-y-3">
+        {comments.map((comment) => (
+          <div key={comment.id} className="flex gap-2">
+            <Avatar className="h-7 w-7 flex-shrink-0 rounded-md">
+              <AvatarImage src={comment.user?.avatar} />
+              <AvatarFallback className="text-[10px] rounded-md">
+                {getInitials(comment)}
+              </AvatarFallback>
+            </Avatar>
 
-              <div className="flex-1 min-w-0 space-y-0.5">
-                {/* User info */}
-                <div className="flex items-center gap-1.5 text-xs">
-                  <span className="font-medium truncate">
-                    {comment.user?.displayName || "TH#000000000"}
-                  </span>
-                  <span className="text-muted-foreground">
-                    {comment.user?.levelBadge || "⭐"} Lv.{comment.user?.level || 1}
-                  </span>
-                </div>
-
-                {/* Comment content */}
-                <p className="text-sm line-clamp-2 break-words">
-                  {comment.content}
-                </p>
-
-                {/* Time */}
-                <p className="text-[11px] text-muted-foreground">
-                  {formatTime(comment.createdAt)}
-                </p>
+            <div className="flex-1 min-w-0 space-y-0.5">
+              {/* User info */}
+              <div className="flex items-center gap-1 text-[11px]">
+                <span className="font-medium truncate">
+                  {comment.user?.displayName || "TH#000"}
+                </span>
+                <span className="text-muted-foreground">
+                  {comment.user?.levelBadge || "⭐"}
+                </span>
               </div>
+
+              {/* Comment content */}
+              <p className="text-xs line-clamp-2 break-words text-muted-foreground">
+                {comment.content}
+              </p>
             </div>
-          ))}
-        </div>
-      </ScrollArea>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

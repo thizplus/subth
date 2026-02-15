@@ -124,7 +124,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
         {/* Recent Comments - ซ่อนเมื่อ sidebar collapsed */}
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
-            <RecentComments locale={locale} limit={10} />
+            <RecentComments locale={locale} limit={5} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

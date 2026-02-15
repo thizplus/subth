@@ -86,3 +86,55 @@ func ToCommentResponseList(comments []models.ReelComment) []CommentResponse {
 	}
 	return result
 }
+
+// CommentWithReelResponse - Comment with reel info (for recent comments feed)
+type CommentWithReelResponse struct {
+	ID        uuid.UUID  `json:"id"`
+	Content   string     `json:"content"`
+	CreatedAt string     `json:"createdAt"`
+	User      *UserBrief `json:"user,omitempty"`
+	Reel      *ReelBrief `json:"reel,omitempty"`
+}
+
+// ReelBrief - Brief reel info for comments
+type ReelBrief struct {
+	ID        uuid.UUID `json:"id"`
+	Title     string    `json:"title"`
+	Thumbnail string    `json:"thumbnail"`
+}
+
+// ToCommentWithReelResponse converts model to response with reel info
+func ToCommentWithReelResponse(comment *models.ReelComment) *CommentWithReelResponse {
+	resp := &CommentWithReelResponse{
+		ID:        comment.ID,
+		Content:   comment.Content,
+		CreatedAt: comment.CreatedAt.UTC().Format("2006-01-02T15:04:05Z"),
+	}
+
+	if comment.User != nil {
+		level := 1
+		levelBadge := "⭐"
+		if comment.User.Stats != nil {
+			level = comment.User.Stats.Level
+			levelBadge = GetLevelBadge(level)
+		}
+		resp.User = &UserBrief{
+			ID:          comment.User.ID,
+			Username:    comment.User.Username,
+			DisplayName: comment.User.DisplayName,
+			Avatar:      comment.User.GetAvatarURL(),
+			Level:       level,
+			LevelBadge:  levelBadge,
+		}
+	}
+
+	if comment.Reel != nil {
+		resp.Reel = &ReelBrief{
+			ID:        comment.Reel.ID,
+			Title:     comment.Reel.Title,
+			Thumbnail: comment.Reel.ThumbURL,
+		}
+	}
+
+	return resp
+}

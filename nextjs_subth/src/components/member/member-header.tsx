@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
-import { LanguageSwitcher } from "@/components/layout";
+import { LanguageSwitcher, OnlineStats } from "@/components/layout";
 
 interface MemberHeaderProps {
   locale: "th" | "en";
@@ -32,6 +32,14 @@ export function MemberHeader({ locale }: MemberHeaderProps) {
         <Separator
           orientation="vertical"
           className="mr-2 data-[orientation=vertical]:h-4"
+        />
+
+        {/* Online Stats - ชิดซ้าย */}
+        <OnlineStats locale={locale} />
+
+        <Separator
+          orientation="vertical"
+          className="mx-2 data-[orientation=vertical]:h-4"
         />
 
         {/* Search */}

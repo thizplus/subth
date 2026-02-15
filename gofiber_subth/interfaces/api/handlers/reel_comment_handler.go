@@ -239,6 +239,30 @@ func (h *ReelCommentHandler) DeleteComment(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, fiber.Map{"message": "Comment deleted successfully"})
 }
 
+// ListRecentComments godoc
+// @Summary List recent comments across all reels
+// @Tags Reel Comments
+// @Accept json
+// @Produce json
+// @Param limit query int false "Number of comments" default(10)
+// @Success 200 {object} utils.Response
+// @Router /api/v1/comments/recent [get]
+func (h *ReelCommentHandler) ListRecentComments(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	limit := c.QueryInt("limit", 10)
+	if limit < 1 || limit > 50 {
+		limit = 10
+	}
+
+	comments, err := h.commentService.ListRecent(ctx, limit)
+	if err != nil {
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	return utils.SuccessResponse(c, comments)
+}
+
 // ListReplies godoc
 // @Summary List replies for a comment
 // @Tags Reel Comments

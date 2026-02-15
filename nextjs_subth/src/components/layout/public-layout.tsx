@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useMyStats } from "@/features/user-stats";
 import { Progress } from "@/components/ui/progress";
+import { OnlineStats } from "./online-stats";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -57,6 +58,9 @@ export function PublicLayout({ children, locale = "th" }: PublicLayoutProps) {
               className="mr-2 data-[orientation=vertical]:h-4"
             />
 
+            {/* Online Stats - ชิดซ้าย */}
+            <OnlineStats locale={locale} />
+
             {/* Spacer */}
             <div className="flex-1" />
 
@@ -72,7 +76,8 @@ export function PublicLayout({ children, locale = "th" }: PublicLayoutProps) {
                           {getInitials()}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="grid text-left text-sm leading-tight">
+                      {/* Desktop: แสดงครบ, Mobile: แค่ Avatar */}
+                      <div className="hidden sm:grid text-left text-sm leading-tight">
                         <span className="truncate font-medium">
                           {user.displayName || "TH#000000000"}
                         </span>

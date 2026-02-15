@@ -103,3 +103,21 @@ func (r *reelCommentRepositoryImpl) CountByReel(ctx context.Context, reelID uuid
 		Count(&count).Error
 	return count, err
 }
+
+func (r *reelCommentRepositoryImpl) ListRecent(ctx context.Context, limit int) ([]models.ReelComment, error) {
+	var comments []models.ReelComment
+
+	// Get recent comments with user and reel preloaded
+	if err := r.db.WithContext(ctx).
+		Preload("User").
+		Preload("User.Stats").
+		Preload("Reel").
+		Where("parent_id IS NULL"). // Only top-level comments
+		Order("created_at DESC").
+		Limit(limit).
+		Find(&comments).Error; err != nil {
+		return nil, err
+	}
+
+	return comments, nil
+}

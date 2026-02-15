@@ -17,6 +17,7 @@ import {
 import { LogOut, User } from "lucide-react";
 import { useMyStats } from "@/features/user-stats";
 import { Progress } from "@/components/ui/progress";
+import { OnlineStats } from "./online-stats";
 
 interface PublicHeaderProps {
   locale?: "th" | "en";
@@ -48,8 +49,13 @@ export function PublicHeader({ locale = "th" }: PublicHeaderProps) {
           <Logo className="h-12 w-auto" />
         </Link>
 
+        {/* Spacer */}
+        <div className="flex-1" />
+
         {/* Right side */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
+          {/* Online Stats - ข้างๆ ปุ่ม Login */}
+          <OnlineStats locale={locale} />
           <PublicLanguageSwitcher locale={locale} />
           <ModeToggle />
 

@@ -8,6 +8,7 @@ import type {
   Comment,
   CreateCommentRequest,
   UpdateCommentRequest,
+  RecentCommentsResponse,
 } from "./types";
 
 export const engagementService = {
@@ -50,5 +51,11 @@ export const engagementService = {
   async getReplies(commentId: string, page = 1, limit = 20): Promise<CommentListResponse> {
     const params = new URLSearchParams({ page: String(page), limit: String(limit) });
     return apiClient.getRaw<CommentListResponse>(`${API_ROUTES.COMMENTS.REPLIES(commentId)}?${params}`);
+  },
+
+  // Get recent comments across all reels (public)
+  async getRecentComments(limit = 10): Promise<RecentCommentsResponse> {
+    const params = new URLSearchParams({ limit: String(limit) });
+    return apiClient.getRaw<RecentCommentsResponse>(`${API_ROUTES.COMMENTS.RECENT}?${params}`);
   },
 };

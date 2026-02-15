@@ -22,4 +22,7 @@ type ReelCommentRepository interface {
 
 	// Count
 	CountByReel(ctx context.Context, reelID uuid.UUID) (int64, error)
+
+	// List recent comments across all reels (with user and reel preloaded)
+	ListRecent(ctx context.Context, limit int) ([]models.ReelComment, error)
 }

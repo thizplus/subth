@@ -148,6 +148,25 @@ func (s *reelCommentServiceImpl) GetCommentsCount(ctx context.Context, reelID uu
 	return int(count), err
 }
 
+func (s *reelCommentServiceImpl) ListRecent(ctx context.Context, limit int) ([]dto.CommentWithReelResponse, error) {
+	if limit <= 0 || limit > 50 {
+		limit = 10
+	}
+
+	comments, err := s.commentRepo.ListRecent(ctx, limit)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list recent comments", "error", err)
+		return nil, err
+	}
+
+	result := make([]dto.CommentWithReelResponse, len(comments))
+	for i, c := range comments {
+		result[i] = *dto.ToCommentWithReelResponse(&c)
+	}
+
+	return result, nil
+}
+
 // updateReelCommentsCount updates the cached comments count on the reel
 func (s *reelCommentServiceImpl) updateReelCommentsCount(ctx context.Context, reelID uuid.UUID) error {
 	count, err := s.commentRepo.CountByReel(ctx, reelID)

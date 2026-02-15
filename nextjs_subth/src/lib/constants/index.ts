@@ -98,6 +98,7 @@ export const API_ROUTES = {
 
   // Comments
   COMMENTS: {
+    RECENT: "/api/v1/comments/recent",
     BY_ID: (id: string) => `/api/v1/comments/${id}`,
     REPLIES: (id: string) => `/api/v1/comments/${id}/replies`,
   },

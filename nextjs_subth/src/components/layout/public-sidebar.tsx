@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ModeToggle, Logo } from "@/components/theme";
 import { useAuthStore } from "@/features/auth";
+import { RecentComments } from "@/features/engagement";
 
 interface PublicSidebarProps {
   locale?: "th" | "en";
@@ -117,6 +118,13 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Recent Comments - ซ่อนเมื่อ sidebar collapsed */}
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupContent>
+            <RecentComments locale={locale} limit={10} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

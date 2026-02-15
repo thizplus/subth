@@ -28,4 +28,7 @@ type ReelCommentService interface {
 
 	// Get comments count for a reel
 	GetCommentsCount(ctx context.Context, reelID uuid.UUID) (int, error)
+
+	// List recent comments across all reels (for public feed)
+	ListRecent(ctx context.Context, limit int) ([]dto.CommentWithReelResponse, error)
 }

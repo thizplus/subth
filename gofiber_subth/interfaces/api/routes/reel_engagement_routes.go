@@ -18,6 +18,7 @@ func SetupReelEngagementRoutes(api fiber.Router, h *handlers.Handlers) {
 
 	// Comment management routes
 	comments := api.Group("/comments")
+	comments.Get("/recent", h.ReelCommentHandler.ListRecentComments) // Recent comments (must be before /:commentId)
 	comments.Get("/:commentId", h.ReelCommentHandler.GetComment)
 	comments.Put("/:commentId", middleware.Protected(), h.ReelCommentHandler.UpdateComment)
 	comments.Delete("/:commentId", middleware.Protected(), h.ReelCommentHandler.DeleteComment)

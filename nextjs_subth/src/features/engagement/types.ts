@@ -52,3 +52,23 @@ export interface CreateCommentRequest {
 export interface UpdateCommentRequest {
   content: string;
 }
+
+// Recent comment with reel info
+export interface ReelBrief {
+  id: string;
+  title: string;
+  thumbnail: string;
+}
+
+export interface RecentComment {
+  id: string;
+  content: string;
+  createdAt: string;
+  user?: CommentUser;
+  reel?: ReelBrief;
+}
+
+export interface RecentCommentsResponse {
+  success: boolean;
+  data: RecentComment[];
+}

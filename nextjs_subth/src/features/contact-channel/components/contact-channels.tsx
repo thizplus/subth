@@ -83,7 +83,7 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
         )}
         <div className="space-y-1">
           {[1, 2].map((i) => (
-            <div key={i} className="flex items-center gap-2 w-full h-12 px-2">
+            <div key={i} className="flex w-full items-center gap-2 rounded-md p-2 h-12">
               <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-muted animate-pulse" />
               <div className="grid flex-1 gap-1">
                 <div className="h-4 w-24 bg-muted rounded animate-pulse" />
@@ -119,7 +119,7 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
               href={channel.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-2 w-full h-12 px-2 rounded-md hover:bg-sidebar-accent transition-colors"
+              className="group peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden h-12 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
             >
               {/* Icon with gradient background */}
               <div

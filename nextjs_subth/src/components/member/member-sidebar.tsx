@@ -201,12 +201,11 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  size="lg"
                   tooltip={t.exitToMain}
                   className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                 >
                   <Link href={locale === "th" ? "/" : "/en"} onClick={handleMenuClick}>
-                    <LogOut className="h-5 w-5" />
+                    <LogOut />
                     <span>{t.exitToMain}</span>
                   </Link>
                 </SidebarMenuButton>

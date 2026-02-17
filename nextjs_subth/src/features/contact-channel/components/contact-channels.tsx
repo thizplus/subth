@@ -81,8 +81,16 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
             {title}
           </h3>
         )}
-        <div className="flex items-center justify-center py-4">
-          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+        <div className="space-y-1">
+          {[1, 2].map((i) => (
+            <div key={i} className="flex items-center gap-3 px-2 py-2">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-muted animate-pulse" />
+              <div className="grid flex-1 gap-1">
+                <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+                <div className="h-3 w-16 bg-muted rounded animate-pulse" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -100,7 +108,7 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
           {title}
         </h3>
       )}
-      <div className="space-y-2">
+      <div className="space-y-1">
         {channels.map((channel) => {
           const Icon = PLATFORM_ICONS[channel.platform] || Globe;
           const gradientColor = PLATFORM_COLORS[channel.platform] || PLATFORM_COLORS.website;

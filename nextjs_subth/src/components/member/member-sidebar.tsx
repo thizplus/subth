@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/sidebar";
 import { MemberNavUser } from "./member-nav-user";
 import type { Category } from "@/features/category";
+import { ContactChannels } from "@/features/contact-channel";
 
 interface NavItem {
   title: string;
@@ -193,8 +194,15 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
           </SidebarMenu>
         </SidebarGroup>
 
+        {/* Contact Channels - ซ่อนเมื่อ sidebar collapsed */}
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden mt-auto">
+          <SidebarGroupContent>
+            <ContactChannels locale={locale} />
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {/* Exit to main page */}
-        <SidebarGroup className="mt-auto">
+        <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>

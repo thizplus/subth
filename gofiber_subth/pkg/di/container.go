@@ -31,23 +31,24 @@ type Container struct {
 	EventScheduler scheduler.EventScheduler
 
 	// Repositories
-	UserRepository          repositories.UserRepository
-	TaskRepository          repositories.TaskRepository
-	FileRepository          repositories.FileRepository
-	JobRepository           repositories.JobRepository
-	VideoRepository         repositories.VideoRepository
-	MakerRepository         repositories.MakerRepository
-	CastRepository          repositories.CastRepository
-	TagRepository           repositories.TagRepository
-	CategoryRepository      repositories.CategoryRepository
-	AutoTagLabelRepository  repositories.AutoTagLabelRepository
-	ReelRepository          repositories.ReelRepository
-	ReelLikeRepository      repositories.ReelLikeRepository
-	ReelCommentRepository   repositories.ReelCommentRepository
-	UserStatsRepository     repositories.UserStatsRepository
-	XPTransactionRepository repositories.XPTransactionRepository
-	VideoViewRepository     repositories.VideoViewRepository
-	ActivityLogRepository   repositories.ActivityLogRepository
+	UserRepository             repositories.UserRepository
+	TaskRepository             repositories.TaskRepository
+	FileRepository             repositories.FileRepository
+	JobRepository              repositories.JobRepository
+	VideoRepository            repositories.VideoRepository
+	MakerRepository            repositories.MakerRepository
+	CastRepository             repositories.CastRepository
+	TagRepository              repositories.TagRepository
+	CategoryRepository         repositories.CategoryRepository
+	AutoTagLabelRepository     repositories.AutoTagLabelRepository
+	ReelRepository             repositories.ReelRepository
+	ReelLikeRepository         repositories.ReelLikeRepository
+	ReelCommentRepository      repositories.ReelCommentRepository
+	UserStatsRepository        repositories.UserStatsRepository
+	XPTransactionRepository    repositories.XPTransactionRepository
+	VideoViewRepository        repositories.VideoViewRepository
+	ActivityLogRepository      repositories.ActivityLogRepository
+	ContactChannelRepository   repositories.ContactChannelRepository
 
 	// Activity Queue
 	ActivityQueue  *redis.ActivityQueue
@@ -73,6 +74,7 @@ type Container struct {
 	UserStatsService       services.UserStatsService
 	XPService              services.XPService
 	ActivityLogService     services.ActivityLogService
+	ContactChannelService  services.ContactChannelService
 }
 
 func NewContainer() *Container {
@@ -236,6 +238,7 @@ func (c *Container) initRepositories() error {
 	c.XPTransactionRepository = postgres.NewXPTransactionRepository(c.DB)
 	c.VideoViewRepository = postgres.NewVideoViewRepository(c.DB)
 	c.ActivityLogRepository = postgres.NewActivityLogRepository(c.DB)
+	c.ContactChannelRepository = postgres.NewContactChannelRepository(c.DB)
 
 	// Activity Queue (Redis)
 	c.ActivityQueue = redis.NewActivityQueue(c.RedisClient)
@@ -287,6 +290,9 @@ func (c *Container) initServices() error {
 
 	// Activity Log Service
 	c.ActivityLogService = serviceimpl.NewActivityLogService(c.ActivityLogRepository, c.ActivityQueue)
+
+	// Contact Channel Service
+	c.ContactChannelService = serviceimpl.NewContactChannelService(c.ContactChannelRepository)
 
 	logger.Info("Services initialized")
 	return nil
@@ -387,24 +393,25 @@ func (c *Container) GetConfig() *config.Config {
 
 func (c *Container) GetHandlerServices() *handlers.Services {
 	return &handlers.Services{
-		UserService:        c.UserService,
-		TaskService:        c.TaskService,
-		FileService:        c.FileService,
-		JobService:         c.JobService,
-		VideoService:       c.VideoService,
-		MakerService:       c.MakerService,
-		CastService:        c.CastService,
-		TagService:         c.TagService,
-		StatsService:       c.StatsService,
-		SemanticService:    c.SemanticService,
-		ChatService:        c.ChatService,
-		FeedService:        c.FeedService,
-		ReelService:        c.ReelService,
-		ReelLikeService:    c.ReelLikeService,
-		ReelCommentService: c.ReelCommentService,
-		UserStatsService:   c.UserStatsService,
-		XPService:          c.XPService,
-		ActivityLogService: c.ActivityLogService,
+		UserService:           c.UserService,
+		TaskService:           c.TaskService,
+		FileService:           c.FileService,
+		JobService:            c.JobService,
+		VideoService:          c.VideoService,
+		MakerService:          c.MakerService,
+		CastService:           c.CastService,
+		TagService:            c.TagService,
+		StatsService:          c.StatsService,
+		SemanticService:       c.SemanticService,
+		ChatService:           c.ChatService,
+		FeedService:           c.FeedService,
+		ReelService:           c.ReelService,
+		ReelLikeService:       c.ReelLikeService,
+		ReelCommentService:    c.ReelCommentService,
+		UserStatsService:      c.UserStatsService,
+		XPService:             c.XPService,
+		ActivityLogService:    c.ActivityLogService,
+		ContactChannelService: c.ContactChannelService,
 	}
 }
 

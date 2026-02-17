@@ -47,6 +47,9 @@ func SetupRoutes(app *fiber.App, h *handlers.Handlers) {
 	// Activity log routes
 	SetupActivityLogRoutes(api, h)
 
+	// Contact channel routes
+	SetupContactChannelRoutes(api, h)
+
 	// Setup WebSocket routes (needs app, not api group)
 	SetupWebSocketRoutes(app)
 }

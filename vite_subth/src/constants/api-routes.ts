@@ -82,3 +82,10 @@ export const ACTIVITY_ROUTES = {
 export const USER_STATS_ROUTES = {
   BY_USER: (userId: string) => `/api/v1/users/${userId}/stats`,
 }
+
+export const CONTACT_CHANNEL_ROUTES = {
+  LIST: '/api/v1/contact-channels',
+  ADMIN: '/api/v1/contact-channels/admin',
+  BY_ID: (id: string) => `/api/v1/contact-channels/${id}`,
+  REORDER: '/api/v1/contact-channels/reorder',
+}

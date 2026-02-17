@@ -88,6 +88,8 @@ func Migrate(db *gorm.DB) error {
 		&models.VideoView{},
 		// Activity logs
 		&models.ActivityLog{},
+		// Contact channels
+		&models.ContactChannel{},
 	); err != nil {
 		return err
 	}

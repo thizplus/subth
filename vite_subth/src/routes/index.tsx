@@ -53,6 +53,9 @@ const VideoListPage = lazy(() =>
 const ReelListPage = lazy(() =>
   import('@/features/reel').then((m) => ({ default: m.ReelListPage }))
 )
+const ContactChannelListPage = lazy(() =>
+  import('@/features/contact-channel').then((m) => ({ default: m.ContactChannelListPage }))
+)
 
 export default function AppRoutes() {
   return (
@@ -96,6 +99,7 @@ export default function AppRoutes() {
               <Route path="/tags" element={<TagListPage />} />
               <Route path="/tags/page/:page" element={<TagListPage />} />
               <Route path="/categories" element={<CategoryListPage />} />
+              <Route path="/contact-channels" element={<ContactChannelListPage />} />
             </Route>
           </Route>
 

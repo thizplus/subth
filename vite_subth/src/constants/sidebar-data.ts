@@ -10,6 +10,7 @@ import {
   Tags,
   FolderTree,
   Activity,
+  MessageCircle,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -69,6 +70,11 @@ export const NAV_MAIN: NavItem[] = [
     title: 'Activity Log',
     url: '/activity',
     icon: Activity,
+  },
+  {
+    title: 'ช่องทางติดต่อ',
+    url: '/contact-channels',
+    icon: MessageCircle,
   },
   {
     title: 'โปรไฟล์',

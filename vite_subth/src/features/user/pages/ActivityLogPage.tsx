@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
-import { Search, X, Loader2, Activity, Eye } from 'lucide-react'
+import { Search, X, Loader2, Activity, Eye, ExternalLink } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -270,9 +270,15 @@ export function ActivityLogPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="p-2">
-                    <span className="text-sm font-mono text-muted-foreground truncate block">
-                      {log.path}
-                    </span>
+                    <a
+                      href={`https://subth.com${log.path}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-mono text-muted-foreground hover:text-primary hover:underline truncate flex items-center gap-1 group"
+                    >
+                      <span className="truncate">{log.pageTitle || log.path}</span>
+                      <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 shrink-0" />
+                    </a>
                   </TableCell>
                   <TableCell className="hidden md:table-cell p-2">
                     <span className="text-xs text-muted-foreground font-mono">

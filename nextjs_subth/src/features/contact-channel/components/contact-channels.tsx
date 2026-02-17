@@ -11,10 +11,14 @@ import {
   Music2,
   Mail,
   Globe,
-  Loader2,
   ExternalLink,
   type LucideIcon,
 } from "lucide-react";
+import {
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 import { contactChannelService } from "../service";
 import type { ContactChannel, Platform } from "../types";
 
@@ -31,18 +35,6 @@ const PLATFORM_ICONS: Record<Platform, LucideIcon> = {
   website: Globe,
 };
 
-// Platform colors for gradient effect
-const PLATFORM_COLORS: Record<Platform, string> = {
-  telegram: "from-[#0088cc] to-[#0077b5]",
-  line: "from-[#00C300] to-[#00B900]",
-  facebook: "from-[#1877F2] to-[#0866FF]",
-  twitter: "from-[#1DA1F2] to-[#0C7ABF]",
-  instagram: "from-[#E4405F] to-[#C13584]",
-  youtube: "from-[#FF0000] to-[#CC0000]",
-  tiktok: "from-[#000000] to-[#25F4EE]",
-  email: "from-[#EA4335] to-[#C5221F]",
-  website: "from-[#6366F1] to-[#4F46E5]",
-};
 
 interface ContactChannelsProps {
   locale?: "th" | "en";
@@ -74,25 +66,27 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
 
   if (isLoading) {
     return (
-      <div className="px-2">
+      <SidebarMenu>
         {showTitle && (
-          <h3 className="font-semibold mb-3 text-sm flex items-center gap-2 text-muted-foreground">
-            <MessageCircle className="h-4 w-4" />
-            {title}
-          </h3>
+          <div className="px-2 mb-2">
+            <h3 className="font-medium text-sm flex items-center gap-2 text-muted-foreground">
+              <MessageCircle className="h-4 w-4" />
+              {title}
+            </h3>
+          </div>
         )}
-        <div className="space-y-1">
-          {[1, 2].map((i) => (
-            <div key={i} className="flex w-full items-center gap-2 rounded-md p-2 h-12">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-muted animate-pulse" />
-              <div className="grid flex-1 gap-1">
+        {[1, 2].map((i) => (
+          <SidebarMenuItem key={i}>
+            <SidebarMenuButton size="lg" className="cursor-default">
+              <div className="h-8 w-8 shrink-0 rounded-lg bg-muted animate-pulse" />
+              <div className="grid flex-1 gap-1 text-left text-sm leading-tight">
                 <div className="h-4 w-24 bg-muted rounded animate-pulse" />
                 <div className="h-3 w-20 bg-muted rounded animate-pulse" />
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
     );
   }
 
@@ -101,49 +95,52 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
   }
 
   return (
-    <div className="px-2">
+    <SidebarMenu>
       {showTitle && (
-        <h3 className="font-semibold mb-3 text-sm flex items-center gap-2 text-muted-foreground">
-          <MessageCircle className="h-4 w-4" />
-          {title}
-        </h3>
+        <div className="px-2 mb-2">
+          <h3 className="font-medium text-sm flex items-center gap-2 text-muted-foreground">
+            <MessageCircle className="h-4 w-4" />
+            {title}
+          </h3>
+        </div>
       )}
-      <div className="space-y-1">
-        {channels.map((channel) => {
-          const Icon = PLATFORM_ICONS[channel.platform] || Globe;
-          const gradientColor = PLATFORM_COLORS[channel.platform] || PLATFORM_COLORS.website;
+      {channels.map((channel) => {
+        const Icon = PLATFORM_ICONS[channel.platform] || Globe;
 
-          return (
-            <a
-              key={channel.id}
-              href={channel.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden h-12 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+        return (
+          <SidebarMenuItem key={channel.id}>
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              className="group bg-sidebar-accent"
             >
-              {/* Icon with gradient background */}
-              <div
-                className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br ${gradientColor} flex items-center justify-center shadow-sm`}
+              <a
+                href={channel.url}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <Icon className="h-4 w-4 text-white" />
-              </div>
+                {/* Icon - same size as Avatar in nav-user */}
+                <div className="h-8 w-8 shrink-0 rounded-lg bg-muted flex items-center justify-center">
+                  <Icon className="h-4 w-4" />
+                </div>
 
-              {/* Text content - same style as nav user */}
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {channel.title}
-                </span>
-                {channel.description && (
-                  <span className="truncate text-xs text-muted-foreground">
-                    {channel.description}
+                {/* Text content - exact same style as nav-user */}
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">
+                    {channel.title}
                   </span>
-                )}
-              </div>
-              <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-            </a>
-          );
-        })}
-      </div>
-    </div>
+                  {channel.description && (
+                    <span className="truncate text-xs text-muted-foreground">
+                      {channel.description}
+                    </span>
+                  )}
+                </div>
+                <ExternalLink className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        );
+      })}
+    </SidebarMenu>
   );
 }

@@ -348,3 +348,32 @@ func (r *videoRepositoryImpl) AddCategories(ctx context.Context, videoID uuid.UU
 func (r *videoRepositoryImpl) ReplaceCategories(ctx context.Context, videoID uuid.UUID, categories []models.Category) error {
 	return r.db.WithContext(ctx).Model(&models.Video{ID: videoID}).Association("Categories").Replace(categories)
 }
+
+// GetTitlesByIDs returns a map of video IDs to their Thai titles
+func (r *videoRepositoryImpl) GetTitlesByIDs(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error) {
+	if len(ids) == 0 {
+		return make(map[uuid.UUID]string), nil
+	}
+
+	var results []struct {
+		VideoID uuid.UUID
+		Title   string
+	}
+
+	err := r.db.WithContext(ctx).
+		Table("video_translations").
+		Select("video_id, title").
+		Where("video_id IN ? AND language = ?", ids, "th").
+		Scan(&results).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	titleMap := make(map[uuid.UUID]string, len(results))
+	for _, r := range results {
+		titleMap[r.VideoID] = r.Title
+	}
+
+	return titleMap, nil
+}

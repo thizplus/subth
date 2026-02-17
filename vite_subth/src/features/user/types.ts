@@ -65,6 +65,7 @@ export interface ActivityLog {
   userId: string
   pageType: string
   pageId?: string
+  pageTitle?: string
   path: string
   metadata?: string
   createdAt: string

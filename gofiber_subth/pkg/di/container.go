@@ -289,7 +289,7 @@ func (c *Container) initServices() error {
 	c.XPService = serviceimpl.NewXPService(c.XPTransactionRepository, c.VideoViewRepository, c.UserStatsRepository)
 
 	// Activity Log Service
-	c.ActivityLogService = serviceimpl.NewActivityLogService(c.ActivityLogRepository, c.ActivityQueue)
+	c.ActivityLogService = serviceimpl.NewActivityLogService(c.ActivityLogRepository, c.VideoRepository, c.ActivityQueue)
 
 	// Contact Channel Service
 	c.ContactChannelService = serviceimpl.NewContactChannelService(c.ContactChannelRepository)

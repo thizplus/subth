@@ -26,6 +26,7 @@ type ActivityLogResponse struct {
 	UserID    string    `json:"userId"`
 	PageType  string    `json:"pageType"`
 	PageID    *string   `json:"pageId"`
+	PageTitle *string   `json:"pageTitle,omitempty"`
 	Path      string    `json:"path"`
 	Metadata  *string   `json:"metadata"`
 	CreatedAt time.Time `json:"createdAt"`
@@ -101,18 +102,19 @@ type PageViewCountResponse struct {
 
 // ActivityLogWithUserResponse response สำหรับ admin ดู activity พร้อมข้อมูล user
 type ActivityLogWithUserResponse struct {
-	ID           string    `json:"id"`
-	UserID       string    `json:"userId"`
-	Username     string    `json:"username"`
-	DisplayName  string    `json:"displayName"`
-	Avatar       string    `json:"avatar"`
-	PageType     string    `json:"pageType"`
-	PageID       *string   `json:"pageId"`
-	Path         string    `json:"path"`
-	Metadata     *string   `json:"metadata"`
-	IPAddress    string    `json:"ipAddress"`
-	UserAgent    string    `json:"userAgent"`
-	CreatedAt    time.Time `json:"createdAt"`
+	ID          string    `json:"id"`
+	UserID      string    `json:"userId"`
+	Username    string    `json:"username"`
+	DisplayName string    `json:"displayName"`
+	Avatar      string    `json:"avatar"`
+	PageType    string    `json:"pageType"`
+	PageID      *string   `json:"pageId"`
+	PageTitle   *string   `json:"pageTitle,omitempty"`
+	Path        string    `json:"path"`
+	Metadata    *string   `json:"metadata"`
+	IPAddress   string    `json:"ipAddress"`
+	UserAgent   string    `json:"userAgent"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
 // ActivityLogToWithUserResponse แปลง model เป็น response พร้อม user info

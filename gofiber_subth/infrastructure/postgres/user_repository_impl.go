@@ -66,7 +66,7 @@ func (r *UserRepositoryImpl) Delete(ctx context.Context, id uuid.UUID) error {
 
 func (r *UserRepositoryImpl) List(ctx context.Context, offset, limit int) ([]*models.User, error) {
 	var users []*models.User
-	err := r.db.WithContext(ctx).Offset(offset).Limit(limit).Find(&users).Error
+	err := r.db.WithContext(ctx).Order("created_at DESC").Offset(offset).Limit(limit).Find(&users).Error
 	return users, err
 }
 

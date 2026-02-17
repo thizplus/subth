@@ -217,9 +217,11 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
 
       <SidebarFooter>
         {/* Contact Channels - ซ่อนเมื่อ sidebar collapsed */}
-        <div className="group-data-[collapsible=icon]:hidden mb-2">
-          <ContactChannels locale={locale} showTitle={false} />
-        </div>
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden p-0">
+          <SidebarGroupContent>
+            <ContactChannels locale={locale} showTitle={false} />
+          </SidebarGroupContent>
+        </SidebarGroup>
         <MemberNavUser locale={locale} />
       </SidebarFooter>
 

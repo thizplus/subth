@@ -34,6 +34,9 @@ type VideoRepository interface {
 	// Search
 	SearchByTitle(ctx context.Context, query string, lang string, limit int, offset int) ([]models.Video, int64, error)
 
+	// Get titles by IDs (for activity log enrichment)
+	GetTitlesByIDs(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error)
+
 	// By relations
 	GetByMakerID(ctx context.Context, makerID uuid.UUID, limit int, offset int) ([]models.Video, int64, error)
 	GetByCastID(ctx context.Context, castID uuid.UUID, limit int, offset int) ([]models.Video, int64, error)

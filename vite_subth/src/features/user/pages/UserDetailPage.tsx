@@ -302,9 +302,15 @@ export function UserDetailPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm font-mono text-muted-foreground">
-                          {log.path}
-                        </span>
+                        <a
+                          href={`https://subth.com${log.path}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-mono text-muted-foreground hover:text-primary hover:underline flex items-center gap-1 group"
+                        >
+                          <span className="truncate">{log.pageTitle || log.path}</span>
+                          <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 shrink-0" />
+                        </a>
                       </TableCell>
                       <TableCell>
                         <span className="text-sm text-muted-foreground tabular-nums">

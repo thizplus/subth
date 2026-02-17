@@ -14,17 +14,20 @@ import (
 )
 
 type activityLogServiceImpl struct {
-	repo  repositories.ActivityLogRepository
-	queue *redis.ActivityQueue
+	repo      repositories.ActivityLogRepository
+	videoRepo repositories.VideoRepository
+	queue     *redis.ActivityQueue
 }
 
 func NewActivityLogService(
 	repo repositories.ActivityLogRepository,
+	videoRepo repositories.VideoRepository,
 	queue *redis.ActivityQueue,
 ) services.ActivityLogService {
 	return &activityLogServiceImpl{
-		repo:  repo,
-		queue: queue,
+		repo:      repo,
+		videoRepo: videoRepo,
+		queue:     queue,
 	}
 }
 
@@ -56,7 +59,32 @@ func (s *activityLogServiceImpl) GetUserHistory(ctx context.Context, userID uuid
 		return nil, 0, err
 	}
 
-	return dto.ActivityLogsToResponse(logs), total, nil
+	responses := dto.ActivityLogsToResponse(logs)
+
+	// Enrich with video titles
+	videoIDs := make([]uuid.UUID, 0)
+	for _, log := range logs {
+		if log.PageType == models.PageTypeVideo && log.PageID != nil {
+			videoIDs = append(videoIDs, *log.PageID)
+		}
+	}
+
+	if len(videoIDs) > 0 {
+		titles, err := s.videoRepo.GetTitlesByIDs(ctx, videoIDs)
+		if err != nil {
+			logger.WarnContext(ctx, "Failed to get video titles for user history", "error", err)
+		} else {
+			for i, log := range logs {
+				if log.PageType == models.PageTypeVideo && log.PageID != nil {
+					if title, ok := titles[*log.PageID]; ok {
+						responses[i].PageTitle = &title
+					}
+				}
+			}
+		}
+	}
+
+	return responses, total, nil
 }
 
 func (s *activityLogServiceImpl) GetPageViews(ctx context.Context, pageType string, pageID *uuid.UUID) (int64, error) {
@@ -91,5 +119,30 @@ func (s *activityLogServiceImpl) GetAllActivity(ctx context.Context, pageType st
 		return nil, 0, err
 	}
 
-	return dto.ActivityLogsToWithUserResponse(logs), total, nil
+	responses := dto.ActivityLogsToWithUserResponse(logs)
+
+	// Enrich with video titles
+	videoIDs := make([]uuid.UUID, 0)
+	for _, log := range logs {
+		if log.PageType == models.PageTypeVideo && log.PageID != nil {
+			videoIDs = append(videoIDs, *log.PageID)
+		}
+	}
+
+	if len(videoIDs) > 0 {
+		titles, err := s.videoRepo.GetTitlesByIDs(ctx, videoIDs)
+		if err != nil {
+			logger.WarnContext(ctx, "Failed to get video titles", "error", err)
+		} else {
+			for i, log := range logs {
+				if log.PageType == models.PageTypeVideo && log.PageID != nil {
+					if title, ok := titles[*log.PageID]; ok {
+						responses[i].PageTitle = &title
+					}
+				}
+			}
+		}
+	}
+
+	return responses, total, nil
 }

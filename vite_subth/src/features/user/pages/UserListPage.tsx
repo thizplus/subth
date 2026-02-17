@@ -322,13 +322,21 @@ export function UserListPage() {
                     )}
                   </TableCell>
                   <TableCell className="hidden xl:table-cell p-2">
-                    <span className="text-xs text-muted-foreground tabular-nums whitespace-nowrap">
-                      {new Date(item.createdAt).toLocaleDateString('th-TH', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </span>
+                    <div className="text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                      <div>
+                        {new Date(item.createdAt).toLocaleDateString('th-TH', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </div>
+                      <div>
+                        {new Date(item.createdAt).toLocaleTimeString('th-TH', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell className="p-2">
                     <DropdownMenu>

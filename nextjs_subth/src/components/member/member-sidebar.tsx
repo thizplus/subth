@@ -197,16 +197,20 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
         {/* Contact Channels - ซ่อนเมื่อ sidebar collapsed */}
         <SidebarGroup className="group-data-[collapsible=icon]:hidden mt-auto">
           <SidebarGroupContent>
-            <ContactChannels locale={locale} />
+            <ContactChannels locale={locale} showTitle={false} />
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Exit to main page */}
+        {/* Exit to main page - เด่นชัด */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={t.exitToMain}>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={t.exitToMain}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+                >
                   <Link href={locale === "th" ? "/" : "/en"} onClick={handleMenuClick}>
                     <LogOut />
                     <span>{t.exitToMain}</span>

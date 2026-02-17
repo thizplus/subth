@@ -46,9 +46,10 @@ const PLATFORM_COLORS: Record<Platform, string> = {
 
 interface ContactChannelsProps {
   locale?: "th" | "en";
+  showTitle?: boolean;
 }
 
-export function ContactChannels({ locale = "th" }: ContactChannelsProps) {
+export function ContactChannels({ locale = "th", showTitle = true }: ContactChannelsProps) {
   const [channels, setChannels] = useState<ContactChannel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -74,10 +75,12 @@ export function ContactChannels({ locale = "th" }: ContactChannelsProps) {
   if (isLoading) {
     return (
       <div className="px-2">
-        <h3 className="font-semibold mb-3 text-sm flex items-center gap-2 text-muted-foreground">
-          <MessageCircle className="h-4 w-4" />
-          {title}
-        </h3>
+        {showTitle && (
+          <h3 className="font-semibold mb-3 text-sm flex items-center gap-2 text-muted-foreground">
+            <MessageCircle className="h-4 w-4" />
+            {title}
+          </h3>
+        )}
         <div className="flex items-center justify-center py-4">
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
         </div>
@@ -91,10 +94,12 @@ export function ContactChannels({ locale = "th" }: ContactChannelsProps) {
 
   return (
     <div className="px-2">
-      <h3 className="font-semibold mb-3 text-sm flex items-center gap-2 text-muted-foreground">
-        <MessageCircle className="h-4 w-4" />
-        {title}
-      </h3>
+      {showTitle && (
+        <h3 className="font-semibold mb-3 text-sm flex items-center gap-2 text-muted-foreground">
+          <MessageCircle className="h-4 w-4" />
+          {title}
+        </h3>
+      )}
       <div className="space-y-2">
         {channels.map((channel) => {
           const Icon = PLATFORM_ICONS[channel.platform] || Globe;

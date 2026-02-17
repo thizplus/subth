@@ -83,11 +83,11 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
         )}
         <div className="space-y-1">
           {[1, 2].map((i) => (
-            <div key={i} className="flex items-center gap-3 px-2 py-2">
+            <div key={i} className="flex items-center gap-2 w-full h-12 px-2">
               <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-muted animate-pulse" />
               <div className="grid flex-1 gap-1">
-                <div className="h-4 w-20 bg-muted rounded animate-pulse" />
-                <div className="h-3 w-16 bg-muted rounded animate-pulse" />
+                <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+                <div className="h-3 w-20 bg-muted rounded animate-pulse" />
               </div>
             </div>
           ))}
@@ -119,7 +119,7 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
               href={channel.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+              className="group flex items-center gap-2 w-full h-12 px-2 rounded-md hover:bg-sidebar-accent transition-colors"
             >
               {/* Icon with gradient background */}
               <div
@@ -130,7 +130,7 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
 
               {/* Text content - same style as nav user */}
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
+                <span className="truncate font-semibold">
                   {channel.title}
                 </span>
                 {channel.description && (

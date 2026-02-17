@@ -111,29 +111,27 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
               href={channel.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 p-2.5 rounded-lg bg-muted/50 hover:bg-muted transition-all duration-200 hover:scale-[1.02]"
+              className="group flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-sidebar-accent transition-colors"
             >
               {/* Icon with gradient background */}
               <div
-                className={`flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br ${gradientColor} flex items-center justify-center shadow-sm`}
+                className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br ${gradientColor} flex items-center justify-center shadow-sm`}
               >
-                <Icon className="h-4.5 w-4.5 text-white" />
+                <Icon className="h-4 w-4 text-white" />
               </div>
 
-              {/* Text content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1">
-                  <span className="font-medium text-sm truncate">
-                    {channel.title}
-                  </span>
-                  <ExternalLink className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
+              {/* Text content - same style as nav user */}
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">
+                  {channel.title}
+                </span>
                 {channel.description && (
-                  <p className="text-xs text-muted-foreground truncate">
+                  <span className="truncate text-xs text-muted-foreground">
                     {channel.description}
-                  </p>
+                  </span>
                 )}
               </div>
+              <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
           );
         })}

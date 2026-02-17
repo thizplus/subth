@@ -19,6 +19,7 @@ import {
 import { ModeToggle, Logo } from "@/components/theme";
 import { useAuthStore } from "@/features/auth";
 import { RecentComments } from "@/features/engagement";
+import { ContactChannels } from "@/features/contact-channel";
 
 interface PublicSidebarProps {
   locale?: "th" | "en";
@@ -125,6 +126,13 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
             <RecentComments locale={locale} limit={5} />
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Contact Channels - ซ่อนเมื่อ sidebar collapsed */}
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden mt-auto">
+          <SidebarGroupContent>
+            <ContactChannels locale={locale} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

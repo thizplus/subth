@@ -119,6 +119,11 @@ export const API_ROUTES = {
     ME: "/api/v1/activity/me",
     VIEWS: "/api/v1/activity/views",
   },
+
+  // Contact Channels
+  CONTACT_CHANNELS: {
+    LIST: "/api/v1/contact-channels",
+  },
 };
 
 // Pagination

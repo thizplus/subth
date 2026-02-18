@@ -16,40 +16,48 @@ export function ChatProvider({ children, locale = "th" }: ChatProviderProps) {
   const { isAuthenticated } = useAuthStore();
   const setMessages = useChatStore((state) => state.setMessages);
   const setOnlineCount = useChatStore((state) => state.setOnlineCount);
+  const isSheetOpen = useChatStore((state) => state.isSheetOpen);
 
   // Initialize WebSocket connection (only when authenticated)
   useChatWebSocket();
 
-  // Fetch messages and online count via REST API for non-authenticated users
+  // Fetch initial data once on mount (for ticker + FAB badge) - no polling
   useEffect(() => {
     if (isAuthenticated) return;
 
-    // Initial fetch
-    const fetchData = () => {
+    // Fetch messages once for ticker display
+    getMessages(20)
+      .then((msgs) => setMessages(msgs))
+      .catch(() => {});
+
+    // Fetch online count for FAB badge
+    getOnlineCount()
+      .then((count) => setOnlineCount(count))
+      .catch(() => {});
+  }, [isAuthenticated, setMessages, setOnlineCount]);
+
+  // Fetch messages only when chat sheet is open (for non-authenticated users)
+  useEffect(() => {
+    if (isAuthenticated || !isSheetOpen) return;
+
+    // Fetch messages when sheet opens
+    const fetchMessages = () => {
       getMessages(20)
-        .then((msgs) => {
-          setMessages(msgs);
-        })
-        .catch((err) => {
-          console.error("Failed to fetch chat messages:", err);
-        });
+        .then((msgs) => setMessages(msgs))
+        .catch((err) => console.error("Failed to fetch chat messages:", err));
 
       getOnlineCount()
-        .then((count) => {
-          setOnlineCount(count);
-        })
-        .catch((err) => {
-          console.error("Failed to fetch online count:", err);
-        });
+        .then((count) => setOnlineCount(count))
+        .catch(() => {});
     };
 
-    fetchData();
+    fetchMessages();
 
-    // Poll every 30 seconds for updates
-    const interval = setInterval(fetchData, 30000);
+    // Poll every 30 seconds only while sheet is open
+    const interval = setInterval(fetchMessages, 30000);
 
     return () => clearInterval(interval);
-  }, [isAuthenticated, setMessages, setOnlineCount]);
+  }, [isAuthenticated, isSheetOpen, setMessages, setOnlineCount]);
 
   return (
     <>

@@ -121,6 +121,26 @@ func (h *ChatHub) GetOnlineCount() int {
 	return len(h.userConns)
 }
 
+// GetOnlineUsers returns list of online users with their info
+func (h *ChatHub) GetOnlineUsers() []dto.CommunityChatUserInfo {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	// Get unique users (one per UserID)
+	userMap := make(map[uuid.UUID]dto.CommunityChatUserInfo)
+	for _, client := range h.clients {
+		if _, exists := userMap[client.UserID]; !exists {
+			userMap[client.UserID] = client.UserInfo
+		}
+	}
+
+	users := make([]dto.CommunityChatUserInfo, 0, len(userMap))
+	for _, user := range userMap {
+		users = append(users, user)
+	}
+	return users
+}
+
 // BroadcastMessage broadcasts a chat message
 func (h *ChatHub) BroadcastMessage(msg *dto.CommunityChatMessageResponse) {
 	data := dto.WSChatServerMessage{

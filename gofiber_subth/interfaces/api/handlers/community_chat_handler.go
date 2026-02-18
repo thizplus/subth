@@ -135,6 +135,12 @@ func (h *CommunityChatHandler) GetOnlineCount(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, map[string]int{"count": count})
 }
 
+// GetOnlineUsers returns list of online users (admin only)
+func (h *CommunityChatHandler) GetOnlineUsers(c *fiber.Ctx) error {
+	users := h.hub.GetOnlineUsers()
+	return utils.SuccessResponse(c, users)
+}
+
 // DeleteMessage deletes a chat message (admin only)
 func (h *CommunityChatHandler) DeleteMessage(c *fiber.Ctx) error {
 	ctx := c.UserContext()

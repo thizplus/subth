@@ -23,6 +23,7 @@ func SetupCommunityChatRoutes(api fiber.Router, h *handlers.CommunityChatHandler
 	admin := chat.Group("/admin")
 	admin.Use(middleware.Protected())
 	admin.Use(middleware.AdminOnly())
+	admin.Get("/online-users", h.GetOnlineUsers)
 	admin.Post("/ban", h.BanUser)
 	admin.Delete("/ban/:userId", h.UnbanUser)
 }

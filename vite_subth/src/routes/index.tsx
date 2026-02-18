@@ -56,6 +56,9 @@ const ReelListPage = lazy(() =>
 const ContactChannelListPage = lazy(() =>
   import('@/features/contact-channel').then((m) => ({ default: m.ContactChannelListPage }))
 )
+const OnlineUsersPage = lazy(() =>
+  import('@/features/online-users').then((m) => ({ default: m.OnlineUsersPage }))
+)
 
 export default function AppRoutes() {
   return (
@@ -100,6 +103,7 @@ export default function AppRoutes() {
               <Route path="/tags/page/:page" element={<TagListPage />} />
               <Route path="/categories" element={<CategoryListPage />} />
               <Route path="/contact-channels" element={<ContactChannelListPage />} />
+              <Route path="/online-users" element={<OnlineUsersPage />} />
             </Route>
           </Route>
 

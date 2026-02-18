@@ -89,3 +89,8 @@ export const CONTACT_CHANNEL_ROUTES = {
   BY_ID: (id: string) => `/api/v1/contact-channels/${id}`,
   REORDER: '/api/v1/contact-channels/reorder',
 }
+
+export const COMMUNITY_CHAT_ROUTES = {
+  ONLINE_USERS: '/api/v1/community-chat/admin/online-users',
+  ONLINE_COUNT: '/api/v1/community-chat/online',
+}

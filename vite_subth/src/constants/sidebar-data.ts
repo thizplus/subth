@@ -11,6 +11,7 @@ import {
   FolderTree,
   Activity,
   MessageCircle,
+  Radio,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -75,6 +76,11 @@ export const NAV_MAIN: NavItem[] = [
     title: 'ช่องทางติดต่อ',
     url: '/contact-channels',
     icon: MessageCircle,
+  },
+  {
+    title: 'ออนไลน์',
+    url: '/online-users',
+    icon: Radio,
   },
   {
     title: 'โปรไฟล์',

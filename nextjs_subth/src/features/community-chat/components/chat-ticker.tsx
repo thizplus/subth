@@ -28,8 +28,8 @@ export function ChatTicker({ locale = "th" }: ChatTickerProps) {
   }
 
   return (
-    <div className="bg-muted/50 border-b overflow-hidden">
-      <div className="relative flex items-center h-8">
+    <div className="bg-muted/50 border-b overflow-hidden w-full max-w-full">
+      <div className="relative flex items-center h-8 w-full">
         {/* Chat icon - clickable to open sheet */}
         <button
           onClick={() => setSheetOpen(true)}
@@ -40,8 +40,8 @@ export function ChatTicker({ locale = "th" }: ChatTickerProps) {
         </button>
 
         {/* Marquee container */}
-        <div className="flex-1 overflow-hidden">
-          <div className="ticker-track flex items-center gap-8 animate-ticker">
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <div className="ticker-track inline-flex items-center gap-8 animate-ticker">
             {/* Show messages - duplicate only when we have few messages for seamless loop */}
             {(recentMessages.length < 3
               ? [...recentMessages, ...recentMessages]

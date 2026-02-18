@@ -57,6 +57,7 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
   const [mentionQuery, setMentionQuery] = useState("");
   const [selectedVideo, setSelectedVideo] = useState<VideoSearchResult | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
 
@@ -67,12 +68,11 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
 
   // Auto-scroll to bottom when new messages arrive or sheet opens
   useEffect(() => {
-    if (scrollRef.current && isSheetOpen) {
-      // ScrollArea has a nested viewport - find it and scroll
-      const viewport = scrollRef.current.querySelector('[data-slot="scroll-area-viewport"]');
-      if (viewport) {
-        viewport.scrollTop = viewport.scrollHeight;
-      }
+    if (isSheetOpen && messagesEndRef.current) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     }
   }, [messages, isSheetOpen]);
 
@@ -150,9 +150,9 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
 
   // Shared chat content
   const chatContent = (
-    <div className="flex flex-col h-full min-h-0">
+    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* Messages */}
-      <ScrollArea className="flex-1 min-h-0 px-4" ref={scrollRef}>
+      <ScrollArea className="flex-1 min-h-0 px-4 overflow-auto" ref={scrollRef}>
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
             <MessageCircle className="h-12 w-12 mb-2" />
@@ -175,6 +175,8 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
                 isOwn={user?.id === message.user.id}
               />
             ))}
+            {/* Scroll anchor */}
+            <div ref={messagesEndRef} />
           </div>
         )}
       </ScrollArea>
@@ -287,8 +289,8 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
   if (isMobile) {
     return (
       <Drawer open={isSheetOpen} onOpenChange={setSheetOpen}>
-        <DrawerContent className="max-h-[85vh]">
-          <DrawerHeader className="border-b">
+        <DrawerContent className="max-h-[85vh] flex flex-col overflow-hidden">
+          <DrawerHeader className="border-b shrink-0">
             <div className="flex items-center justify-between">
               <DrawerTitle className="flex items-center gap-2">
                 <MessageCircle className="h-5 w-5" />

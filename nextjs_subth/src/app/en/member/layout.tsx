@@ -35,7 +35,7 @@ export default async function EnglishMemberLayout({
             <MemberSidebar locale="en" categories={categories} />
             <SidebarInset>
               <MemberHeader locale="en" />
-              <ChatTicker />
+              <ChatTicker locale="en" />
               <main className="flex-1 overflow-auto p-4">
                 {children}
               </main>

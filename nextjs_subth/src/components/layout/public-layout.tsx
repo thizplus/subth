@@ -22,6 +22,7 @@ import {
 import { useMyStats } from "@/features/user-stats";
 import { Progress } from "@/components/ui/progress";
 import { OnlineStats } from "./online-stats";
+import { ChatProvider, ChatTicker, ChatFab } from "@/features/community-chat";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -46,11 +47,12 @@ export function PublicLayout({ children, locale = "th" }: PublicLayoutProps) {
   };
 
   return (
-    <SidebarProvider>
-      <PublicSidebar locale={locale} />
-      <SidebarInset>
-        {/* Header - similar to MemberHeader but without search */}
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+    <ChatProvider locale={locale}>
+      <SidebarProvider>
+        <PublicSidebar locale={locale} />
+        <SidebarInset>
+          {/* Header - similar to MemberHeader but without search */}
+          <header className="flex h-14 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex w-full items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -152,11 +154,18 @@ export function PublicLayout({ children, locale = "th" }: PublicLayoutProps) {
           </div>
         </header>
 
+        {/* Chat Ticker */}
+        <ChatTicker locale={locale} />
+
         {/* Main Content - no horizontal padding on mobile for edge-to-edge feed */}
         <main className="flex-1 overflow-auto px-0 py-4 sm:px-4">
           {children}
         </main>
+
+        {/* Chat FAB */}
+        <ChatFab />
       </SidebarInset>
     </SidebarProvider>
+    </ChatProvider>
   );
 }

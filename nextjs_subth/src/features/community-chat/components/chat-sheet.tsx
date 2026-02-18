@@ -152,24 +152,26 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
           </p>
         </div>
       ) : (
-        <Virtuoso
-          ref={virtuosoRef}
-          className="flex-1"
-          data={messages}
-          followOutput="smooth"
-          initialTopMostItemIndex={messages.length - 1}
-          itemContent={(index, message) => (
-            <div className="px-4 py-1.5">
-              <ChatMessageItem
-                message={message}
-                locale={locale}
-                formatTime={formatTime}
-                onReply={() => setReplyTo(message)}
-                isOwn={user?.id === message.user.id}
-              />
-            </div>
-          )}
-        />
+        <div className="flex-1 min-h-0">
+          <Virtuoso
+            ref={virtuosoRef}
+            style={{ height: "100%" }}
+            data={messages}
+            followOutput="smooth"
+            initialTopMostItemIndex={messages.length - 1}
+            itemContent={(index, message) => (
+              <div className="px-4 py-1.5">
+                <ChatMessageItem
+                  message={message}
+                  locale={locale}
+                  formatTime={formatTime}
+                  onReply={() => setReplyTo(message)}
+                  isOwn={user?.id === message.user.id}
+                />
+              </div>
+            )}
+          />
+        </div>
       )}
 
       {/* Reply indicator */}
@@ -280,7 +282,7 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
   if (isMobile) {
     return (
       <Drawer open={isSheetOpen} onOpenChange={setSheetOpen}>
-        <DrawerContent className="max-h-[85vh] flex flex-col overflow-hidden">
+        <DrawerContent className="h-[85vh] flex flex-col overflow-hidden">
           <DrawerHeader className="border-b shrink-0">
             <div className="flex items-center justify-between">
               <DrawerTitle className="flex items-center gap-2">

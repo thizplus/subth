@@ -1,16 +1,20 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { MessageCircle, Film } from "lucide-react";
 import Link from "next/link";
 import { useChatStore } from "../store";
+import { useAuthStore, LoginDialog } from "@/features/auth";
 import type { ChatMessage } from "../types";
 
-export function ChatTicker() {
+interface ChatTickerProps {
+  locale?: "th" | "en";
+}
+
+export function ChatTicker({ locale = "th" }: ChatTickerProps) {
   const messages = useChatStore((state) => state.messages);
   const { setSheetOpen } = useChatStore();
   const [recentMessages, setRecentMessages] = useState<ChatMessage[]>([]);
-  const tickerRef = useRef<HTMLDivElement>(null);
 
   // Get last 5 messages for ticker
   useEffect(() => {
@@ -46,6 +50,7 @@ export function ChatTicker() {
               <TickerItem
                 key={`${msg.id}-${idx}`}
                 message={msg}
+                locale={locale}
                 onChatClick={() => setSheetOpen(true)}
               />
             ))}
@@ -58,10 +63,13 @@ export function ChatTicker() {
 
 interface TickerItemProps {
   message: ChatMessage;
+  locale: "th" | "en";
   onChatClick: () => void;
 }
 
-function TickerItem({ message, onChatClick }: TickerItemProps) {
+function TickerItem({ message, locale, onChatClick }: TickerItemProps) {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <div className="flex items-center gap-2 text-sm whitespace-nowrap shrink-0">
       {/* User info */}
@@ -80,16 +88,28 @@ function TickerItem({ message, onChatClick }: TickerItemProps) {
         {message.content}
       </span>
 
-      {/* Video mention - clickable link */}
+      {/* Video mention - clickable link or login dialog */}
       {message.mentionedVideo && (
-        <Link
-          href={`/member/videos/${message.mentionedVideo.id}`}
-          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Film className="h-3 w-3" />
-          {message.mentionedVideo.code}
-        </Link>
+        isAuthenticated ? (
+          <Link
+            href={`/member/videos/${message.mentionedVideo.id}`}
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Film className="h-3 w-3" />
+            {message.mentionedVideo.code || message.mentionedVideo.title}
+          </Link>
+        ) : (
+          <LoginDialog locale={locale}>
+            <button
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Film className="h-3 w-3" />
+              {message.mentionedVideo.code || message.mentionedVideo.title}
+            </button>
+          </LoginDialog>
+        )
       )}
     </div>
   );

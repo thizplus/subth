@@ -131,13 +131,12 @@ export function VideoMentionPicker({
             >
               <img
                 src={`${CDN_URL}/${video.thumbnail}`}
-                alt={video.code}
+                alt={video.title}
                 className="h-10 w-14 rounded object-cover bg-muted"
               />
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">{video.code}</p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {video.title}
+                <p className="font-medium text-sm truncate">
+                  {video.titleTh || video.title}
                 </p>
               </div>
             </button>

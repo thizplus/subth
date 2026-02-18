@@ -203,7 +203,7 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
               <div className="flex items-center gap-2 p-2 bg-muted rounded-lg">
                 <Film className="h-4 w-4 text-primary shrink-0" />
                 <span className="text-sm font-medium truncate flex-1">
-                  {selectedVideo.code}
+                  {selectedVideo.titleTh || selectedVideo.title}
                 </span>
                 <Button
                   variant="ghost"

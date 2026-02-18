@@ -78,12 +78,12 @@ export function getWebSocketUrl(token: string): string {
 // Video search result for mention
 export interface VideoSearchResult {
   id: string;
-  code: string;
   title: string;
+  titleTh?: string;
   thumbnail: string;
 }
 
-// Search videos for mention (quick search by code)
+// Search videos for mention (quick search by title)
 export async function searchVideosForMention(
   query: string,
   limit = 5
@@ -93,6 +93,7 @@ export async function searchVideosForMention(
   const params = new URLSearchParams({
     q: query,
     limit: limit.toString(),
+    lang: "th",
   });
 
   const res = await fetch(
@@ -104,10 +105,10 @@ export async function searchVideosForMention(
     return [];
   }
 
-  const json: ApiResponse<{ videos: VideoSearchResult[] }> = await res.json();
+  const json: ApiResponse<VideoSearchResult[]> = await res.json();
   if (!json.success) {
     return [];
   }
 
-  return json.data.videos || [];
+  return json.data || [];
 }

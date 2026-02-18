@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { th, enUS } from "date-fns/locale";
 import { Send, Loader2, X, Reply, MessageCircle, Film } from "lucide-react";

@@ -65,10 +65,14 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
     useChatStore();
   const { sendMessage } = useChatWebSocket();
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive or sheet opens
   useEffect(() => {
     if (scrollRef.current && isSheetOpen) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      // ScrollArea has a nested viewport - find it and scroll
+      const viewport = scrollRef.current.querySelector('[data-slot="scroll-area-viewport"]');
+      if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
     }
   }, [messages, isSheetOpen]);
 

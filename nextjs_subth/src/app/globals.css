@@ -47,6 +47,8 @@
 }
 
 :root {
+
+
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -82,6 +84,7 @@
 }
 
 .dark {
+
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -119,6 +122,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -141,9 +145,11 @@
   .theme-toggle {
     background-color: var(--theme-toggle-bg);
   }
+
   .theme-toggle-thumb {
     background-color: var(--theme-toggle-thumb);
   }
+
   .theme-toggle-icon {
     color: var(--theme-toggle-icon);
   }
@@ -151,9 +157,12 @@
 
 /* AI Search FAB animations */
 @keyframes fab-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 0 0 var(--primary);
   }
+
   50% {
     box-shadow: 0 0 20px 4px var(--primary);
   }
@@ -164,6 +173,7 @@
     transform: scale(1);
     opacity: 0.4;
   }
+
   100% {
     transform: scale(1.5);
     opacity: 0;
@@ -176,6 +186,24 @@
 
 .fab-ring {
   animation: fab-ring 2s ease-out infinite;
+}
+
+/* ===== Chat Ticker Animation ===== */
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker-scroll 30s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
 }
 
 /* ===== Reels Theme (TikTok Style) ===== */
@@ -202,6 +230,7 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -221,20 +250,25 @@
     transform: scale(0);
     opacity: 0;
   }
+
   15% {
     transform: scale(1.2);
     opacity: 1;
   }
+
   30% {
     transform: scale(0.95);
   }
+
   45% {
     transform: scale(1);
   }
+
   80% {
     transform: scale(1);
     opacity: 1;
   }
+
   100% {
     transform: scale(1);
     opacity: 0;
@@ -251,17 +285,21 @@
     transform: translateY(-20px) scale(0.8);
     opacity: 0;
   }
+
   15% {
     transform: translateY(0) scale(1.1);
     opacity: 1;
   }
+
   30% {
     transform: translateY(0) scale(1);
   }
+
   80% {
     transform: translateY(0) scale(1);
     opacity: 1;
   }
+
   100% {
     transform: translateY(-10px) scale(0.9);
     opacity: 0;

@@ -402,22 +402,20 @@ function ChatMessageItem({
         {message.mentionedVideo && (
           <Link
             href={`/member/videos/${message.mentionedVideo.id}`}
-            className="mt-1 p-2 border rounded-lg bg-background inline-block max-w-[200px] hover:bg-accent transition-colors"
+            className="mt-2 block p-2 border rounded-lg bg-background max-w-[180px] hover:bg-accent transition-colors"
           >
-            <div className="flex items-center gap-2">
-              {message.mentionedVideo.thumbnail && (
-                <img
-                  src={message.mentionedVideo.thumbnail.startsWith('http')
-                    ? message.mentionedVideo.thumbnail
-                    : `${CDN_URL}${message.mentionedVideo.thumbnail}`}
-                  alt={message.mentionedVideo.code || message.mentionedVideo.title}
-                  className="h-12 w-16 rounded object-cover bg-muted"
-                />
-              )}
-              <div className="text-xs">
-                <p className="font-medium">{message.mentionedVideo.code || message.mentionedVideo.title || "Video"}</p>
-              </div>
-            </div>
+            {message.mentionedVideo.thumbnail && (
+              <img
+                src={message.mentionedVideo.thumbnail.startsWith('http')
+                  ? message.mentionedVideo.thumbnail
+                  : `${CDN_URL}${message.mentionedVideo.thumbnail}`}
+                alt={message.mentionedVideo.code || message.mentionedVideo.title}
+                className="w-full aspect-video rounded object-cover bg-muted"
+              />
+            )}
+            <p className="mt-1.5 text-xs font-medium text-center truncate">
+              {message.mentionedVideo.code || message.mentionedVideo.title || "Video"}
+            </p>
           </Link>
         )}
 

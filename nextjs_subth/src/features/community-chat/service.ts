@@ -74,3 +74,40 @@ export function getWebSocketUrl(token: string): string {
   const wsBase = API_URL.replace(/^http/, "ws");
   return `${wsBase}${API_ROUTES.COMMUNITY_CHAT.WS}?token=${token}`;
 }
+
+// Video search result for mention
+export interface VideoSearchResult {
+  id: string;
+  code: string;
+  title: string;
+  thumbnail: string;
+}
+
+// Search videos for mention (quick search by code)
+export async function searchVideosForMention(
+  query: string,
+  limit = 5
+): Promise<VideoSearchResult[]> {
+  if (!query || query.length < 2) return [];
+
+  const params = new URLSearchParams({
+    q: query,
+    limit: limit.toString(),
+  });
+
+  const res = await fetch(
+    `${API_URL}${API_ROUTES.VIDEOS.SEARCH}?${params.toString()}`,
+    { cache: "no-store" }
+  );
+
+  if (!res.ok) {
+    return [];
+  }
+
+  const json: ApiResponse<{ videos: VideoSearchResult[] }> = await res.json();
+  if (!json.success) {
+    return [];
+  }
+
+  return json.data.videos || [];
+}

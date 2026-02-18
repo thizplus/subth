@@ -33,7 +33,7 @@ export default async function MemberLayout({
         <ChatProvider locale="th">
           <SidebarProvider defaultOpen={defaultOpen}>
             <MemberSidebar locale="th" categories={categories} />
-            <SidebarInset>
+            <SidebarInset className="overflow-x-hidden">
               <MemberHeader locale="th" />
               <ChatTicker locale="th" />
               <main className="flex-1 overflow-auto p-4">

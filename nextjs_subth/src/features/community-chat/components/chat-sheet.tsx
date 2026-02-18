@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { th, enUS } from "date-fns/locale";
 import { Send, Loader2, X, Reply, MessageCircle, Film } from "lucide-react";
 import Link from "next/link";
+import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { CDN_URL } from "@/lib/constants";
 import {
   Sheet,
@@ -22,7 +23,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { useAuthStore } from "@/features/auth";
 import { LoginDialog } from "@/features/auth";
@@ -56,8 +56,7 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
   const [showMentionPicker, setShowMentionPicker] = useState(false);
   const [mentionQuery, setMentionQuery] = useState("");
   const [selectedVideo, setSelectedVideo] = useState<VideoSearchResult | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
 
@@ -65,16 +64,6 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
   const { messages, onlineCount, isConnected, isSheetOpen, replyTo, setSheetOpen, setReplyTo } =
     useChatStore();
   const { sendMessage } = useChatWebSocket();
-
-  // Auto-scroll to bottom when new messages arrive or sheet opens
-  useEffect(() => {
-    if (isSheetOpen && messagesEndRef.current) {
-      // Small delay to ensure DOM is ready
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
-  }, [messages, isSheetOpen]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -151,35 +140,37 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
   // Shared chat content
   const chatContent = (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-      {/* Messages */}
-      <ScrollArea className="flex-1 min-h-0 px-4 overflow-auto" ref={scrollRef}>
-        {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-            <MessageCircle className="h-12 w-12 mb-2" />
-            <p>{locale === "th" ? "ยังไม่มีข้อความ" : "No messages yet"}</p>
-            <p className="text-sm">
-              {locale === "th"
-                ? "เป็นคนแรกที่ส่งข้อความ!"
-                : "Be the first to send a message!"}
-            </p>
-          </div>
-        ) : (
-          <div className="py-4 space-y-3">
-            {messages.map((message) => (
+      {/* Messages with Virtuoso */}
+      {messages.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
+          <MessageCircle className="h-12 w-12 mb-2" />
+          <p>{locale === "th" ? "ยังไม่มีข้อความ" : "No messages yet"}</p>
+          <p className="text-sm">
+            {locale === "th"
+              ? "เป็นคนแรกที่ส่งข้อความ!"
+              : "Be the first to send a message!"}
+          </p>
+        </div>
+      ) : (
+        <Virtuoso
+          ref={virtuosoRef}
+          className="flex-1"
+          data={messages}
+          followOutput="smooth"
+          initialTopMostItemIndex={messages.length - 1}
+          itemContent={(index, message) => (
+            <div className="px-4 py-1.5">
               <ChatMessageItem
-                key={message.id}
                 message={message}
                 locale={locale}
                 formatTime={formatTime}
                 onReply={() => setReplyTo(message)}
                 isOwn={user?.id === message.user.id}
               />
-            ))}
-            {/* Scroll anchor */}
-            <div ref={messagesEndRef} />
-          </div>
-        )}
-      </ScrollArea>
+            </div>
+          )}
+        />
+      )}
 
       {/* Reply indicator */}
       {replyTo && (

@@ -43,8 +43,11 @@ func main() {
 	googleConfig := container.GetConfig().Google
 	h := handlers.NewHandlers(services, repos, googleConfig)
 
+	// Get community chat handler (initialized separately with ChatHub)
+	communityChatHandler := container.GetCommunityChatHandler()
+
 	// Setup routes
-	routes.SetupRoutes(app, h)
+	routes.SetupRoutes(app, h, communityChatHandler)
 
 	// Start server
 	port := container.GetConfig().App.Port

@@ -124,6 +124,14 @@ export const API_ROUTES = {
   CONTACT_CHANNELS: {
     LIST: "/api/v1/contact-channels",
   },
+
+  // Community Chat
+  COMMUNITY_CHAT: {
+    MESSAGES: "/api/v1/community-chat/messages",
+    ONLINE: "/api/v1/community-chat/online",
+    DELETE: (id: string) => `/api/v1/community-chat/messages/${id}`,
+    WS: "/ws/chat",
+  },
 };
 
 // Pagination

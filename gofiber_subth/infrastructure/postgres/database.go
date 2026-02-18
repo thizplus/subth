@@ -90,6 +90,9 @@ func Migrate(db *gorm.DB) error {
 		&models.ActivityLog{},
 		// Contact channels
 		&models.ContactChannel{},
+		// Community chat
+		&models.ChatMessage{},
+		&models.ChatBan{},
 	); err != nil {
 		return err
 	}

@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { categoryService, Category } from "@/features/category";
 import { SemanticSearchProvider } from "@/features/semantic-search";
+import { ChatProvider, ChatFab, ChatTicker } from "@/features/community-chat";
 import { MemberAuthGuard } from "./auth-guard";
 import { cookies } from "next/headers";
 
@@ -29,16 +30,20 @@ export default async function MemberLayout({
   return (
     <DictionaryProvider dictionary={dictionary} locale="th" categories={categories} basePath="/member">
       <MemberAuthGuard>
-        <SidebarProvider defaultOpen={defaultOpen}>
-          <MemberSidebar locale="th" categories={categories} />
-          <SidebarInset>
-            <MemberHeader locale="th" />
-            <main className="flex-1 overflow-auto p-4">
-              {children}
-            </main>
-            <SemanticSearchProvider />
-          </SidebarInset>
-        </SidebarProvider>
+        <ChatProvider locale="th">
+          <SidebarProvider defaultOpen={defaultOpen}>
+            <MemberSidebar locale="th" categories={categories} />
+            <SidebarInset>
+              <MemberHeader locale="th" />
+              <ChatTicker />
+              <main className="flex-1 overflow-auto p-4">
+                {children}
+              </main>
+              <SemanticSearchProvider />
+              <ChatFab />
+            </SidebarInset>
+          </SidebarProvider>
+        </ChatProvider>
       </MemberAuthGuard>
     </DictionaryProvider>
   );

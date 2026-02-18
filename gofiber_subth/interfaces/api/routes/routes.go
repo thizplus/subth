@@ -5,7 +5,7 @@ import (
 	"gofiber-template/interfaces/api/handlers"
 )
 
-func SetupRoutes(app *fiber.App, h *handlers.Handlers) {
+func SetupRoutes(app *fiber.App, h *handlers.Handlers, communityChatHandler *handlers.CommunityChatHandler) {
 	// Setup health and root routes
 	SetupHealthRoutes(app)
 
@@ -49,6 +49,12 @@ func SetupRoutes(app *fiber.App, h *handlers.Handlers) {
 
 	// Contact channel routes
 	SetupContactChannelRoutes(api, h)
+
+	// Community chat routes
+	if communityChatHandler != nil {
+		SetupCommunityChatRoutes(api, communityChatHandler)
+		SetupCommunityChatWebSocket(app, communityChatHandler)
+	}
 
 	// Setup WebSocket routes (needs app, not api group)
 	SetupWebSocketRoutes(app)

@@ -11,6 +11,7 @@ import (
 	"gofiber-template/infrastructure/postgres"
 	"gofiber-template/infrastructure/redis"
 	"gofiber-template/infrastructure/storage"
+	"gofiber-template/infrastructure/websocket"
 	"gofiber-template/interfaces/api/handlers"
 	"gofiber-template/pkg/config"
 	"gofiber-template/pkg/logger"
@@ -49,10 +50,14 @@ type Container struct {
 	VideoViewRepository        repositories.VideoViewRepository
 	ActivityLogRepository      repositories.ActivityLogRepository
 	ContactChannelRepository   repositories.ContactChannelRepository
+	ChatRepository             repositories.ChatRepository
 
 	// Activity Queue
 	ActivityQueue  *redis.ActivityQueue
 	ActivityWorker *worker.ActivityWorker
+
+	// WebSocket
+	ChatHub *websocket.ChatHub
 
 	// Services
 	UserService            services.UserService
@@ -75,6 +80,10 @@ type Container struct {
 	XPService              services.XPService
 	ActivityLogService     services.ActivityLogService
 	ContactChannelService  services.ContactChannelService
+	CommunityChatService   services.CommunityChatService
+
+	// Handlers that need special initialization
+	CommunityChatHandler *handlers.CommunityChatHandler
 }
 
 func NewContainer() *Container {
@@ -239,6 +248,7 @@ func (c *Container) initRepositories() error {
 	c.VideoViewRepository = postgres.NewVideoViewRepository(c.DB)
 	c.ActivityLogRepository = postgres.NewActivityLogRepository(c.DB)
 	c.ContactChannelRepository = postgres.NewContactChannelRepository(c.DB)
+	c.ChatRepository = postgres.NewChatRepository(c.DB)
 
 	// Activity Queue (Redis)
 	c.ActivityQueue = redis.NewActivityQueue(c.RedisClient)
@@ -293,6 +303,17 @@ func (c *Container) initServices() error {
 
 	// Contact Channel Service
 	c.ContactChannelService = serviceimpl.NewContactChannelService(c.ContactChannelRepository)
+
+	// Community Chat Service
+	c.CommunityChatService = serviceimpl.NewCommunityChatService(c.ChatRepository, c.VideoRepository)
+
+	// Chat Hub (WebSocket)
+	c.ChatHub = websocket.NewChatHub(c.CommunityChatService)
+	go c.ChatHub.Run()
+	logger.Info("Chat hub started")
+
+	// Community Chat Handler
+	c.CommunityChatHandler = handlers.NewCommunityChatHandler(c.CommunityChatService, c.UserService, c.UserStatsService, c.ChatHub)
 
 	logger.Info("Services initialized")
 	return nil
@@ -412,7 +433,13 @@ func (c *Container) GetHandlerServices() *handlers.Services {
 		XPService:             c.XPService,
 		ActivityLogService:    c.ActivityLogService,
 		ContactChannelService: c.ContactChannelService,
+		CommunityChatService:  c.CommunityChatService,
 	}
+}
+
+// GetCommunityChatHandler returns the community chat handler
+func (c *Container) GetCommunityChatHandler() *handlers.CommunityChatHandler {
+	return c.CommunityChatHandler
 }
 
 // GetStorage returns the storage adapter

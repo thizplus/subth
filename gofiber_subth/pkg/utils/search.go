@@ -11,7 +11,8 @@ import (
 //   - "ftkd 034" → "FTKD-034"
 //   - "FTKD034" → "FTKD-034"
 //   - "ftkd-034" → "FTKD-034"
-//   - "abc 12" → "ABC-012" (pads number to 3 digits)
+//   - "ipzz-7" → "IPZZ-7" (partial search, no padding)
+//   - "abc 12" → "ABC-12" (no padding for search flexibility)
 //
 // Returns original query if it doesn't match video code pattern
 func NormalizeVideoCode(query string) string {
@@ -35,12 +36,7 @@ func NormalizeVideoCode(query string) string {
 	letters := matches[1]
 	numbers := matches[2]
 
-	// Pad numbers to at least 3 digits (most codes are 3 digits)
-	// But keep original length if already 3+ digits
-	if len(numbers) < 3 {
-		numbers = strings.Repeat("0", 3-len(numbers)) + numbers
-	}
-
+	// Don't pad numbers - allow partial search (e.g., "IPZZ-7" finds "IPZZ-794")
 	return letters + "-" + numbers
 }
 

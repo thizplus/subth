@@ -130,7 +130,7 @@ export function VideoMentionPicker({
               }`}
             >
               <img
-                src={`${CDN_URL}/${video.thumbnail}`}
+                src={`${CDN_URL}${video.thumbnail.startsWith('/') ? '' : '/'}${video.thumbnail}`}
                 alt={video.title}
                 className="h-10 w-14 rounded object-cover bg-muted"
               />

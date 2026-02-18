@@ -68,7 +68,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex items-start justify-between">
-          <Link href={`${basePath}/`} className="flex items-center">
+          <Link href={`${basePath}/`} className="flex items-center" onClick={handleMenuClick}>
             <Logo className="h-10 w-auto group-data-[collapsible=icon]:h-8" />
           </Link>
           <div className="group-data-[collapsible=icon]:hidden">

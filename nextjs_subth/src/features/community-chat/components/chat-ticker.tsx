@@ -38,8 +38,11 @@ export function ChatTicker() {
         {/* Marquee container */}
         <div className="flex-1 overflow-hidden">
           <div className="ticker-track flex items-center gap-8 animate-ticker">
-            {/* Duplicate messages for seamless loop */}
-            {[...recentMessages, ...recentMessages].map((msg, idx) => (
+            {/* Show messages - duplicate only when we have few messages for seamless loop */}
+            {(recentMessages.length < 3
+              ? [...recentMessages, ...recentMessages]
+              : recentMessages
+            ).map((msg, idx) => (
               <TickerItem
                 key={`${msg.id}-${idx}`}
                 message={msg}

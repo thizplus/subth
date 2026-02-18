@@ -402,25 +402,27 @@ function ChatMessageItem({
           <p className="text-sm break-words">{message.content}</p>
         </div>
 
-        {/* Video mention - separate block */}
+        {/* Video mention - separate block, align with message */}
         {message.mentionedVideo && (
-          <Link
-            href={`/member/videos/${message.mentionedVideo.id}`}
-            className="mt-3 block p-2 border rounded-lg bg-card max-w-[160px] hover:bg-accent transition-colors shadow-sm"
-          >
-            {message.mentionedVideo.thumbnail && (
-              <img
-                src={message.mentionedVideo.thumbnail.startsWith('http')
-                  ? message.mentionedVideo.thumbnail
-                  : `${CDN_URL}${message.mentionedVideo.thumbnail}`}
-                alt={message.mentionedVideo.code || message.mentionedVideo.title}
-                className="w-full aspect-video rounded object-cover bg-muted"
-              />
-            )}
-            <p className="mt-1.5 text-xs font-medium text-center truncate">
-              {message.mentionedVideo.code || message.mentionedVideo.title || "Video"}
-            </p>
-          </Link>
+          <div className={`mt-3 ${isOwn ? "flex justify-end" : ""}`}>
+            <Link
+              href={`/member/videos/${message.mentionedVideo.id}`}
+              className="block p-2 border rounded-lg bg-card max-w-[160px] hover:bg-accent transition-colors shadow-sm"
+            >
+              {message.mentionedVideo.thumbnail && (
+                <img
+                  src={message.mentionedVideo.thumbnail.startsWith('http')
+                    ? message.mentionedVideo.thumbnail
+                    : `${CDN_URL}${message.mentionedVideo.thumbnail}`}
+                  alt={message.mentionedVideo.code || message.mentionedVideo.title}
+                  className="w-full aspect-video rounded object-cover bg-muted"
+                />
+              )}
+              <p className="mt-1.5 text-xs font-medium text-center truncate">
+                {message.mentionedVideo.code || message.mentionedVideo.title || "Video"}
+              </p>
+            </Link>
+          </div>
         )}
 
         {/* Time & reply button */}

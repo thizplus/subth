@@ -4,6 +4,8 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { th, enUS } from "date-fns/locale";
 import { Send, Loader2, X, Reply, MessageCircle, Film } from "lucide-react";
+import Link from "next/link";
+import { CDN_URL } from "@/lib/constants";
 import {
   Sheet,
   SheetContent,
@@ -398,18 +400,25 @@ function ChatMessageItem({
 
         {/* Video mention */}
         {message.mentionedVideo && (
-          <div className="mt-1 p-2 border rounded-lg bg-background inline-block max-w-[200px]">
+          <Link
+            href={`/member/videos/${message.mentionedVideo.id}`}
+            className="mt-1 p-2 border rounded-lg bg-background inline-block max-w-[200px] hover:bg-accent transition-colors"
+          >
             <div className="flex items-center gap-2">
-              <img
-                src={message.mentionedVideo.thumbnail}
-                alt={message.mentionedVideo.code}
-                className="h-12 w-16 rounded object-cover"
-              />
+              {message.mentionedVideo.thumbnail && (
+                <img
+                  src={message.mentionedVideo.thumbnail.startsWith('http')
+                    ? message.mentionedVideo.thumbnail
+                    : `${CDN_URL}${message.mentionedVideo.thumbnail}`}
+                  alt={message.mentionedVideo.code || message.mentionedVideo.title}
+                  className="h-12 w-16 rounded object-cover bg-muted"
+                />
+              )}
               <div className="text-xs">
-                <p className="font-medium">{message.mentionedVideo.code}</p>
+                <p className="font-medium">{message.mentionedVideo.code || message.mentionedVideo.title || "Video"}</p>
               </div>
             </div>
-          </div>
+          </Link>
         )}
 
         {/* Time & reply button */}

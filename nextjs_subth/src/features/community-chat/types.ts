@@ -11,9 +11,9 @@ export interface ChatUserInfo {
 // Video mention in chat
 export interface ChatVideoInfo {
   id: string;
-  code: string;
-  title: string;
-  thumbnail: string;
+  code?: string;
+  title?: string;
+  thumbnail?: string;
 }
 
 // Chat message

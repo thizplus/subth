@@ -26,6 +26,7 @@ type ChatClient struct {
 // ChatHub manages WebSocket connections
 type ChatHub struct {
 	clients    map[string]*ChatClient
+	userConns  map[uuid.UUID]int // Track connection count per user for unique count
 	broadcast  chan []byte
 	register   chan *ChatClient
 	unregister chan *ChatClient
@@ -37,6 +38,7 @@ type ChatHub struct {
 func NewChatHub(chatSvc services.CommunityChatService) *ChatHub {
 	return &ChatHub{
 		clients:    make(map[string]*ChatClient),
+		userConns:  make(map[uuid.UUID]int),
 		broadcast:  make(chan []byte, 256),
 		register:   make(chan *ChatClient),
 		unregister: make(chan *ChatClient),
@@ -51,10 +53,14 @@ func (h *ChatHub) Run() {
 		case client := <-h.register:
 			h.mu.Lock()
 			h.clients[client.ID] = client
+			h.userConns[client.UserID]++
+			isNewUser := h.userConns[client.UserID] == 1
 			h.mu.Unlock()
 
-			// Broadcast user join
-			h.broadcastUserJoin(client)
+			// Broadcast user join only if this is their first connection
+			if isNewUser {
+				h.broadcastUserJoin(client)
+			}
 			// Send online count
 			h.broadcastOnlineCount()
 
@@ -63,11 +69,18 @@ func (h *ChatHub) Run() {
 			if _, ok := h.clients[client.ID]; ok {
 				delete(h.clients, client.ID)
 				close(client.Send)
+				h.userConns[client.UserID]--
+				if h.userConns[client.UserID] <= 0 {
+					delete(h.userConns, client.UserID)
+				}
 			}
+			isLastConn := h.userConns[client.UserID] <= 0
 			h.mu.Unlock()
 
-			// Broadcast user leave
-			h.broadcastUserLeave(client)
+			// Broadcast user leave only if this was their last connection
+			if isLastConn {
+				h.broadcastUserLeave(client)
+			}
 			// Send online count
 			h.broadcastOnlineCount()
 
@@ -101,11 +114,11 @@ func (h *ChatHub) Broadcast(msg []byte) {
 	h.broadcast <- msg
 }
 
-// GetOnlineCount returns the number of online users
+// GetOnlineCount returns the number of unique online users
 func (h *ChatHub) GetOnlineCount() int {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
-	return len(h.clients)
+	return len(h.userConns)
 }
 
 // BroadcastMessage broadcasts a chat message

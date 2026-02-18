@@ -166,6 +166,7 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
                   locale={locale}
                   formatTime={formatTime}
                   onReply={() => setReplyTo(message)}
+                  onVideoClick={() => setSheetOpen(false)}
                   isOwn={user?.id === message.user.id}
                 />
               </div>
@@ -352,6 +353,7 @@ interface ChatMessageItemProps {
   locale: "th" | "en";
   formatTime: (dateString: string) => string;
   onReply: () => void;
+  onVideoClick: () => void;
   isOwn: boolean;
 }
 
@@ -360,6 +362,7 @@ function ChatMessageItem({
   locale,
   formatTime,
   onReply,
+  onVideoClick,
   isOwn,
 }: ChatMessageItemProps) {
   return (
@@ -403,6 +406,7 @@ function ChatMessageItem({
             <Link
               href={`/member/videos/${message.mentionedVideo.id}`}
               className="block p-2 border rounded-lg bg-card max-w-[160px] hover:bg-accent transition-colors shadow-sm"
+              onClick={onVideoClick}
             >
               {message.mentionedVideo.thumbnail && (
                 <img

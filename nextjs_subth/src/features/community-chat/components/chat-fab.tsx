@@ -1,30 +1,31 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useChatStore } from "../store";
 
 export function ChatFab() {
   const { onlineCount, isConnected, setSheetOpen } = useChatStore();
 
   return (
-    <div className="fixed bottom-20 right-4 z-50 md:bottom-6">
-      <Button
-        size="lg"
-        className="h-14 w-14 rounded-full shadow-lg relative"
+    <div className="hidden md:flex fixed bottom-6 right-6 z-50 flex-col items-center gap-2">
+      <button
         onClick={() => setSheetOpen(true)}
+        className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95 fab-glow"
+        aria-label="Community Chat"
       >
-        <MessageCircle className="h-6 w-6" />
+        <MessageCircle className="h-8 w-8" />
+        {/* Animated ring effect */}
+        <span className="absolute inset-0 rounded-full bg-primary/30 fab-ring" />
+        {/* Online count badge */}
         {isConnected && onlineCount > 0 && (
-          <Badge
-            variant="secondary"
-            className="absolute -top-1 -right-1 h-5 min-w-[20px] px-1 text-[10px]"
-          >
+          <span className="absolute -top-1 -right-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-green-500 px-1.5 text-xs font-bold text-white shadow">
             {onlineCount}
-          </Badge>
+          </span>
         )}
-      </Button>
+      </button>
+      <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+        ห้องแชท
+      </span>
     </div>
   );
 }

@@ -146,9 +146,9 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
 
   // Shared chat content
   const chatContent = (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-h-0">
       {/* Messages */}
-      <ScrollArea className="flex-1 px-4" ref={scrollRef}>
+      <ScrollArea className="flex-1 min-h-0 px-4" ref={scrollRef}>
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
             <MessageCircle className="h-12 w-12 mb-2" />
@@ -177,7 +177,7 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
 
       {/* Reply indicator */}
       {replyTo && (
-        <div className="px-4 py-2 border-t bg-muted/50 flex items-center justify-between">
+        <div className="px-4 py-2 border-t bg-muted/50 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Reply className="h-4 w-4" />
             <span>
@@ -196,8 +196,8 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
         </div>
       )}
 
-      {/* Input */}
-      <div className="border-t p-4">
+      {/* Input - fixed at bottom */}
+      <div className="border-t p-4 shrink-0 bg-background">
         {isAuthenticated ? (
           <div className="space-y-2">
             {/* Selected video preview */}
@@ -398,11 +398,11 @@ function ChatMessageItem({
           <p className="text-sm break-words">{message.content}</p>
         </div>
 
-        {/* Video mention */}
+        {/* Video mention - separate block */}
         {message.mentionedVideo && (
           <Link
             href={`/member/videos/${message.mentionedVideo.id}`}
-            className="mt-2 block p-2 border rounded-lg bg-background max-w-[180px] hover:bg-accent transition-colors"
+            className="mt-3 block p-2 border rounded-lg bg-card max-w-[160px] hover:bg-accent transition-colors shadow-sm"
           >
             {message.mentionedVideo.thumbnail && (
               <img

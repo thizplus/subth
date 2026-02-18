@@ -363,7 +363,7 @@ func (r *videoRepositoryImpl) GetTitlesByIDs(ctx context.Context, ids []uuid.UUI
 	err := r.db.WithContext(ctx).
 		Table("video_translations").
 		Select("video_id, title").
-		Where("video_id IN ? AND language = ?", ids, "th").
+		Where("video_id IN ? AND lang = ?", ids, "th").
 		Scan(&results).Error
 
 	if err != nil {

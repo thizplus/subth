@@ -14,29 +14,46 @@ import type {
 
 export function useChatWebSocket() {
   const { token, isAuthenticated } = useAuthStore();
-  const {
-    setMessages,
-    addMessage,
-    removeMessage,
-    setOnlineCount,
-    setConnected,
-    replyTo,
-    setReplyTo,
-  } = useChatStore();
-
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isConnectingRef = useRef(false);
+
+  // Get store actions (these are stable)
+  const setMessages = useChatStore((state) => state.setMessages);
+  const addMessage = useChatStore((state) => state.addMessage);
+  const removeMessage = useChatStore((state) => state.removeMessage);
+  const setOnlineCount = useChatStore((state) => state.setOnlineCount);
+  const setConnected = useChatStore((state) => state.setConnected);
+  const replyTo = useChatStore((state) => state.replyTo);
+  const setReplyTo = useChatStore((state) => state.setReplyTo);
+  const messages = useChatStore((state) => state.messages);
 
   // Connect to WebSocket
   const connect = useCallback(() => {
     if (!token || !isAuthenticated) return;
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
+    if (wsRef.current?.readyState === WebSocket.CONNECTING) return;
+    if (isConnectingRef.current) return;
+
+    isConnectingRef.current = true;
+
+    // Close existing connection if any
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
 
     const ws = new WebSocket(getWebSocketUrl(token));
 
     ws.onopen = () => {
+      isConnectingRef.current = false;
       setConnected(true);
+
+      // Clear any existing ping interval
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
+      }
 
       // Start ping interval
       pingIntervalRef.current = setInterval(() => {
@@ -58,7 +75,12 @@ export function useChatWebSocket() {
           }
           case "message": {
             const message = msg.data as ChatMessage;
-            addMessage(message);
+            // Check for duplicate by ID
+            const currentMessages = useChatStore.getState().messages;
+            const isDuplicate = currentMessages.some((m) => m.id === message.id);
+            if (!isDuplicate) {
+              addMessage(message);
+            }
             break;
           }
           case "online_count": {
@@ -82,20 +104,24 @@ export function useChatWebSocket() {
     };
 
     ws.onclose = () => {
+      isConnectingRef.current = false;
       setConnected(false);
 
       if (pingIntervalRef.current) {
         clearInterval(pingIntervalRef.current);
+        pingIntervalRef.current = null;
       }
 
-      // Reconnect after 3 seconds
-      reconnectTimeoutRef.current = setTimeout(() => {
-        connect();
-      }, 3000);
+      // Only reconnect if still authenticated
+      if (useAuthStore.getState().isAuthenticated) {
+        reconnectTimeoutRef.current = setTimeout(() => {
+          connect();
+        }, 3000);
+      }
     };
 
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
+    ws.onerror = () => {
+      isConnectingRef.current = false;
     };
 
     wsRef.current = ws;
@@ -103,11 +129,15 @@ export function useChatWebSocket() {
 
   // Disconnect
   const disconnect = useCallback(() => {
+    isConnectingRef.current = false;
+
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
     }
     if (pingIntervalRef.current) {
       clearInterval(pingIntervalRef.current);
+      pingIntervalRef.current = null;
     }
     if (wsRef.current) {
       wsRef.current.close();
@@ -146,7 +176,8 @@ export function useChatWebSocket() {
     return () => {
       disconnect();
     };
-  }, [isAuthenticated, token, connect, disconnect]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, token]);
 
   return {
     connect,

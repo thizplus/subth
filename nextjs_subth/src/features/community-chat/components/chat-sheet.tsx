@@ -293,7 +293,7 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
                   {isConnected ? (
                     <>
                       <span className="h-2 w-2 rounded-full bg-green-500 mr-1.5" />
-                      {onlineCount}
+                      {onlineCount} {locale === "th" ? "ออนไลน์" : "online"}
                     </>
                   ) : (
                     locale === "th" ? "ออฟไลน์" : "Offline"

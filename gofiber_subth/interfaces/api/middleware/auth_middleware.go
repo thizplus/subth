@@ -115,3 +115,41 @@ func Optional() fiber.Handler {
 		return c.Next()
 	}
 }
+
+// WebSocketAuth middleware for WebSocket connections that accepts token from query param
+// Used for WebSocket because browsers can't set custom headers on WebSocket connections
+func WebSocketAuth() fiber.Handler {
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable is required")
+	}
+
+	return func(c *fiber.Ctx) error {
+		// Try to get token from query param first (for WebSocket)
+		token := c.Query("token")
+
+		// If not in query, try Authorization header
+		if token == "" {
+			authHeader := c.Get("Authorization")
+			if authHeader != "" {
+				token = utils.ExtractTokenFromHeader(authHeader)
+			}
+		}
+
+		if token == "" {
+			return utils.UnauthorizedResponse(c, "Missing authentication token")
+		}
+
+		// Validate token
+		userCtx, err := utils.ValidateTokenStringToUUID(token, jwtSecret)
+		if err != nil {
+			log.Printf("❌ WebSocket token validation failed: %v", err)
+			return utils.UnauthorizedResponse(c, "Invalid or expired token")
+		}
+
+		log.Printf("✅ WebSocket authenticated: %s (%s)", userCtx.Email, userCtx.ID)
+		c.Locals("user", userCtx)
+
+		return c.Next()
+	}
+}

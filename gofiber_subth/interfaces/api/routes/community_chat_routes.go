@@ -28,7 +28,7 @@ func SetupCommunityChatRoutes(api fiber.Router, h *handlers.CommunityChatHandler
 }
 
 func SetupCommunityChatWebSocket(app *fiber.App, h *handlers.CommunityChatHandler) {
-	// WebSocket route with authentication
-	app.Use("/ws/chat", middleware.Protected(), h.WebSocketUpgrade)
+	// WebSocket route with authentication (accepts token from query param)
+	app.Use("/ws/chat", middleware.WebSocketAuth(), h.WebSocketUpgrade)
 	app.Get("/ws/chat", websocket.New(h.HandleWebSocket))
 }

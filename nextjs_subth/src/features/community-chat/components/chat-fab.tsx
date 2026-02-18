@@ -7,7 +7,7 @@ export function ChatFab() {
   const { onlineCount, isConnected, setSheetOpen } = useChatStore();
 
   return (
-    <div className="fixed z-50 flex flex-col items-center gap-1 bottom-20 right-4 md:bottom-6 md:right-6 md:gap-2">
+    <div className="fixed z-50 flex flex-col items-center gap-1 bottom-4 right-4 md:bottom-6 md:right-6 md:gap-2">
       <button
         onClick={() => setSheetOpen(true)}
         className="relative flex items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95 fab-glow h-12 w-12 md:h-16 md:w-16"

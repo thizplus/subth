@@ -30,7 +30,7 @@ func (r *chatRepositoryImpl) GetMessages(ctx context.Context, limit int, beforeI
 		Preload("User").
 		Preload("User.Stats").
 		Preload("MentionedVideo").
-		Preload("MentionedVideo.Translations", "language = ?", "th").
+		Preload("MentionedVideo.Translations", "lang = ?", "th").
 		Preload("ReplyTo").
 		Preload("ReplyTo.User").
 		Where("is_deleted = ?", false)
@@ -66,7 +66,7 @@ func (r *chatRepositoryImpl) GetMessageByID(ctx context.Context, id uuid.UUID) (
 		Preload("User").
 		Preload("User.Stats").
 		Preload("MentionedVideo").
-		Preload("MentionedVideo.Translations", "language = ?", "th").
+		Preload("MentionedVideo.Translations", "lang = ?", "th").
 		Preload("ReplyTo").
 		Preload("ReplyTo.User").
 		Where("id = ? AND is_deleted = ?", id, false).

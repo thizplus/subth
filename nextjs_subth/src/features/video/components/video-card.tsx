@@ -8,6 +8,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import type { VideoListItem } from "../types";
 
 interface VideoCardProps {
@@ -33,6 +34,17 @@ function formatDate(dateString?: string | null, locale?: string): string {
   }
 
   return date.toLocaleDateString("en-CA"); // YYYY-MM-DD format
+}
+
+function isToday(dateString?: string | null): boolean {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  const today = new Date();
+  return (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
 }
 
 export function VideoCard({ video }: VideoCardProps) {
@@ -96,8 +108,13 @@ export function VideoCard({ video }: VideoCardProps) {
           {renderTitle()}
         </p>
         {video.releaseDate && (
-          <span className="text-xs text-muted-foreground mt-1 block">
+          <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1.5">
             {formatDate(video.releaseDate, locale)}
+            {isToday(video.releaseDate) && (
+              <Badge variant="destructive" className="text-[10px] px-1.5 py-0 h-4">
+                {locale === "th" ? "ใหม่" : "NEW"}
+              </Badge>
+            )}
           </span>
         )}
       </div>

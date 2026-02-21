@@ -462,3 +462,51 @@ func (h *VideoHandler) GetVideosByCategories(c *fiber.Ctx) error {
 
 	return utils.SuccessResponse(c, result)
 }
+
+// DeleteVideosByEmbedCodes ลบ videos โดย embed codes (for cleanup)
+func (h *VideoHandler) DeleteVideosByEmbedCodes(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	var req dto.DeleteByCodesRequest
+	if err := c.BodyParser(&req); err != nil {
+		return utils.BadRequestResponse(c, "Invalid request body")
+	}
+
+	if len(req.Codes) == 0 {
+		return utils.BadRequestResponse(c, "Codes are required")
+	}
+
+	deleted, err := h.videoService.DeleteVideosByEmbedCodes(ctx, req.Codes)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to delete videos by embed codes", "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	logger.InfoContext(ctx, "Videos deleted by embed codes", "count", deleted, "requested", len(req.Codes))
+	return utils.SuccessResponse(c, map[string]interface{}{
+		"deleted":   deleted,
+		"requested": len(req.Codes),
+	})
+}
+
+// GetVideosByEmbedCodes ค้นหา videos โดย embed codes
+func (h *VideoHandler) GetVideosByEmbedCodes(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	var req dto.DeleteByCodesRequest
+	if err := c.BodyParser(&req); err != nil {
+		return utils.BadRequestResponse(c, "Invalid request body")
+	}
+
+	if len(req.Codes) == 0 {
+		return utils.BadRequestResponse(c, "Codes are required")
+	}
+
+	videos, err := h.videoService.GetVideosByEmbedCodes(ctx, req.Codes)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to get videos by embed codes", "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	return utils.SuccessResponse(c, videos)
+}

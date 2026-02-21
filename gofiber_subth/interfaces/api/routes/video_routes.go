@@ -29,4 +29,8 @@ func SetupVideoRoutes(api fiber.Router, h *handlers.Handlers) {
 	videos.Post("/batch", middleware.Protected(), h.VideoHandler.CreateVideoBatch)
 	videos.Put("/:id", middleware.Protected(), h.VideoHandler.UpdateVideo)
 	videos.Delete("/:id", middleware.Protected(), h.VideoHandler.DeleteVideo)
+
+	// Cleanup routes (for deleting videos by embed codes)
+	videos.Post("/find-by-codes", middleware.Protected(), h.VideoHandler.GetVideosByEmbedCodes)
+	videos.Post("/delete-by-codes", middleware.Protected(), h.VideoHandler.DeleteVideosByEmbedCodes)
 }

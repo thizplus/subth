@@ -859,3 +859,47 @@ func (s *VideoServiceImpl) toVideoListItemResponses(videos []models.Video, lang 
 	return result
 }
 
+// GetVideosByEmbedCodes ค้นหา videos โดย embed codes
+func (s *VideoServiceImpl) GetVideosByEmbedCodes(ctx context.Context, codes []string) ([]dto.VideoIDWithCode, error) {
+	videos, err := s.videoRepo.GetByEmbedCodes(ctx, codes)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]dto.VideoIDWithCode, 0, len(videos))
+	for _, v := range videos {
+		// Extract code from embed_url (last segment after /)
+		code := ""
+		if v.EmbedURL != "" {
+			parts := strings.Split(v.EmbedURL, "/")
+			if len(parts) > 0 {
+				code = parts[len(parts)-1]
+			}
+		}
+		result = append(result, dto.VideoIDWithCode{
+			ID:       v.ID.String(),
+			Code:     code,
+			EmbedURL: v.EmbedURL,
+		})
+	}
+	return result, nil
+}
+
+// DeleteVideosByEmbedCodes ลบ videos โดย embed codes
+func (s *VideoServiceImpl) DeleteVideosByEmbedCodes(ctx context.Context, codes []string) (int, error) {
+	videos, err := s.videoRepo.GetByEmbedCodes(ctx, codes)
+	if err != nil {
+		return 0, err
+	}
+
+	deleted := 0
+	for _, v := range videos {
+		if err := s.DeleteVideo(ctx, v.ID); err != nil {
+			logger.WarnContext(ctx, "Failed to delete video by embed code", "video_id", v.ID, "error", err)
+			continue
+		}
+		deleted++
+	}
+	return deleted, nil
+}
+

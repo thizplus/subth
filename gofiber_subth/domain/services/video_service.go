@@ -32,4 +32,8 @@ type VideoService interface {
 
 	// Homepage - grouped by categories
 	GetVideosByCategories(ctx context.Context, req *dto.VideosByCategoriesRequest) ([]dto.CategoryWithVideosResponse, error)
+
+	// Cleanup - get videos by embed codes
+	GetVideosByEmbedCodes(ctx context.Context, codes []string) ([]dto.VideoIDWithCode, error)
+	DeleteVideosByEmbedCodes(ctx context.Context, codes []string) (int, error)
 }

@@ -117,6 +117,18 @@ type CategoryWithVideosResponse struct {
 	Videos   []VideoListItemResponse `json:"videos"`
 }
 
+// VideoIDWithCode for cleanup operations
+type VideoIDWithCode struct {
+	ID       string `json:"id"`
+	Code     string `json:"code"`
+	EmbedURL string `json:"embed_url"`
+}
+
+// DeleteByCodesRequest for bulk delete by embed codes
+type DeleteByCodesRequest struct {
+	Codes []string `json:"codes" validate:"required,min=1"`
+}
+
 // === Search ===
 
 type SemanticSearchRequest struct {

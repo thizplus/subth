@@ -338,6 +338,31 @@ func (r *videoRepositoryImpl) GetWithReels(ctx context.Context, limit int, offse
 	return videos, total, err
 }
 
+// GetByEmbedCodes ค้นหา videos โดย embed codes (ต่อท้าย embed_url)
+// embed_url format: https://player.suekk.com/embed/{code}
+func (r *videoRepositoryImpl) GetByEmbedCodes(ctx context.Context, codes []string) ([]models.Video, error) {
+	if len(codes) == 0 {
+		return nil, nil
+	}
+
+	var videos []models.Video
+
+	// สร้าง OR conditions สำหรับแต่ละ code
+	// embed_url LIKE '%/{code}'
+	query := r.db.WithContext(ctx).Model(&models.Video{})
+	for i, code := range codes {
+		pattern := "%/" + code
+		if i == 0 {
+			query = query.Where("embed_url LIKE ?", pattern)
+		} else {
+			query = query.Or("embed_url LIKE ?", pattern)
+		}
+	}
+
+	err := query.Find(&videos).Error
+	return videos, err
+}
+
 func (r *videoRepositoryImpl) AddCategories(ctx context.Context, videoID uuid.UUID, categories []models.Category) error {
 	if len(categories) == 0 {
 		return nil

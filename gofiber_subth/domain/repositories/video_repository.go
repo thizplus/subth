@@ -51,6 +51,9 @@ type VideoRepository interface {
 
 	// Reel queries (for public feed/reels pages)
 	GetWithReels(ctx context.Context, limit int, offset int) ([]models.Video, int64, error)
+
+	// Get videos by embed codes (for cleanup)
+	GetByEmbedCodes(ctx context.Context, codes []string) ([]models.Video, error)
 }
 
 type VideoListParams struct {

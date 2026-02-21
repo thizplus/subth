@@ -87,8 +87,18 @@ func (s *VideoServiceImpl) CreateVideo(ctx context.Context, req *dto.CreateVideo
 		}
 	}
 
+	// Extract code from EmbedURL (https://player.suekk.com/embed/{code})
+	code := ""
+	if req.EmbedURL != "" && strings.Contains(req.EmbedURL, "/embed/") {
+		parts := strings.Split(req.EmbedURL, "/embed/")
+		if len(parts) > 1 {
+			code = parts[1]
+		}
+	}
+
 	// Create video
 	video := &models.Video{
+		Code:        code,
 		Thumbnail:   req.Thumbnail,
 		EmbedURL:    req.EmbedURL,
 		ReleaseDate: releaseDate,
@@ -240,8 +250,18 @@ func (s *VideoServiceImpl) createVideoInternal(ctx context.Context, req *dto.Cre
 		}
 	}
 
+	// Extract code from EmbedURL
+	code := ""
+	if req.EmbedURL != "" && strings.Contains(req.EmbedURL, "/embed/") {
+		parts := strings.Split(req.EmbedURL, "/embed/")
+		if len(parts) > 1 {
+			code = parts[1]
+		}
+	}
+
 	// Create video
 	video := &models.Video{
+		Code:        code,
 		Thumbnail:   req.Thumbnail,
 		EmbedURL:    req.EmbedURL,
 		ReleaseDate: releaseDate,
@@ -339,6 +359,13 @@ func (s *VideoServiceImpl) UpdateVideo(ctx context.Context, id uuid.UUID, req *d
 	}
 	if req.EmbedURL != nil {
 		video.EmbedURL = *req.EmbedURL
+		// Extract code from EmbedURL
+		if strings.Contains(*req.EmbedURL, "/embed/") {
+			parts := strings.Split(*req.EmbedURL, "/embed/")
+			if len(parts) > 1 {
+				video.Code = parts[1]
+			}
+		}
 	}
 	if req.ReleaseDate != nil {
 		t, err := time.Parse("2006-01-02", *req.ReleaseDate)
@@ -847,6 +874,7 @@ func (s *VideoServiceImpl) toVideoListItemResponses(videos []models.Video, lang 
 
 		result = append(result, dto.VideoListItemResponse{
 			ID:          v.ID,
+			Code:        v.Code,
 			Title:       title,
 			TitleTh:     titleTh,
 			Thumbnail:   v.Thumbnail,

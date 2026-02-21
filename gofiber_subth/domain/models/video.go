@@ -9,9 +9,10 @@ import (
 
 type Video struct {
 	ID          uuid.UUID      `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Thumbnail   string         `gorm:"size:255"` // เก็บแค่ path เช่น /thumbnails/AAA-001.jpg
-	SourceURL   string         `gorm:"size:255"` // URL ต้นทาง เช่น https://supjav.com/136849.html
-	EmbedURL    string         `gorm:"size:255"` // Embed player URL เช่น https://player.suekk.com/embed/xxx
+	Code        string         `gorm:"size:50;index"`                // Code จาก suekk เช่น dbprhr2b (extract จาก EmbedURL)
+	Thumbnail   string         `gorm:"size:255"`                     // เก็บแค่ path เช่น /thumbnails/AAA-001.jpg
+	SourceURL   string         `gorm:"size:255"`                     // URL ต้นทาง เช่น https://supjav.com/136849.html
+	EmbedURL    string         `gorm:"size:255"`                     // Embed player URL เช่น https://player.suekk.com/embed/xxx
 	ReleaseDate *time.Time     `gorm:"type:date"`
 	MakerID     *uuid.UUID     `gorm:"type:uuid"`
 	Views       int            `gorm:"default:0"`

@@ -85,6 +85,7 @@ type VideoResponse struct {
 
 type VideoListItemResponse struct {
 	ID          uuid.UUID              `json:"id"`
+	Code        string                 `json:"code,omitempty"` // Code จาก suekk
 	Title       string                 `json:"title"`
 	TitleTh     string                 `json:"titleTh,omitempty"`
 	Thumbnail   string                 `json:"thumbnail,omitempty"`

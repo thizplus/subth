@@ -850,6 +850,7 @@ func (s *VideoServiceImpl) toVideoListItemResponses(videos []models.Video, lang 
 			Title:       title,
 			TitleTh:     titleTh,
 			Thumbnail:   v.Thumbnail,
+			EmbedURL:    v.EmbedURL,
 			Categories:  categorySlugs,
 			ReleaseDate: releaseDate,
 			MakerName:   makerName,

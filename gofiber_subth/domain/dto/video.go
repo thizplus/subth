@@ -88,6 +88,7 @@ type VideoListItemResponse struct {
 	Title       string                 `json:"title"`
 	TitleTh     string                 `json:"titleTh,omitempty"`
 	Thumbnail   string                 `json:"thumbnail,omitempty"`
+	EmbedURL    string                 `json:"embedUrl,omitempty"`
 	Categories  []string               `json:"categories,omitempty"` // Category slugs
 	ReleaseDate string                 `json:"releaseDate,omitempty"` // Format: YYYY-MM-DD
 	MakerName   string                 `json:"maker,omitempty"`

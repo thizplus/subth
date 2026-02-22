@@ -75,3 +75,47 @@ func (r *UserRepositoryImpl) Count(ctx context.Context) (int64, error) {
 	err := r.db.WithContext(ctx).Model(&models.User{}).Count(&count).Error
 	return count, err
 }
+
+func (r *UserRepositoryImpl) ListWithSearch(ctx context.Context, search string, role string, offset, limit int) ([]*models.User, int64, error) {
+	var users []*models.User
+	var count int64
+
+	query := r.db.WithContext(ctx).Model(&models.User{})
+
+	// Search filter - ค้นหาจาก email, username, displayName, firstName, lastName
+	if search != "" {
+		searchPattern := "%" + search + "%"
+		query = query.Where(
+			"email ILIKE ? OR username ILIKE ? OR display_name ILIKE ? OR first_name ILIKE ? OR last_name ILIKE ?",
+			searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
+		)
+	}
+
+	// Role filter
+	if role != "" {
+		query = query.Where("role = ?", role)
+	}
+
+	// Count total
+	if err := query.Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated results
+	err := query.Order("created_at DESC").Offset(offset).Limit(limit).Find(&users).Error
+	return users, count, err
+}
+
+func (r *UserRepositoryImpl) CountNewToday(ctx context.Context) (int64, error) {
+	var count int64
+	today := "DATE(created_at) = CURRENT_DATE"
+	err := r.db.WithContext(ctx).Model(&models.User{}).Where(today).Count(&count).Error
+	return count, err
+}
+
+func (r *UserRepositoryImpl) CountNewThisWeek(ctx context.Context) (int64, error) {
+	var count int64
+	thisWeek := "created_at >= DATE_TRUNC('week', CURRENT_DATE)"
+	err := r.db.WithContext(ctx).Model(&models.User{}).Where(thisWeek).Count(&count).Error
+	return count, err
+}

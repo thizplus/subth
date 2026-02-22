@@ -106,3 +106,10 @@ export interface ActivitySummaryResponse {
   endDate: string
   summary: Record<string, PopularPage[]>
 }
+
+// User Summary (admin)
+export interface UserSummary {
+  total: number
+  newToday: number
+  newThisWeek: number
+}

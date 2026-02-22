@@ -90,3 +90,11 @@ export function useActivitySummary(days = 7) {
     queryFn: () => userService.getActivitySummary(days),
   })
 }
+
+// User Summary (admin) - สรุปจำนวนสมาชิก
+export function useUserSummary() {
+  return useQuery({
+    queryKey: [...userKeys.all, 'summary'] as const,
+    queryFn: () => userService.getUserSummary(),
+  })
+}

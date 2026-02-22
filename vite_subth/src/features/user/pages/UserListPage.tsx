@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { Search, X, Loader2, Users, UserCheck, UserX, Shield, MoreHorizontal, Eye } from 'lucide-react'
+import { Search, X, Loader2, Users, UserCheck, UserX, UserPlus, CalendarDays, MoreHorizontal, Eye } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,7 +39,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
-import { useUserList, type UserListItem, type UserListParams } from '@/features/user'
+import { useUserList, useUserSummary, type UserListItem, type UserListParams } from '@/features/user'
 import { ROLE, ROLE_LABELS, ROLE_STYLES, type RoleType } from '@/constants/enums'
 
 // MetricItem Component
@@ -75,13 +75,14 @@ export function UserListPage() {
   const [searchInput, setSearchInput] = useState('')
   const [filters, setFilters] = useState<UserListParams>({})
 
-  // Query
+  // Queries
   const { data, isLoading } = useUserList({
     page,
     limit: 20,
     search: search || undefined,
     ...filters,
   })
+  const { data: summary, isLoading: isLoadingSummary } = useUserSummary()
 
   // Navigate to page
   const goToPage = (p: number) => {
@@ -157,26 +158,26 @@ export function UserListPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricItem
           label="ผู้ใช้ทั้งหมด"
-          value={`${total.toLocaleString()} คน`}
+          value={`${(summary?.total || total).toLocaleString()} คน`}
           icon={<Users className="h-3 w-3" />}
-          isLoading={isLoading}
+          isLoading={isLoading && isLoadingSummary}
+        />
+        <MetricItem
+          label="สมาชิกใหม่วันนี้"
+          value={`${(summary?.newToday || 0).toLocaleString()} คน`}
+          icon={<UserPlus className="h-3 w-3" />}
+          isLoading={isLoadingSummary}
+        />
+        <MetricItem
+          label="สมาชิกใหม่สัปดาห์นี้"
+          value={`${(summary?.newThisWeek || 0).toLocaleString()} คน`}
+          icon={<CalendarDays className="h-3 w-3" />}
+          isLoading={isLoadingSummary}
         />
         <MetricItem
           label="หน้าปัจจุบัน"
           value={`${page} / ${totalPages}`}
-          icon={<Shield className="h-3 w-3" />}
-          isLoading={isLoading}
-        />
-        <MetricItem
-          label="ใช้งาน (หน้านี้)"
-          value={`${activeCount} คน`}
-          icon={<UserCheck className="h-3 w-3" />}
-          isLoading={isLoading}
-        />
-        <MetricItem
-          label="ไม่ใช้งาน (หน้านี้)"
-          value={`${inactiveCount} คน`}
-          icon={<UserX className="h-3 w-3" />}
+          icon={<Eye className="h-3 w-3" />}
           isLoading={isLoading}
         />
       </div>

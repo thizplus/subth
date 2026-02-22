@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"gofiber-template/domain/dto"
+	"gofiber-template/domain/models"
 	"gofiber-template/domain/services"
 	"gofiber-template/pkg/logger"
 	"gofiber-template/pkg/utils"
@@ -175,6 +176,8 @@ func (h *UserHandler) ListUsers(c *fiber.Ctx) error {
 
 	pageStr := c.Query("page", "1")
 	limitStr := c.Query("limit", "10")
+	search := c.Query("search")
+	role := c.Query("role")
 
 	page, err := strconv.Atoi(pageStr)
 	if err != nil || page < 1 {
@@ -189,7 +192,17 @@ func (h *UserHandler) ListUsers(c *fiber.Ctx) error {
 	}
 
 	offset := (page - 1) * limit
-	users, total, err := h.userService.ListUsers(ctx, offset, limit)
+
+	var users []*models.User
+	var total int64
+
+	// ใช้ ListUsersWithSearch ถ้ามี search หรือ role filter
+	if search != "" || role != "" {
+		users, total, err = h.userService.ListUsersWithSearch(ctx, search, role, offset, limit)
+	} else {
+		users, total, err = h.userService.ListUsers(ctx, offset, limit)
+	}
+
 	if err != nil {
 		logger.ErrorContext(ctx, "Failed to retrieve users", "error", err)
 		return utils.InternalServerErrorResponse(c)
@@ -201,4 +214,17 @@ func (h *UserHandler) ListUsers(c *fiber.Ctx) error {
 	}
 
 	return utils.PaginatedSuccessResponse(c, userResponses, total, page, limit)
+}
+
+// GetUserSummary - สรุปจำนวนสมาชิก
+func (h *UserHandler) GetUserSummary(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	summary, err := h.userService.GetUserSummary(ctx)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to get user summary", "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	return utils.SuccessResponse(c, summary)
 }

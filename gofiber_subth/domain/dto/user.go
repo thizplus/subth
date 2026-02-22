@@ -44,3 +44,10 @@ type ChangePasswordRequest struct {
 	NewPassword     string `json:"newPassword" validate:"required,min=8,max=72"`
 	ConfirmPassword string `json:"confirmPassword" validate:"required,eqfield=NewPassword"`
 }
+
+// UserSummaryResponse - สรุปจำนวนสมาชิก
+type UserSummaryResponse struct {
+	Total        int64 `json:"total"`
+	NewToday     int64 `json:"newToday"`
+	NewThisWeek  int64 `json:"newThisWeek"`
+}

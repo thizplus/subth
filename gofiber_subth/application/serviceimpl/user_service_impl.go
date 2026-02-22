@@ -202,6 +202,41 @@ func (s *UserServiceImpl) ListUsers(ctx context.Context, offset, limit int) ([]*
 	return users, count, nil
 }
 
+func (s *UserServiceImpl) ListUsersWithSearch(ctx context.Context, search, role string, offset, limit int) ([]*models.User, int64, error) {
+	users, count, err := s.userRepo.ListWithSearch(ctx, search, role, offset, limit)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list users with search", "search", search, "role", role, "error", err)
+		return nil, 0, err
+	}
+	return users, count, nil
+}
+
+func (s *UserServiceImpl) GetUserSummary(ctx context.Context) (*dto.UserSummaryResponse, error) {
+	total, err := s.userRepo.Count(ctx)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to count total users", "error", err)
+		return nil, err
+	}
+
+	newToday, err := s.userRepo.CountNewToday(ctx)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to count new users today", "error", err)
+		return nil, err
+	}
+
+	newThisWeek, err := s.userRepo.CountNewThisWeek(ctx)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to count new users this week", "error", err)
+		return nil, err
+	}
+
+	return &dto.UserSummaryResponse{
+		Total:       total,
+		NewToday:    newToday,
+		NewThisWeek: newThisWeek,
+	}, nil
+}
+
 func (s *UserServiceImpl) GenerateJWT(user *models.User) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id":  user.ID.String(),

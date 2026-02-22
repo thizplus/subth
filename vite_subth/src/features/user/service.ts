@@ -11,6 +11,7 @@ import type {
   ActivityLogParams,
   PopularPagesResponse,
   ActivitySummaryResponse,
+  UserSummary,
 } from './types'
 
 export const userService = {
@@ -70,5 +71,10 @@ export const userService = {
     return apiClient.get<ActivitySummaryResponse>(ACTIVITY_ROUTES.SUMMARY, {
       params: { days },
     })
+  },
+
+  // User Summary (admin)
+  async getUserSummary(): Promise<UserSummary> {
+    return apiClient.get<UserSummary>(USER_ROUTES.SUMMARY)
   },
 }

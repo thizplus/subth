@@ -14,6 +14,7 @@ export {
   useAllActivity,
   usePopularPages,
   useActivitySummary,
+  useUserSummary,
   userKeys,
   activityKeys,
 } from './hooks'
@@ -30,4 +31,5 @@ export type {
   PopularPage,
   PopularPagesResponse,
   ActivitySummaryResponse,
+  UserSummary,
 } from './types'

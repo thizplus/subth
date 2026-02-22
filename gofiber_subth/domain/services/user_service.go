@@ -14,6 +14,8 @@ type UserService interface {
 	UpdateProfile(ctx context.Context, userID uuid.UUID, req *dto.UpdateUserRequest) (*models.User, error)
 	DeleteUser(ctx context.Context, userID uuid.UUID) error
 	ListUsers(ctx context.Context, offset, limit int) ([]*models.User, int64, error)
+	ListUsersWithSearch(ctx context.Context, search, role string, offset, limit int) ([]*models.User, int64, error)
+	GetUserSummary(ctx context.Context) (*dto.UserSummaryResponse, error)
 	GenerateJWT(user *models.User) (string, error)
 	ValidateJWT(token string) (*models.User, error)
 	// Google OAuth

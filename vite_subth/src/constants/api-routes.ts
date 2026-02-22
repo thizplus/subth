@@ -11,6 +11,7 @@ export const USER_ROUTES = {
   LIST: '/api/v1/users',
   BY_ID: (id: string) => `/api/v1/users/${id}`,
   PROFILE: '/api/v1/users/profile',
+  SUMMARY: '/api/v1/users/summary',
 }
 
 export const DASHBOARD_ROUTES = {

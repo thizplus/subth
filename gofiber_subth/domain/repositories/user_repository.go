@@ -15,5 +15,8 @@ type UserRepository interface {
 	Update(ctx context.Context, id uuid.UUID, user *models.User) error
 	Delete(ctx context.Context, id uuid.UUID) error
 	List(ctx context.Context, offset, limit int) ([]*models.User, error)
+	ListWithSearch(ctx context.Context, search string, role string, offset, limit int) ([]*models.User, int64, error)
 	Count(ctx context.Context) (int64, error)
+	CountNewToday(ctx context.Context) (int64, error)
+	CountNewThisWeek(ctx context.Context) (int64, error)
 }

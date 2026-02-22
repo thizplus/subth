@@ -13,8 +13,9 @@ func SetupUserRoutes(api fiber.Router, h *handlers.Handlers) {
 	users.Put("/profile", h.UserHandler.UpdateProfile)
 	users.Delete("/profile", h.UserHandler.DeleteUser)
 	users.Get("/", middleware.AdminOnly(), h.UserHandler.ListUsers)
+	users.Get("/summary", middleware.AdminOnly(), h.UserHandler.GetUserSummary)
 
-	// Admin routes
+	// Admin routes (ต้องอยู่หลัง /summary เพราะ :id จะ match "summary")
 	users.Get("/:id", middleware.AdminOnly(), h.UserHandler.GetUserById)
 	users.Get("/:id/activity", middleware.AdminOnly(), h.ActivityLogHandler.GetUserActivity)
 }

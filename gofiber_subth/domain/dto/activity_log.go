@@ -95,9 +95,10 @@ func (q *ActivityQueueItem) ToModel() *models.ActivityLog {
 
 // PageViewCountResponse response สำหรับ analytics
 type PageViewCountResponse struct {
-	PageID    string `json:"pageId"`
-	PageType  string `json:"pageType"`
-	ViewCount int64  `json:"viewCount"`
+	PageID    string  `json:"pageId"`
+	PageType  string  `json:"pageType"`
+	PageTitle string  `json:"pageTitle,omitempty"`
+	ViewCount int64   `json:"viewCount"`
 }
 
 // ActivityLogWithUserResponse response สำหรับ admin ดู activity พร้อมข้อมูล user

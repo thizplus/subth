@@ -166,3 +166,57 @@ func (r *tagRepositoryImpl) GetTranslation(ctx context.Context, tagID uuid.UUID,
 func (r *tagRepositoryImpl) DeleteTranslationsByTagID(ctx context.Context, tagID uuid.UUID) error {
 	return r.db.WithContext(ctx).Where("tag_id = ?", tagID).Delete(&models.TagTranslation{}).Error
 }
+
+// GetNamesByIDs returns a map of tag IDs to their names (prefer Thai translation)
+func (r *tagRepositoryImpl) GetNamesByIDs(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error) {
+	if len(ids) == 0 {
+		return make(map[uuid.UUID]string), nil
+	}
+
+	// First get Thai translations
+	var translations []struct {
+		TagID uuid.UUID
+		Name  string
+	}
+	err := r.db.WithContext(ctx).
+		Model(&models.TagTranslation{}).
+		Select("tag_id, name").
+		Where("tag_id IN ? AND lang = ?", ids, "th").
+		Scan(&translations).Error
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[uuid.UUID]string)
+	for _, t := range translations {
+		result[t.TagID] = t.Name
+	}
+
+	// Fill missing with English names
+	missingIDs := make([]uuid.UUID, 0)
+	for _, id := range ids {
+		if _, ok := result[id]; !ok {
+			missingIDs = append(missingIDs, id)
+		}
+	}
+
+	if len(missingIDs) > 0 {
+		var tags []struct {
+			ID   uuid.UUID
+			Name string
+		}
+		err := r.db.WithContext(ctx).
+			Model(&models.Tag{}).
+			Select("id, name").
+			Where("id IN ?", missingIDs).
+			Scan(&tags).Error
+		if err != nil {
+			return nil, err
+		}
+		for _, t := range tags {
+			result[t.ID] = t.Name
+		}
+	}
+
+	return result, nil
+}

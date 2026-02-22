@@ -166,3 +166,57 @@ func (r *castRepositoryImpl) GetTranslation(ctx context.Context, castID uuid.UUI
 func (r *castRepositoryImpl) DeleteTranslationsByCastID(ctx context.Context, castID uuid.UUID) error {
 	return r.db.WithContext(ctx).Where("cast_id = ?", castID).Delete(&models.CastTranslation{}).Error
 }
+
+// GetNamesByIDs returns a map of cast IDs to their names (prefer Thai translation)
+func (r *castRepositoryImpl) GetNamesByIDs(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error) {
+	if len(ids) == 0 {
+		return make(map[uuid.UUID]string), nil
+	}
+
+	// First get Thai translations
+	var translations []struct {
+		CastID uuid.UUID
+		Name   string
+	}
+	err := r.db.WithContext(ctx).
+		Model(&models.CastTranslation{}).
+		Select("cast_id, name").
+		Where("cast_id IN ? AND lang = ?", ids, "th").
+		Scan(&translations).Error
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[uuid.UUID]string)
+	for _, t := range translations {
+		result[t.CastID] = t.Name
+	}
+
+	// Fill missing with English names
+	missingIDs := make([]uuid.UUID, 0)
+	for _, id := range ids {
+		if _, ok := result[id]; !ok {
+			missingIDs = append(missingIDs, id)
+		}
+	}
+
+	if len(missingIDs) > 0 {
+		var casts []struct {
+			ID   uuid.UUID
+			Name string
+		}
+		err := r.db.WithContext(ctx).
+			Model(&models.Cast{}).
+			Select("id, name").
+			Where("id IN ?", missingIDs).
+			Scan(&casts).Error
+		if err != nil {
+			return nil, err
+		}
+		for _, c := range casts {
+			result[c.ID] = c.Name
+		}
+	}
+
+	return result, nil
+}

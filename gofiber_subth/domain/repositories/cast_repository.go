@@ -34,6 +34,9 @@ type CastRepository interface {
 	GetTranslations(ctx context.Context, castID uuid.UUID) ([]models.CastTranslation, error)
 	GetTranslation(ctx context.Context, castID uuid.UUID, lang string) (*models.CastTranslation, error)
 	DeleteTranslationsByCastID(ctx context.Context, castID uuid.UUID) error
+
+	// Bulk lookup
+	GetNamesByIDs(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error)
 }
 
 type CastListParams struct {

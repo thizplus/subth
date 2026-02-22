@@ -34,6 +34,9 @@ type TagRepository interface {
 	GetTranslations(ctx context.Context, tagID uuid.UUID) ([]models.TagTranslation, error)
 	GetTranslation(ctx context.Context, tagID uuid.UUID, lang string) (*models.TagTranslation, error)
 	DeleteTranslationsByTagID(ctx context.Context, tagID uuid.UUID) error
+
+	// Bulk lookup
+	GetNamesByIDs(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error)
 }
 
 type TagListParams struct {

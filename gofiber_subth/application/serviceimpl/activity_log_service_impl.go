@@ -16,17 +16,26 @@ import (
 type activityLogServiceImpl struct {
 	repo      repositories.ActivityLogRepository
 	videoRepo repositories.VideoRepository
+	castRepo  repositories.CastRepository
+	tagRepo   repositories.TagRepository
+	makerRepo repositories.MakerRepository
 	queue     *redis.ActivityQueue
 }
 
 func NewActivityLogService(
 	repo repositories.ActivityLogRepository,
 	videoRepo repositories.VideoRepository,
+	castRepo repositories.CastRepository,
+	tagRepo repositories.TagRepository,
+	makerRepo repositories.MakerRepository,
 	queue *redis.ActivityQueue,
 ) services.ActivityLogService {
 	return &activityLogServiceImpl{
 		repo:      repo,
 		videoRepo: videoRepo,
+		castRepo:  castRepo,
+		tagRepo:   tagRepo,
+		makerRepo: makerRepo,
 		queue:     queue,
 	}
 }
@@ -103,6 +112,35 @@ func (s *activityLogServiceImpl) GetPopularPages(ctx context.Context, pageType s
 			PageID:    r.PageID.String(),
 			PageType:  r.PageType,
 			ViewCount: r.ViewCount,
+		}
+	}
+
+	// Collect IDs by page type
+	ids := make([]uuid.UUID, len(results))
+	for i, r := range results {
+		ids[i] = r.PageID
+	}
+
+	// Enrich titles based on page type
+	var titles map[uuid.UUID]string
+	switch pageType {
+	case models.PageTypeVideo:
+		titles, err = s.videoRepo.GetTitlesByIDs(ctx, ids)
+	case models.PageTypeCast:
+		titles, err = s.castRepo.GetNamesByIDs(ctx, ids)
+	case models.PageTypeTag:
+		titles, err = s.tagRepo.GetNamesByIDs(ctx, ids)
+	case models.PageTypeMaker:
+		titles, err = s.makerRepo.GetNamesByIDs(ctx, ids)
+	}
+
+	if err != nil {
+		logger.WarnContext(ctx, "Failed to get titles for popular pages", "error", err, "pageType", pageType)
+	} else if titles != nil {
+		for i, r := range results {
+			if title, ok := titles[r.PageID]; ok {
+				responses[i].PageTitle = title
+			}
 		}
 	}
 

@@ -89,6 +89,7 @@ export interface ActivityLogParams {
 export interface PopularPage {
   pageId: string
   pageType: string
+  pageTitle?: string
   viewCount: number
 }
 

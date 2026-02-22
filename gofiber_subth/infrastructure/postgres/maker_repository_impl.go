@@ -129,3 +129,29 @@ func (r *makerRepositoryImpl) GetOrCreateByName(ctx context.Context, name string
 	}
 	return &maker, nil
 }
+
+// GetNamesByIDs returns a map of maker IDs to their names
+func (r *makerRepositoryImpl) GetNamesByIDs(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error) {
+	if len(ids) == 0 {
+		return make(map[uuid.UUID]string), nil
+	}
+
+	var makers []struct {
+		ID   uuid.UUID
+		Name string
+	}
+	err := r.db.WithContext(ctx).
+		Model(&models.Maker{}).
+		Select("id, name").
+		Where("id IN ?", ids).
+		Scan(&makers).Error
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[uuid.UUID]string)
+	for _, m := range makers {
+		result[m.ID] = m.Name
+	}
+	return result, nil
+}

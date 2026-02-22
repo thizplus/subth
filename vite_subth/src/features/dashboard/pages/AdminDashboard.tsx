@@ -106,20 +106,25 @@ interface PopularRowProps {
 }
 
 function PopularRow({ index, item, linkPrefix }: PopularRowProps) {
+  const displayTitle = item.pageTitle || item.pageId.slice(0, 12) + '...'
+
   return (
     <div className="flex items-center gap-2 text-sm py-1">
       <span className="text-muted-foreground w-4 text-xs">{index + 1}.</span>
       {linkPrefix ? (
         <Link
           to={`${linkPrefix}/${item.pageId}`}
-          className="truncate hover:underline font-mono text-xs"
+          className="truncate hover:underline text-xs flex-1 min-w-0"
+          title={item.pageTitle || item.pageId}
         >
-          {item.pageId.length > 12 ? `${item.pageId.slice(0, 12)}...` : item.pageId}
+          {displayTitle}
         </Link>
       ) : (
-        <span className="truncate font-mono text-xs">{item.pageId.slice(0, 12)}...</span>
+        <span className="truncate text-xs flex-1 min-w-0" title={item.pageTitle || item.pageId}>
+          {displayTitle}
+        </span>
       )}
-      <Badge variant="secondary" className="ml-auto text-xs tabular-nums">
+      <Badge variant="secondary" className="ml-auto text-xs tabular-nums shrink-0">
         {item.viewCount.toLocaleString()}
       </Badge>
     </div>

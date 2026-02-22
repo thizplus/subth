@@ -28,6 +28,9 @@ type MakerRepository interface {
 
 	// Bulk
 	GetOrCreateByName(ctx context.Context, name string) (*models.Maker, error)
+
+	// Bulk lookup
+	GetNamesByIDs(ctx context.Context, ids []uuid.UUID) (map[uuid.UUID]string, error)
 }
 
 type MakerListParams struct {

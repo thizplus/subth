@@ -46,6 +46,7 @@ type TagListParams struct {
 	Search string
 	SortBy string
 	Order  string
+	IDs    []string // Batch fetch by IDs
 }
 
 // AutoTagLabel Repository

@@ -3,6 +3,7 @@ package serviceimpl
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gosimple/slug"
@@ -187,6 +188,23 @@ func (s *CastServiceImpl) ListCasts(ctx context.Context, req *dto.CastListReques
 		Search: req.Search,
 		SortBy: req.SortBy,
 		Order:  req.Order,
+	}
+
+	// Parse IDs if provided (batch fetch mode)
+	if req.IDs != "" {
+		ids := strings.Split(req.IDs, ",")
+		params.IDs = make([]string, 0, len(ids))
+		for _, id := range ids {
+			id = strings.TrimSpace(id)
+			if id != "" {
+				params.IDs = append(params.IDs, id)
+			}
+		}
+		// In batch mode, increase limit to cover all IDs
+		if len(params.IDs) > 0 {
+			params.Limit = len(params.IDs)
+			params.Offset = 0
+		}
 	}
 
 	casts, total, err := s.castRepo.List(ctx, params)

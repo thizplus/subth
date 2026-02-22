@@ -15,6 +15,7 @@ type TagListRequest struct {
 	Search string `query:"search"`
 	SortBy string `query:"sort_by" validate:"omitempty,oneof=name video_count created_at"`
 	Order  string `query:"order" validate:"omitempty,oneof=asc desc"`
+	IDs    string `query:"ids"` // Comma-separated IDs for batch fetch
 }
 
 type CreateTagRequest struct {

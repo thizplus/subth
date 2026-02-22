@@ -65,7 +65,10 @@ func (r *tagRepositoryImpl) List(ctx context.Context, params repositories.TagLis
 
 	query := r.db.WithContext(ctx).Model(&models.Tag{})
 
-	if params.Search != "" {
+	// Filter by IDs (batch fetch mode) - takes priority over search
+	if len(params.IDs) > 0 {
+		query = query.Where("id IN ?", params.IDs)
+	} else if params.Search != "" {
 		if params.Lang != "" && params.Lang != "en" {
 			// Search in translations
 			subQuery := r.db.Model(&models.TagTranslation{}).

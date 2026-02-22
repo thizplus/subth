@@ -357,10 +357,14 @@ func (s *VideoServiceImpl) UpdateVideo(ctx context.Context, id uuid.UUID, req *d
 	if req.Thumbnail != nil {
 		video.Thumbnail = *req.Thumbnail
 	}
+	// ถ้าใส่ Code มาตรงๆ ให้ใช้ค่านั้น
+	if req.Code != nil {
+		video.Code = *req.Code
+	}
 	if req.EmbedURL != nil {
 		video.EmbedURL = *req.EmbedURL
-		// Extract code from EmbedURL
-		if strings.Contains(*req.EmbedURL, "/embed/") {
+		// Extract code from EmbedURL เฉพาะเมื่อไม่ได้ใส่ Code มาตรงๆ
+		if req.Code == nil && strings.Contains(*req.EmbedURL, "/embed/") {
 			parts := strings.Split(*req.EmbedURL, "/embed/")
 			if len(parts) > 1 {
 				video.Code = parts[1]
@@ -801,6 +805,7 @@ func (s *VideoServiceImpl) toVideoResponse(ctx context.Context, video *models.Vi
 
 	return &dto.VideoResponse{
 		ID:           video.ID,
+		Code:         video.Code,
 		Title:        title,
 		Translations: translations,
 		Thumbnail:    video.Thumbnail,

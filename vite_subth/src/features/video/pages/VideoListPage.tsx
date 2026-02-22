@@ -122,6 +122,7 @@ export function VideoListPage() {
   const [previewImage, setPreviewImage] = useState<string | null>(null)
 
   // Form state
+  const [formCode, setFormCode] = useState('')
   const [formTitleEn, setFormTitleEn] = useState('')
   const [formTitleTh, setFormTitleTh] = useState('')
   const [formTitleJa, setFormTitleJa] = useState('')
@@ -171,6 +172,7 @@ export function VideoListPage() {
   }
 
   const resetForm = () => {
+    setFormCode('')
     setFormTitleEn('')
     setFormTitleTh('')
     setFormTitleJa('')
@@ -230,6 +232,7 @@ export function VideoListPage() {
       await updateVideo.mutateAsync({
         id: editingId,
         payload: {
+          code: formCode.trim() || undefined,
           titles,
           thumbnail: formThumbnail.trim() || undefined,
           embed_url: formEmbedUrl.trim() || undefined,
@@ -265,6 +268,7 @@ export function VideoListPage() {
 
   // Load editing data when editingVideo changes
   if (editingVideo && editingId && formTitleEn === '') {
+    setFormCode(editingVideo.code || '')
     setFormTitleEn(editingVideo.translations?.en || editingVideo.title || '')
     setFormTitleTh(editingVideo.translations?.th || '')
     setFormTitleJa(editingVideo.translations?.ja || '')
@@ -373,45 +377,58 @@ export function VideoListPage() {
         </div>
       </div>
 
-      {/* Embed URL & Maker */}
+      {/* Code & Embed URL */}
       <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Code (suekk)</Label>
+          <Input
+            value={formCode}
+            onChange={(e) => setFormCode(e.target.value)}
+            placeholder="เช่น dbprhr2b"
+          />
+          <p className="text-xs text-muted-foreground">
+            ถ้าไม่ใส่จะ extract จาก Embed URL อัตโนมัติ
+          </p>
+        </div>
         <div className="space-y-2">
           <Label>Embed URL</Label>
           <Input
             value={formEmbedUrl}
             onChange={(e) => setFormEmbedUrl(e.target.value)}
-            placeholder="https://..."
+            placeholder="https://player.suekk.com/embed/..."
           />
         </div>
-        <div className="space-y-2">
-          <Label>Maker</Label>
-          <div className="relative">
-            <Input
-              value={formMaker}
-              onChange={(e) => {
-                setFormMaker(e.target.value)
-                setMakerSearch(e.target.value)
-              }}
-              placeholder="ชื่อ Maker"
-            />
-            {makerSearch && makerResults && makerResults.length > 0 && (
-              <div className="absolute z-50 mt-1 w-full border rounded-md max-h-32 overflow-y-auto bg-popover shadow-lg">
-                {makerResults.slice(0, 5).map((maker) => (
-                  <button
-                    key={maker.id}
-                    type="button"
-                    className="w-full text-left px-3 py-2 hover:bg-accent text-sm transition-colors"
-                    onClick={() => {
-                      setFormMaker(maker.name)
-                      setMakerSearch('')
-                    }}
-                  >
-                    {maker.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+      </div>
+
+      {/* Maker */}
+      <div className="space-y-2">
+        <Label>Maker</Label>
+        <div className="relative">
+          <Input
+            value={formMaker}
+            onChange={(e) => {
+              setFormMaker(e.target.value)
+              setMakerSearch(e.target.value)
+            }}
+            placeholder="ชื่อ Maker"
+          />
+          {makerSearch && makerResults && makerResults.length > 0 && (
+            <div className="absolute z-50 mt-1 w-full border rounded-md max-h-32 overflow-y-auto bg-popover shadow-lg">
+              {makerResults.slice(0, 5).map((maker) => (
+                <button
+                  key={maker.id}
+                  type="button"
+                  className="w-full text-left px-3 py-2 hover:bg-accent text-sm transition-colors"
+                  onClick={() => {
+                    setFormMaker(maker.name)
+                    setMakerSearch('')
+                  }}
+                >
+                  {maker.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -644,6 +661,11 @@ export function VideoListPage() {
                   </TableCell>
                   <TableCell className="p-2 overflow-hidden">
                     <div className="space-y-0.5 min-w-0">
+                      {item.code && (
+                        <code className="text-xs font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                          {item.code}
+                        </code>
+                      )}
                       <p className="font-medium text-sm truncate" title={item.title}>
                         {item.title}
                       </p>

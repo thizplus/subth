@@ -35,6 +35,7 @@ type CreateVideoRequest struct {
 }
 
 type UpdateVideoRequest struct {
+	Code        *string           `json:"code"`        // Code จาก suekk (ถ้าไม่ใส่จะ extract จาก embed_url)
 	Thumbnail   *string           `json:"thumbnail"`
 	EmbedURL    *string           `json:"embed_url"`
 	Categories  []string          `json:"categories"` // Multi-category: ["onlyfans", "homemade"]
@@ -69,6 +70,7 @@ type BatchCreateVideoResponse struct {
 
 type VideoResponse struct {
 	ID           uuid.UUID           `json:"id"`
+	Code         string              `json:"code,omitempty"` // Code จาก suekk
 	Title        string              `json:"title"`
 	Translations map[string]string   `json:"translations,omitempty"`
 	Thumbnail    string              `json:"thumbnail,omitempty"`

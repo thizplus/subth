@@ -6,6 +6,7 @@ import type { Category } from '@/features/category'
 
 export interface Video {
   id: string
+  code?: string // Code จาก suekk
   title: string
   titleTh?: string // ชื่อไทย (ถ้ามี)
   titleEn?: string // ชื่อ EN (ถ้ามี)
@@ -18,6 +19,7 @@ export interface Video {
 
 export interface VideoDetail {
   id: string
+  code?: string // Code จาก suekk
   title: string
   thumbnail?: string
   categories?: Category[] // Multi-category support
@@ -59,6 +61,7 @@ export interface CreateVideoPayload {
 }
 
 export interface UpdateVideoPayload {
+  code?: string // Code จาก suekk (ถ้าไม่ใส่จะ extract จาก embed_url)
   thumbnail?: string
   embed_url?: string
   categories?: string[] // Category slugs (multi-category)

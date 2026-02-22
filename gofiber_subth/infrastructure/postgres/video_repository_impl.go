@@ -81,7 +81,7 @@ func (r *videoRepositoryImpl) List(ctx context.Context, params repositories.Vide
 		query = query.Where("auto_tags && ?", pq.Array(params.AutoTags))
 	}
 
-	// Search in translations
+	// Search in translations หรือ code
 	if params.Search != "" {
 		subQuery := r.db.Model(&models.VideoTranslation{}).
 			Select("video_id").
@@ -89,7 +89,8 @@ func (r *videoRepositoryImpl) List(ctx context.Context, params repositories.Vide
 		if params.Lang != "" {
 			subQuery = subQuery.Where("lang = ?", params.Lang)
 		}
-		query = query.Where("id IN (?)", subQuery)
+		// ค้นหาจาก title หรือ code
+		query = query.Where("id IN (?) OR code ILIKE ?", subQuery, "%"+params.Search+"%")
 	}
 
 	// Filter videos without Thai title
@@ -205,10 +206,10 @@ func (r *videoRepositoryImpl) SearchByTitle(ctx context.Context, query string, l
 		Where("casts.name ILIKE ? OR casts.slug ILIKE ? OR cast_translations.name ILIKE ?",
 			"%"+query+"%", "%"+query+"%", "%"+query+"%")
 
-	// รวม query ทั้งสอง
+	// รวม query ทั้งสาม: title, cast, code
 	q := r.db.WithContext(ctx).
 		Model(&models.Video{}).
-		Where("id IN (?) OR id IN (?)", titleSubQuery, castSubQuery)
+		Where("id IN (?) OR id IN (?) OR code ILIKE ?", titleSubQuery, castSubQuery, "%"+query+"%")
 
 	q.Count(&total)
 

@@ -11,6 +11,7 @@ import (
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 
 	"gofiber-template/domain/ports"
 )
@@ -97,6 +98,51 @@ func (r *R2Adapter) Delete(ctx context.Context, path string) error {
 	}
 
 	return nil
+}
+
+// DeleteByPrefix implements ports.Storage - ลบไฟล์ทั้งหมดที่ขึ้นต้นด้วย prefix
+func (r *R2Adapter) DeleteByPrefix(ctx context.Context, prefix string) (int, error) {
+	prefix = strings.TrimPrefix(prefix, "/")
+
+	// List all objects with prefix
+	listOutput, err := r.client.ListObjectsV2(ctx, &s3.ListObjectsV2Input{
+		Bucket: aws.String(r.bucket),
+		Prefix: aws.String(prefix),
+	})
+	if err != nil {
+		return 0, fmt.Errorf("R2 list failed: %w", err)
+	}
+
+	if len(listOutput.Contents) == 0 {
+		return 0, nil
+	}
+
+	// Build delete objects input
+	objects := make([]types.ObjectIdentifier, 0, len(listOutput.Contents))
+	for _, obj := range listOutput.Contents {
+		objects = append(objects, types.ObjectIdentifier{
+			Key: obj.Key,
+		})
+	}
+
+	// Delete objects
+	deleteOutput, err := r.client.DeleteObjects(ctx, &s3.DeleteObjectsInput{
+		Bucket: aws.String(r.bucket),
+		Delete: &types.Delete{
+			Objects: objects,
+			Quiet:   aws.Bool(true),
+		},
+	})
+	if err != nil {
+		return 0, fmt.Errorf("R2 delete objects failed: %w", err)
+	}
+
+	deletedCount := len(objects)
+	if deleteOutput.Errors != nil {
+		deletedCount -= len(deleteOutput.Errors)
+	}
+
+	return deletedCount, nil
 }
 
 // GetURL implements ports.Storage

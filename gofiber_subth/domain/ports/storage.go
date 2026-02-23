@@ -16,6 +16,10 @@ type Storage interface {
 	// Delete ลบไฟล์จาก storage
 	Delete(ctx context.Context, path string) error
 
+	// DeleteByPrefix ลบไฟล์ทั้งหมดที่ขึ้นต้นด้วย prefix
+	// เช่น prefix "articles/abc123/" จะลบทุกไฟล์ใน folder นั้น
+	DeleteByPrefix(ctx context.Context, prefix string) (int, error)
+
 	// GetURL สร้าง public URL จาก path
 	GetURL(path string) string
 

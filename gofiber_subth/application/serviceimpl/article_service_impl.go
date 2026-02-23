@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -11,6 +12,7 @@ import (
 
 	"gofiber-template/domain/dto"
 	"gofiber-template/domain/models"
+	"gofiber-template/domain/ports"
 	"gofiber-template/domain/repositories"
 	"gofiber-template/domain/services"
 	"gofiber-template/pkg/logger"
@@ -19,15 +21,18 @@ import (
 type ArticleServiceImpl struct {
 	articleRepo repositories.ArticleRepository
 	videoRepo   repositories.VideoRepository
+	storage     ports.Storage
 }
 
 func NewArticleService(
 	articleRepo repositories.ArticleRepository,
 	videoRepo repositories.VideoRepository,
+	storage ports.Storage,
 ) services.ArticleService {
 	return &ArticleServiceImpl{
 		articleRepo: articleRepo,
 		videoRepo:   videoRepo,
+		storage:     storage,
 	}
 }
 
@@ -130,7 +135,7 @@ func (s *ArticleServiceImpl) GetArticleBySlug(ctx context.Context, slug string) 
 }
 
 func (s *ArticleServiceImpl) DeleteArticle(ctx context.Context, id uuid.UUID) error {
-	_, err := s.articleRepo.GetByID(ctx, id)
+	article, err := s.articleRepo.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.New("article not found")
@@ -139,9 +144,23 @@ func (s *ArticleServiceImpl) DeleteArticle(ctx context.Context, id uuid.UUID) er
 		return err
 	}
 
+	// Delete article from database first
 	if err := s.articleRepo.Delete(ctx, id); err != nil {
 		logger.ErrorContext(ctx, "Failed to delete article", "article_id", id, "error", err)
 		return err
+	}
+
+	// Delete R2 files (articles/{slug}/)
+	// ใช้ slug เป็น folder name เพราะ seo_worker เก็บที่ articles/{videoCode}/
+	if s.storage != nil && article.Slug != "" {
+		prefix := fmt.Sprintf("articles/%s/", article.Slug)
+		deletedCount, err := s.storage.DeleteByPrefix(ctx, prefix)
+		if err != nil {
+			// Log warning แต่ไม่ fail เพราะ DB ลบไปแล้ว
+			logger.WarnContext(ctx, "Failed to delete R2 files", "article_id", id, "prefix", prefix, "error", err)
+		} else if deletedCount > 0 {
+			logger.InfoContext(ctx, "R2 files deleted", "article_id", id, "prefix", prefix, "count", deletedCount)
+		}
 	}
 
 	logger.InfoContext(ctx, "Article deleted", "article_id", id)

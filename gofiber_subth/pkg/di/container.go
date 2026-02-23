@@ -317,8 +317,8 @@ func (c *Container) initServices() error {
 	// Community Chat Service
 	c.CommunityChatService = serviceimpl.NewCommunityChatService(c.ChatRepository, c.VideoRepository)
 
-	// SEO Article Service
-	c.ArticleService = serviceimpl.NewArticleService(c.ArticleRepository, c.VideoRepository)
+	// SEO Article Service (with Storage for R2 cleanup on delete)
+	c.ArticleService = serviceimpl.NewArticleService(c.ArticleRepository, c.VideoRepository, c.Storage)
 
 	// Chat Hub (WebSocket)
 	c.ChatHub = websocket.NewChatHub(c.CommunityChatService)

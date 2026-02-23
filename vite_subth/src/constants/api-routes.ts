@@ -95,3 +95,12 @@ export const COMMUNITY_CHAT_ROUTES = {
   ONLINE_USERS: '/api/v1/community-chat/admin/online-users',
   ONLINE_COUNT: '/api/v1/community-chat/online',
 }
+
+export const ARTICLE_ROUTES = {
+  LIST: '/api/v1/articles',
+  BY_ID: (id: string) => `/api/v1/articles/${id}`,
+  STATS: '/api/v1/articles/stats',
+  STATUS: (id: string) => `/api/v1/articles/${id}/status`,
+  BULK_SCHEDULE: '/api/v1/articles/bulk-schedule',
+  BY_SLUG: (slug: string) => `/api/v1/articles/slug/${slug}`,
+}

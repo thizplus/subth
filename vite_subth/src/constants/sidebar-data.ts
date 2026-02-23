@@ -12,6 +12,7 @@ import {
   Activity,
   MessageCircle,
   Radio,
+  FileText,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -41,6 +42,11 @@ export const NAV_MAIN: NavItem[] = [
     title: 'Reels',
     url: '/reels',
     icon: Film,
+  },
+  {
+    title: 'บทความ',
+    url: '/articles',
+    icon: FileText,
   },
   {
     title: 'ค่าย',

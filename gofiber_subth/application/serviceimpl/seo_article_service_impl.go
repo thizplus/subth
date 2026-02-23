@@ -1,0 +1,390 @@
+package serviceimpl
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+
+	"gofiber-template/domain/dto"
+	"gofiber-template/domain/models"
+	"gofiber-template/domain/repositories"
+	"gofiber-template/domain/services"
+	"gofiber-template/pkg/logger"
+)
+
+type SEOArticleServiceImpl struct {
+	articleRepo repositories.SEOArticleRepository
+	videoRepo   repositories.VideoRepository
+}
+
+func NewSEOArticleService(
+	articleRepo repositories.SEOArticleRepository,
+	videoRepo repositories.VideoRepository,
+) services.SEOArticleService {
+	return &SEOArticleServiceImpl{
+		articleRepo: articleRepo,
+		videoRepo:   videoRepo,
+	}
+}
+
+func (s *SEOArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestArticleRequest, content []byte) (*dto.SEOArticleDetailResponse, error) {
+	videoID, err := uuid.Parse(req.VideoID)
+	if err != nil {
+		logger.WarnContext(ctx, "Invalid video ID", "video_id", req.VideoID, "error", err)
+		return nil, errors.New("invalid video_id")
+	}
+
+	// ตรวจสอบว่า video มีอยู่จริง
+	video, err := s.videoRepo.GetByID(ctx, videoID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			logger.WarnContext(ctx, "Video not found", "video_id", videoID)
+			return nil, errors.New("video not found")
+		}
+		logger.ErrorContext(ctx, "Failed to get video", "video_id", videoID, "error", err)
+		return nil, err
+	}
+
+	// ตรวจสอบว่ามี article สำหรับ video นี้แล้วหรือไม่
+	existing, _ := s.articleRepo.GetByVideoID(ctx, videoID)
+	if existing != nil {
+		// Update existing article
+		existing.Title = req.Title
+		existing.MetaTitle = req.MetaTitle
+		existing.MetaDescription = req.MetaDescription
+		existing.Slug = req.Slug
+		existing.Content = json.RawMessage(content)
+		existing.QualityScore = req.QualityScore
+		existing.ReadingTime = req.ReadingTime
+
+		if err := s.articleRepo.Update(ctx, existing); err != nil {
+			logger.ErrorContext(ctx, "Failed to update article", "article_id", existing.ID, "error", err)
+			return nil, err
+		}
+
+		logger.InfoContext(ctx, "Article updated", "article_id", existing.ID, "video_id", videoID)
+		return s.mapToDetailResponse(existing, video), nil
+	}
+
+	// Create new article
+	article := &models.SEOArticle{
+		VideoID:         videoID,
+		Title:           req.Title,
+		MetaTitle:       req.MetaTitle,
+		MetaDescription: req.MetaDescription,
+		Slug:            req.Slug,
+		Content:         json.RawMessage(content),
+		Status:          models.SEOStatusDraft,
+		IndexingStatus:  models.IndexingPending,
+		QualityScore:    req.QualityScore,
+		ReadingTime:     req.ReadingTime,
+	}
+
+	if err := s.articleRepo.Create(ctx, article); err != nil {
+		logger.ErrorContext(ctx, "Failed to create article", "video_id", videoID, "error", err)
+		return nil, err
+	}
+
+	logger.InfoContext(ctx, "Article created", "article_id", article.ID, "video_id", videoID)
+	return s.mapToDetailResponse(article, video), nil
+}
+
+func (s *SEOArticleServiceImpl) GetArticle(ctx context.Context, id uuid.UUID) (*dto.SEOArticleDetailResponse, error) {
+	article, err := s.articleRepo.GetByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("article not found")
+		}
+		logger.ErrorContext(ctx, "Failed to get article", "article_id", id, "error", err)
+		return nil, err
+	}
+
+	video, _ := s.videoRepo.GetByID(ctx, article.VideoID)
+	return s.mapToDetailResponse(article, video), nil
+}
+
+func (s *SEOArticleServiceImpl) GetArticleBySlug(ctx context.Context, slug string) (*dto.SEOArticleDetailResponse, error) {
+	article, err := s.articleRepo.GetBySlug(ctx, slug)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("article not found")
+		}
+		logger.ErrorContext(ctx, "Failed to get article by slug", "slug", slug, "error", err)
+		return nil, err
+	}
+
+	video, _ := s.videoRepo.GetByID(ctx, article.VideoID)
+	return s.mapToDetailResponse(article, video), nil
+}
+
+func (s *SEOArticleServiceImpl) DeleteArticle(ctx context.Context, id uuid.UUID) error {
+	_, err := s.articleRepo.GetByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("article not found")
+		}
+		logger.ErrorContext(ctx, "Failed to get article for delete", "article_id", id, "error", err)
+		return err
+	}
+
+	if err := s.articleRepo.Delete(ctx, id); err != nil {
+		logger.ErrorContext(ctx, "Failed to delete article", "article_id", id, "error", err)
+		return err
+	}
+
+	logger.InfoContext(ctx, "Article deleted", "article_id", id)
+	return nil
+}
+
+func (s *SEOArticleServiceImpl) ListArticles(ctx context.Context, params *dto.SEOArticleListParams) ([]dto.SEOArticleListItemResponse, int64, error) {
+	params.SetDefaults()
+
+	repoParams := repositories.SEOArticleListParams{
+		Limit:          params.Limit,
+		Offset:         (params.Page - 1) * params.Limit,
+		Status:         params.Status,
+		IndexingStatus: params.IndexingStatus,
+		Search:         params.Search,
+		SortBy:         params.SortBy,
+		Order:          params.Order,
+	}
+
+	articles, total, err := s.articleRepo.List(ctx, repoParams)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list articles", "error", err)
+		return nil, 0, err
+	}
+
+	// ดึง video IDs เพื่อ get video codes
+	videoIDs := make([]uuid.UUID, 0, len(articles))
+	for _, a := range articles {
+		videoIDs = append(videoIDs, a.VideoID)
+	}
+
+	videoMap := make(map[uuid.UUID]*models.Video)
+	for _, vid := range videoIDs {
+		if v, err := s.videoRepo.GetByID(ctx, vid); err == nil {
+			videoMap[vid] = v
+		}
+	}
+
+	result := make([]dto.SEOArticleListItemResponse, 0, len(articles))
+	for _, a := range articles {
+		item := dto.SEOArticleListItemResponse{
+			ID:             a.ID.String(),
+			VideoID:        a.VideoID.String(),
+			Slug:           a.Slug,
+			Title:          a.Title,
+			Status:         string(a.Status),
+			IndexingStatus: string(a.IndexingStatus),
+			QualityScore:   a.QualityScore,
+			ReadingTime:    a.ReadingTime,
+			CreatedAt:      a.CreatedAt.Format(time.RFC3339),
+		}
+
+		if video, ok := videoMap[a.VideoID]; ok && video != nil {
+			item.VideoCode = video.Code
+			item.VideoThumbnail = video.Thumbnail
+		}
+
+		if a.ScheduledAt != nil {
+			t := a.ScheduledAt.Format(time.RFC3339)
+			item.ScheduledAt = &t
+		}
+		if a.PublishedAt != nil {
+			t := a.PublishedAt.Format(time.RFC3339)
+			item.PublishedAt = &t
+		}
+
+		result = append(result, item)
+	}
+
+	return result, total, nil
+}
+
+func (s *SEOArticleServiceImpl) GetStats(ctx context.Context) (*dto.SEOArticleStatsResponse, error) {
+	stats, err := s.articleRepo.GetStats(ctx)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to get article stats", "error", err)
+		return nil, err
+	}
+
+	return &dto.SEOArticleStatsResponse{
+		TotalArticles:  int(stats.TotalArticles),
+		DraftCount:     int(stats.DraftCount),
+		ScheduledCount: int(stats.ScheduledCount),
+		PublishedCount: int(stats.PublishedCount),
+		IndexedCount:   int(stats.IndexedCount),
+		PendingIndex:   int(stats.PendingIndex),
+		FailedIndex:    int(stats.FailedIndex),
+	}, nil
+}
+
+func (s *SEOArticleServiceImpl) UpdateStatus(ctx context.Context, id uuid.UUID, req *dto.UpdateSEOArticleStatusRequest) error {
+	article, err := s.articleRepo.GetByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("article not found")
+		}
+		logger.ErrorContext(ctx, "Failed to get article for status update", "article_id", id, "error", err)
+		return err
+	}
+
+	status := models.SEOArticleStatus(req.Status)
+
+	// Validate status transition
+	switch status {
+	case models.SEOStatusScheduled:
+		if req.ScheduledAt == nil {
+			return errors.New("scheduledAt is required for scheduled status")
+		}
+		article.ScheduledAt = req.ScheduledAt
+	case models.SEOStatusPublished:
+		now := time.Now()
+		article.PublishedAt = &now
+	}
+
+	article.Status = status
+
+	if err := s.articleRepo.Update(ctx, article); err != nil {
+		logger.ErrorContext(ctx, "Failed to update article status", "article_id", id, "error", err)
+		return err
+	}
+
+	logger.InfoContext(ctx, "Article status updated", "article_id", id, "status", status)
+	return nil
+}
+
+func (s *SEOArticleServiceImpl) BulkSchedule(ctx context.Context, req *dto.BulkScheduleRequest) error {
+	ids := make([]uuid.UUID, 0, len(req.ArticleIDs))
+	scheduledTimes := make([]interface{}, 0, len(req.ArticleIDs))
+
+	baseTime := req.ScheduledAt
+	for i, idStr := range req.ArticleIDs {
+		id, err := uuid.Parse(idStr)
+		if err != nil {
+			logger.WarnContext(ctx, "Invalid article ID in bulk schedule", "id", idStr, "error", err)
+			continue
+		}
+		ids = append(ids, id)
+
+		// Calculate scheduled time with interval
+		scheduledTime := baseTime.Add(time.Duration(i*req.Interval) * time.Minute)
+		scheduledTimes = append(scheduledTimes, scheduledTime)
+	}
+
+	if len(ids) == 0 {
+		return errors.New("no valid article IDs provided")
+	}
+
+	if err := s.articleRepo.BulkSchedule(ctx, ids, scheduledTimes); err != nil {
+		logger.ErrorContext(ctx, "Failed to bulk schedule articles", "count", len(ids), "error", err)
+		return err
+	}
+
+	logger.InfoContext(ctx, "Articles bulk scheduled", "count", len(ids), "start_time", baseTime)
+	return nil
+}
+
+func (s *SEOArticleServiceImpl) PublishScheduledArticles(ctx context.Context) (int, error) {
+	articles, err := s.articleRepo.GetScheduledToPublish(ctx)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to get scheduled articles", "error", err)
+		return 0, err
+	}
+
+	count := 0
+	for _, article := range articles {
+		if err := s.articleRepo.UpdateStatus(ctx, article.ID, models.SEOStatusPublished); err != nil {
+			logger.ErrorContext(ctx, "Failed to publish scheduled article", "article_id", article.ID, "error", err)
+			continue
+		}
+		count++
+		logger.InfoContext(ctx, "Scheduled article published", "article_id", article.ID)
+	}
+
+	return count, nil
+}
+
+func (s *SEOArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug string) (*dto.PublicArticleResponse, error) {
+	article, err := s.articleRepo.GetPublishedBySlug(ctx, slug)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("article not found")
+		}
+		logger.ErrorContext(ctx, "Failed to get published article", "slug", slug, "error", err)
+		return nil, err
+	}
+
+	video, _ := s.videoRepo.GetByID(ctx, article.VideoID)
+
+	var content map[string]interface{}
+	if err := json.Unmarshal(article.Content, &content); err != nil {
+		logger.ErrorContext(ctx, "Failed to unmarshal article content", "article_id", article.ID, "error", err)
+		return nil, err
+	}
+
+	response := &dto.PublicArticleResponse{
+		Slug:            article.Slug,
+		Title:           article.Title,
+		MetaTitle:       article.MetaTitle,
+		MetaDescription: article.MetaDescription,
+		Content:         content,
+	}
+
+	if video != nil {
+		response.VideoCode = video.Code
+	}
+	if article.PublishedAt != nil {
+		response.PublishedAt = article.PublishedAt.Format(time.RFC3339)
+	}
+
+	return response, nil
+}
+
+// Helper to map article to detail response
+func (s *SEOArticleServiceImpl) mapToDetailResponse(article *models.SEOArticle, video *models.Video) *dto.SEOArticleDetailResponse {
+	var content map[string]interface{}
+	if article.Content != nil {
+		json.Unmarshal(article.Content, &content)
+	}
+
+	resp := &dto.SEOArticleDetailResponse{
+		ID:              article.ID.String(),
+		VideoID:         article.VideoID.String(),
+		Slug:            article.Slug,
+		Title:           article.Title,
+		MetaTitle:       article.MetaTitle,
+		MetaDescription: article.MetaDescription,
+		Content:         content,
+		Status:          string(article.Status),
+		IndexingStatus:  string(article.IndexingStatus),
+		QualityScore:    article.QualityScore,
+		ReadingTime:     article.ReadingTime,
+		CreatedAt:       article.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:       article.UpdatedAt.Format(time.RFC3339),
+	}
+
+	if video != nil {
+		resp.VideoCode = video.Code
+	}
+
+	if article.ScheduledAt != nil {
+		t := article.ScheduledAt.Format(time.RFC3339)
+		resp.ScheduledAt = &t
+	}
+	if article.PublishedAt != nil {
+		t := article.PublishedAt.Format(time.RFC3339)
+		resp.PublishedAt = &t
+	}
+	if article.IndexedAt != nil {
+		t := article.IndexedAt.Format(time.RFC3339)
+		resp.IndexedAt = &t
+	}
+
+	return resp
+}

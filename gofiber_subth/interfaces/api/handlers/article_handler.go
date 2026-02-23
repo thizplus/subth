@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"io"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 
@@ -27,6 +25,9 @@ func NewArticleHandler(articleService services.ArticleService) *ArticleHandler {
 func (h *ArticleHandler) IngestArticle(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
+	// Get raw body first (before BodyParser consumes it)
+	rawBody := c.Body()
+
 	var req dto.IngestArticleRequest
 	if err := c.BodyParser(&req); err != nil {
 		logger.WarnContext(ctx, "Invalid request body", "error", err)
@@ -37,13 +38,6 @@ func (h *ArticleHandler) IngestArticle(c *fiber.Ctx) error {
 		errors := utils.GetValidationErrors(err)
 		logger.WarnContext(ctx, "Validation failed", "errors", errors)
 		return utils.ValidationErrorResponse(c, errors)
-	}
-
-	// Get raw body for content storage
-	rawBody, err := io.ReadAll(c.Request().BodyStream())
-	if err != nil {
-		// Body already read by BodyParser, use request body
-		rawBody = c.Body()
 	}
 
 	article, err := h.articleService.IngestArticle(ctx, &req, rawBody)

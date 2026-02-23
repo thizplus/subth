@@ -144,16 +144,23 @@ func (s *ArticleServiceImpl) DeleteArticle(ctx context.Context, id uuid.UUID) er
 		return err
 	}
 
+	// Get video to get the videoCode (used for R2 path)
+	video, err := s.videoRepo.GetByID(ctx, article.VideoID)
+	if err != nil {
+		logger.WarnContext(ctx, "Failed to get video for R2 cleanup", "video_id", article.VideoID, "error", err)
+		// Continue with deletion even if video not found
+	}
+
 	// Delete article from database first
 	if err := s.articleRepo.Delete(ctx, id); err != nil {
 		logger.ErrorContext(ctx, "Failed to delete article", "article_id", id, "error", err)
 		return err
 	}
 
-	// Delete R2 files (articles/{slug}/)
-	// ใช้ slug เป็น folder name เพราะ seo_worker เก็บที่ articles/{videoCode}/
-	if s.storage != nil && article.Slug != "" {
-		prefix := fmt.Sprintf("articles/%s/", article.Slug)
+	// Delete R2 files (articles/{videoCode}/)
+	// SEO Worker เก็บที่ articles/{videoCode}/ ไม่ใช่ {slug}
+	if s.storage != nil && video != nil && video.Code != "" {
+		prefix := fmt.Sprintf("articles/%s/", video.Code)
 		deletedCount, err := s.storage.DeleteByPrefix(ctx, prefix)
 		if err != nil {
 			// Log warning แต่ไม่ fail เพราะ DB ลบไปแล้ว

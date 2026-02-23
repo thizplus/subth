@@ -55,4 +55,8 @@ export const videoService = {
   async delete(id: string): Promise<void> {
     return apiClient.delete(VIDEO_ROUTES.BY_ID(id))
   },
+
+  async regenerateGallery(id: string): Promise<{ message: string; video_id: string; video_code: string }> {
+    return apiClient.post(VIDEO_ROUTES.REGENERATE_GALLERY(id))
+  },
 }

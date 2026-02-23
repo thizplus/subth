@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Plus, Pencil, Trash2, Search, Video, X, Loader2, Film, Calendar, Users, Tag, MoreHorizontal } from 'lucide-react'
+import { Plus, Pencil, Trash2, Search, Video, X, Loader2, Film, Calendar, Users, Tag, MoreHorizontal, ImagePlus } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -73,6 +73,7 @@ import {
   useCreateVideo,
   useUpdateVideo,
   useDeleteVideo,
+  useRegenerateGallery,
   type Video as VideoType,
   type VideoListParams,
 } from '@/features/video'
@@ -150,6 +151,7 @@ export function VideoListPage() {
   const createVideo = useCreateVideo()
   const updateVideo = useUpdateVideo()
   const deleteVideo = useDeleteVideo()
+  const regenerateGallery = useRegenerateGallery()
 
   // Search queries for autocomplete
   const { data: makerResults } = useMakerSearch(makerSearch)
@@ -742,6 +744,20 @@ export function VideoListPage() {
                         <DropdownMenuItem onClick={() => openEdit(item)}>
                           <Pencil className="mr-2 h-4 w-4" />
                           แก้ไข
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={async () => {
+                            try {
+                              await regenerateGallery.mutateAsync(item.id)
+                              toast.success('กำลังสร้าง Gallery ใหม่')
+                            } catch {
+                              toast.error('ไม่สามารถสร้าง Gallery ได้')
+                            }
+                          }}
+                          disabled={regenerateGallery.isPending}
+                        >
+                          <ImagePlus className="mr-2 h-4 w-4" />
+                          สร้าง Gallery ใหม่
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => setDeletingVideo(item)}

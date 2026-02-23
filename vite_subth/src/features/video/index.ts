@@ -11,6 +11,7 @@ export {
   useCreateVideoBatch,
   useUpdateVideo,
   useDeleteVideo,
+  useRegenerateGallery,
   videoKeys,
 } from './hooks'
 export { videoService } from './service'

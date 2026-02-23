@@ -118,3 +118,14 @@ export function useDeleteVideo() {
     },
   })
 }
+
+export function useRegenerateGallery() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: string) => videoService.regenerateGallery(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: videoKeys.detail(id) })
+    },
+  })
+}

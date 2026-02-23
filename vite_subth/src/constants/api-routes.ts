@@ -32,6 +32,7 @@ export const VIDEO_ROUTES = {
   BY_CAST: (castId: string) => `/api/v1/videos/cast/${castId}`,
   BY_TAG: (tagId: string) => `/api/v1/videos/tag/${tagId}`,
   BATCH: '/api/v1/videos/batch',
+  REGENERATE_GALLERY: (id: string) => `/api/v1/videos/${id}/regenerate-gallery`,
 }
 
 export const MAKER_ROUTES = {

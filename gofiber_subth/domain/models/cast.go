@@ -8,8 +8,8 @@ import (
 
 type Cast struct {
 	ID           uuid.UUID         `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Name         string            `gorm:"size:255;not null;uniqueIndex:casts_name_key"`
-	Slug         string            `gorm:"size:255;not null;uniqueIndex:casts_slug_key"`
+	Name         string            `gorm:"size:255;not null;uniqueIndex:uni_casts_name"`
+	Slug         string            `gorm:"size:255;not null;uniqueIndex:uni_casts_slug"`
 	VideoCount   int               `gorm:"default:0"`
 	Translations []CastTranslation `gorm:"foreignKey:CastID"`
 	CreatedAt    time.Time         `gorm:"autoCreateTime"`

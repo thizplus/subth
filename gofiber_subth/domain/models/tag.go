@@ -8,8 +8,8 @@ import (
 
 type Tag struct {
 	ID           uuid.UUID        `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Name         string           `gorm:"size:255;not null;uniqueIndex:tags_name_key"`
-	Slug         string           `gorm:"size:255;not null;uniqueIndex:tags_slug_key"`
+	Name         string           `gorm:"size:255;not null;uniqueIndex:uni_tags_name"`
+	Slug         string           `gorm:"size:255;not null;uniqueIndex:uni_tags_slug"`
 	VideoCount   int              `gorm:"default:0"`
 	Translations []TagTranslation `gorm:"foreignKey:TagID"`
 	CreatedAt    time.Time        `gorm:"autoCreateTime"`

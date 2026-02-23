@@ -58,20 +58,18 @@ func NewDatabase(config DatabaseConfig) (*gorm.DB, error) {
 
 func Migrate(db *gorm.DB) error {
 	// Run AutoMigrate first
-	// NOTE: Maker, Cast, Tag ถูกเอาออกเพราะ GORM v1.30.0 มี bug พยายาม drop constraint ที่ไม่มี
-	// Tables เหล่านี้มีอยู่ใน production แล้ว ไม่ต้อง migrate
 	if err := db.AutoMigrate(
 		&models.User{},
 		&models.Task{},
 		&models.File{},
 		&models.Job{},
-		// SubTH models - Category first (Maker, Cast, Tag skipped - already exist)
+		// SubTH models - Category & Maker first (referenced by Video)
 		&models.Category{},
 		&models.CategoryTranslation{},
-		// &models.Maker{},      // SKIP - GORM bug
-		// &models.Cast{},       // SKIP - GORM bug
+		&models.Maker{},
+		&models.Cast{},
 		&models.CastTranslation{},
-		// &models.Tag{},        // SKIP - GORM bug
+		&models.Tag{},
 		&models.TagTranslation{},
 		// Video after its dependencies
 		&models.Video{},

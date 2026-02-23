@@ -1,10 +1,10 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/datatypes"
 )
 
 // SEOArticleStatus - สถานะบทความ
@@ -38,7 +38,7 @@ type SEOArticle struct {
 	MetaDescription string `gorm:"size:250;not null"`
 
 	// Full Content (JSONB - flexible structure จาก worker)
-	Content datatypes.JSON `gorm:"type:jsonb;not null"`
+	Content json.RawMessage `gorm:"type:jsonb;not null"`
 
 	// Status & Workflow
 	Status      SEOArticleStatus `gorm:"size:20;default:'draft';index"`

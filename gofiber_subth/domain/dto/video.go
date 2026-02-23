@@ -145,12 +145,3 @@ type ImageSearchRequest struct {
 	ImageURL string `json:"image_url" validate:"omitempty,url"`
 	Limit    int    `json:"limit" validate:"min=1,max=100"`
 }
-
-// === Internal API (from Worker) ===
-
-type UpdateGalleryRequest struct {
-	GalleryPath  string `json:"gallery_path"`
-	GalleryCount int    `json:"gallery_count"`
-	SafeCount    int    `json:"safe_count"`
-	NsfwCount    int    `json:"nsfw_count"`
-}

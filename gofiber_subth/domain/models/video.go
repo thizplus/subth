@@ -18,12 +18,6 @@ type Video struct {
 	Views       int            `gorm:"default:0"`
 	AutoTags    pq.StringArray `gorm:"type:text[]"`
 
-	// Gallery fields (from worker)
-	GalleryPath      string `gorm:"size:500"`    // path to gallery folder e.g. gallery/ABC-001
-	GalleryCount     int    `gorm:"default:0"`   // total gallery images (safe + nsfw)
-	GallerySafeCount int    `gorm:"default:0"`   // number of safe (SFW) images
-	GalleryNsfwCount int    `gorm:"default:0"`   // number of NSFW images
-
 	// Reel fields (from reel worker)
 	ReelVideoURL string `gorm:"size:500" json:"reel_video_url"` // cdn.suekk.com/xxx/output.mp4
 	ReelThumbURL string `gorm:"size:500" json:"reel_thumb_url"` // cdn.suekk.com/xxx/thumb.jpg

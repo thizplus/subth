@@ -403,26 +403,3 @@ func (r *videoRepositoryImpl) GetTitlesByIDs(ctx context.Context, ids []uuid.UUI
 
 	return titleMap, nil
 }
-
-// UpdateGallery updates gallery info for a video (from worker)
-func (r *videoRepositoryImpl) UpdateGallery(ctx context.Context, id uuid.UUID, galleryPath string, galleryCount, safeCount, nsfwCount int) error {
-	result := r.db.WithContext(ctx).
-		Model(&models.Video{}).
-		Where("id = ?", id).
-		Updates(map[string]interface{}{
-			"gallery_path":       galleryPath,
-			"gallery_count":      galleryCount,
-			"gallery_safe_count": safeCount,
-			"gallery_nsfw_count": nsfwCount,
-		})
-
-	if result.Error != nil {
-		return result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
-	}
-
-	return nil
-}

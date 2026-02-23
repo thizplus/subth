@@ -20,6 +20,9 @@ func SetupVideoRoutes(api fiber.Router, h *handlers.Handlers) {
 	videos.Get("/tag/:tag_id", h.VideoHandler.GetVideosByTag)
 	videos.Get("/:id", h.VideoHandler.GetVideo)
 
+
+	
+
 	// Admin routes (protected)
 	videos.Post("/", middleware.Protected(), h.VideoHandler.CreateVideo)
 	// Batch create (for scraper upload)
@@ -30,8 +33,4 @@ func SetupVideoRoutes(api fiber.Router, h *handlers.Handlers) {
 	// Cleanup routes (for deleting videos by embed codes)
 	videos.Post("/find-by-codes", middleware.Protected(), h.VideoHandler.GetVideosByEmbedCodes)
 	videos.Post("/delete-by-codes", middleware.Protected(), h.VideoHandler.DeleteVideosByEmbedCodes)
-
-	// Internal routes (from worker) - ใช้ api token authentication
-	internal := api.Group("/internal/videos")
-	internal.Patch("/:id/gallery", middleware.Protected(), h.VideoHandler.UpdateVideoGallery)
 }

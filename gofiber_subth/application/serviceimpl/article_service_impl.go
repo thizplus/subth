@@ -16,22 +16,22 @@ import (
 	"gofiber-template/pkg/logger"
 )
 
-type SEOArticleServiceImpl struct {
-	articleRepo repositories.SEOArticleRepository
+type ArticleServiceImpl struct {
+	articleRepo repositories.ArticleRepository
 	videoRepo   repositories.VideoRepository
 }
 
-func NewSEOArticleService(
-	articleRepo repositories.SEOArticleRepository,
+func NewArticleService(
+	articleRepo repositories.ArticleRepository,
 	videoRepo repositories.VideoRepository,
-) services.SEOArticleService {
-	return &SEOArticleServiceImpl{
+) services.ArticleService {
+	return &ArticleServiceImpl{
 		articleRepo: articleRepo,
 		videoRepo:   videoRepo,
 	}
 }
 
-func (s *SEOArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestArticleRequest, content []byte) (*dto.SEOArticleDetailResponse, error) {
+func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestArticleRequest, content []byte) (*dto.ArticleDetailResponse, error) {
 	videoID, err := uuid.Parse(req.VideoID)
 	if err != nil {
 		logger.WarnContext(ctx, "Invalid video ID", "video_id", req.VideoID, "error", err)
@@ -49,10 +49,17 @@ func (s *SEOArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.Inge
 		return nil, err
 	}
 
+	// Default type to "seo" if not specified
+	articleType := models.ArticleTypeSEO
+	if req.Type != "" {
+		articleType = models.ArticleType(req.Type)
+	}
+
 	// ตรวจสอบว่ามี article สำหรับ video นี้แล้วหรือไม่
 	existing, _ := s.articleRepo.GetByVideoID(ctx, videoID)
 	if existing != nil {
 		// Update existing article
+		existing.Type = articleType
 		existing.Title = req.Title
 		existing.MetaTitle = req.MetaTitle
 		existing.MetaDescription = req.MetaDescription
@@ -71,14 +78,15 @@ func (s *SEOArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.Inge
 	}
 
 	// Create new article
-	article := &models.SEOArticle{
+	article := &models.Article{
 		VideoID:         videoID,
+		Type:            articleType,
 		Title:           req.Title,
 		MetaTitle:       req.MetaTitle,
 		MetaDescription: req.MetaDescription,
 		Slug:            req.Slug,
 		Content:         json.RawMessage(content),
-		Status:          models.SEOStatusDraft,
+		Status:          models.ArticleStatusDraft,
 		IndexingStatus:  models.IndexingPending,
 		QualityScore:    req.QualityScore,
 		ReadingTime:     req.ReadingTime,
@@ -93,7 +101,7 @@ func (s *SEOArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.Inge
 	return s.mapToDetailResponse(article, video), nil
 }
 
-func (s *SEOArticleServiceImpl) GetArticle(ctx context.Context, id uuid.UUID) (*dto.SEOArticleDetailResponse, error) {
+func (s *ArticleServiceImpl) GetArticle(ctx context.Context, id uuid.UUID) (*dto.ArticleDetailResponse, error) {
 	article, err := s.articleRepo.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -107,7 +115,7 @@ func (s *SEOArticleServiceImpl) GetArticle(ctx context.Context, id uuid.UUID) (*
 	return s.mapToDetailResponse(article, video), nil
 }
 
-func (s *SEOArticleServiceImpl) GetArticleBySlug(ctx context.Context, slug string) (*dto.SEOArticleDetailResponse, error) {
+func (s *ArticleServiceImpl) GetArticleBySlug(ctx context.Context, slug string) (*dto.ArticleDetailResponse, error) {
 	article, err := s.articleRepo.GetBySlug(ctx, slug)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -121,7 +129,7 @@ func (s *SEOArticleServiceImpl) GetArticleBySlug(ctx context.Context, slug strin
 	return s.mapToDetailResponse(article, video), nil
 }
 
-func (s *SEOArticleServiceImpl) DeleteArticle(ctx context.Context, id uuid.UUID) error {
+func (s *ArticleServiceImpl) DeleteArticle(ctx context.Context, id uuid.UUID) error {
 	_, err := s.articleRepo.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -140,12 +148,13 @@ func (s *SEOArticleServiceImpl) DeleteArticle(ctx context.Context, id uuid.UUID)
 	return nil
 }
 
-func (s *SEOArticleServiceImpl) ListArticles(ctx context.Context, params *dto.SEOArticleListParams) ([]dto.SEOArticleListItemResponse, int64, error) {
+func (s *ArticleServiceImpl) ListArticles(ctx context.Context, params *dto.ArticleListParams) ([]dto.ArticleListItemResponse, int64, error) {
 	params.SetDefaults()
 
-	repoParams := repositories.SEOArticleListParams{
+	repoParams := repositories.ArticleListParams{
 		Limit:          params.Limit,
 		Offset:         (params.Page - 1) * params.Limit,
+		Type:           params.Type,
 		Status:         params.Status,
 		IndexingStatus: params.IndexingStatus,
 		Search:         params.Search,
@@ -172,11 +181,12 @@ func (s *SEOArticleServiceImpl) ListArticles(ctx context.Context, params *dto.SE
 		}
 	}
 
-	result := make([]dto.SEOArticleListItemResponse, 0, len(articles))
+	result := make([]dto.ArticleListItemResponse, 0, len(articles))
 	for _, a := range articles {
-		item := dto.SEOArticleListItemResponse{
+		item := dto.ArticleListItemResponse{
 			ID:             a.ID.String(),
 			VideoID:        a.VideoID.String(),
+			Type:           string(a.Type),
 			Slug:           a.Slug,
 			Title:          a.Title,
 			Status:         string(a.Status),
@@ -206,14 +216,14 @@ func (s *SEOArticleServiceImpl) ListArticles(ctx context.Context, params *dto.SE
 	return result, total, nil
 }
 
-func (s *SEOArticleServiceImpl) GetStats(ctx context.Context) (*dto.SEOArticleStatsResponse, error) {
+func (s *ArticleServiceImpl) GetStats(ctx context.Context) (*dto.ArticleStatsResponse, error) {
 	stats, err := s.articleRepo.GetStats(ctx)
 	if err != nil {
 		logger.ErrorContext(ctx, "Failed to get article stats", "error", err)
 		return nil, err
 	}
 
-	return &dto.SEOArticleStatsResponse{
+	return &dto.ArticleStatsResponse{
 		TotalArticles:  int(stats.TotalArticles),
 		DraftCount:     int(stats.DraftCount),
 		ScheduledCount: int(stats.ScheduledCount),
@@ -224,7 +234,7 @@ func (s *SEOArticleServiceImpl) GetStats(ctx context.Context) (*dto.SEOArticleSt
 	}, nil
 }
 
-func (s *SEOArticleServiceImpl) UpdateStatus(ctx context.Context, id uuid.UUID, req *dto.UpdateSEOArticleStatusRequest) error {
+func (s *ArticleServiceImpl) UpdateStatus(ctx context.Context, id uuid.UUID, req *dto.UpdateArticleStatusRequest) error {
 	article, err := s.articleRepo.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -234,16 +244,16 @@ func (s *SEOArticleServiceImpl) UpdateStatus(ctx context.Context, id uuid.UUID, 
 		return err
 	}
 
-	status := models.SEOArticleStatus(req.Status)
+	status := models.ArticleStatus(req.Status)
 
 	// Validate status transition
 	switch status {
-	case models.SEOStatusScheduled:
+	case models.ArticleStatusScheduled:
 		if req.ScheduledAt == nil {
 			return errors.New("scheduledAt is required for scheduled status")
 		}
 		article.ScheduledAt = req.ScheduledAt
-	case models.SEOStatusPublished:
+	case models.ArticleStatusPublished:
 		now := time.Now()
 		article.PublishedAt = &now
 	}
@@ -259,7 +269,7 @@ func (s *SEOArticleServiceImpl) UpdateStatus(ctx context.Context, id uuid.UUID, 
 	return nil
 }
 
-func (s *SEOArticleServiceImpl) BulkSchedule(ctx context.Context, req *dto.BulkScheduleRequest) error {
+func (s *ArticleServiceImpl) BulkSchedule(ctx context.Context, req *dto.BulkScheduleRequest) error {
 	ids := make([]uuid.UUID, 0, len(req.ArticleIDs))
 	scheduledTimes := make([]interface{}, 0, len(req.ArticleIDs))
 
@@ -290,7 +300,7 @@ func (s *SEOArticleServiceImpl) BulkSchedule(ctx context.Context, req *dto.BulkS
 	return nil
 }
 
-func (s *SEOArticleServiceImpl) PublishScheduledArticles(ctx context.Context) (int, error) {
+func (s *ArticleServiceImpl) PublishScheduledArticles(ctx context.Context) (int, error) {
 	articles, err := s.articleRepo.GetScheduledToPublish(ctx)
 	if err != nil {
 		logger.ErrorContext(ctx, "Failed to get scheduled articles", "error", err)
@@ -299,7 +309,7 @@ func (s *SEOArticleServiceImpl) PublishScheduledArticles(ctx context.Context) (i
 
 	count := 0
 	for _, article := range articles {
-		if err := s.articleRepo.UpdateStatus(ctx, article.ID, models.SEOStatusPublished); err != nil {
+		if err := s.articleRepo.UpdateStatus(ctx, article.ID, models.ArticleStatusPublished); err != nil {
 			logger.ErrorContext(ctx, "Failed to publish scheduled article", "article_id", article.ID, "error", err)
 			continue
 		}
@@ -310,7 +320,7 @@ func (s *SEOArticleServiceImpl) PublishScheduledArticles(ctx context.Context) (i
 	return count, nil
 }
 
-func (s *SEOArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug string) (*dto.PublicArticleResponse, error) {
+func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug string) (*dto.PublicArticleResponse, error) {
 	article, err := s.articleRepo.GetPublishedBySlug(ctx, slug)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -347,15 +357,16 @@ func (s *SEOArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug st
 }
 
 // Helper to map article to detail response
-func (s *SEOArticleServiceImpl) mapToDetailResponse(article *models.SEOArticle, video *models.Video) *dto.SEOArticleDetailResponse {
+func (s *ArticleServiceImpl) mapToDetailResponse(article *models.Article, video *models.Video) *dto.ArticleDetailResponse {
 	var content map[string]interface{}
 	if article.Content != nil {
 		json.Unmarshal(article.Content, &content)
 	}
 
-	resp := &dto.SEOArticleDetailResponse{
+	resp := &dto.ArticleDetailResponse{
 		ID:              article.ID.String(),
 		VideoID:         article.VideoID.String(),
+		Type:            string(article.Type),
 		Slug:            article.Slug,
 		Title:           article.Title,
 		MetaTitle:       article.MetaTitle,

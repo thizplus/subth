@@ -7,13 +7,22 @@ import (
 	"github.com/google/uuid"
 )
 
-// SEOArticleStatus - สถานะบทความ
-type SEOArticleStatus string
+// ArticleType - ประเภทบทความ
+type ArticleType string
 
 const (
-	SEOStatusDraft     SEOArticleStatus = "draft"
-	SEOStatusScheduled SEOArticleStatus = "scheduled"
-	SEOStatusPublished SEOArticleStatus = "published"
+	ArticleTypeSEO    ArticleType = "seo"    // AI-generated SEO article
+	ArticleTypeNews   ArticleType = "news"   // News article
+	ArticleTypeReview ArticleType = "review" // Review article
+)
+
+// ArticleStatus - สถานะบทความ
+type ArticleStatus string
+
+const (
+	ArticleStatusDraft     ArticleStatus = "draft"
+	ArticleStatusScheduled ArticleStatus = "scheduled"
+	ArticleStatusPublished ArticleStatus = "published"
 )
 
 // IndexingStatus - สถานะการ index กับ Google
@@ -26,10 +35,13 @@ const (
 	IndexingFailed    IndexingStatus = "failed"
 )
 
-// SEOArticle - บทความ SEO ที่ generate จาก AI
-type SEOArticle struct {
+// Article - บทความ
+type Article struct {
 	ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	VideoID uuid.UUID `gorm:"type:uuid;not null;uniqueIndex"` // 1 video = 1 article
+
+	// Article Type
+	Type ArticleType `gorm:"size:20;default:'seo';index"`
 
 	// Core SEO (indexed for search)
 	Slug            string `gorm:"size:100;uniqueIndex;not null"`
@@ -41,8 +53,8 @@ type SEOArticle struct {
 	Content json.RawMessage `gorm:"type:jsonb;not null"`
 
 	// Status & Workflow
-	Status      SEOArticleStatus `gorm:"size:20;default:'draft';index"`
-	ScheduledAt *time.Time       `gorm:"index"`
+	Status      ArticleStatus `gorm:"size:20;default:'draft';index"`
+	ScheduledAt *time.Time    `gorm:"index"`
 	PublishedAt *time.Time
 
 	// SEO Tracking (Google Indexing API)
@@ -60,6 +72,6 @@ type SEOArticle struct {
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }
 
-func (SEOArticle) TableName() string {
-	return "seo_articles"
+func (Article) TableName() string {
+	return "articles"
 }

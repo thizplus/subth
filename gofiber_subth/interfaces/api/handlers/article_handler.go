@@ -12,19 +12,19 @@ import (
 	"gofiber-template/pkg/utils"
 )
 
-type SEOArticleHandler struct {
-	seoArticleService services.SEOArticleService
+type ArticleHandler struct {
+	articleService services.ArticleService
 }
 
-func NewSEOArticleHandler(seoArticleService services.SEOArticleService) *SEOArticleHandler {
-	return &SEOArticleHandler{
-		seoArticleService: seoArticleService,
+func NewArticleHandler(articleService services.ArticleService) *ArticleHandler {
+	return &ArticleHandler{
+		articleService: articleService,
 	}
 }
 
-// IngestArticle - รับบทความจาก seo_worker
-// POST /api/v1/seo-articles/ingest
-func (h *SEOArticleHandler) IngestArticle(c *fiber.Ctx) error {
+// IngestArticle - รับบทความจาก worker
+// POST /api/v1/articles/ingest
+func (h *ArticleHandler) IngestArticle(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
 	var req dto.IngestArticleRequest
@@ -46,7 +46,7 @@ func (h *SEOArticleHandler) IngestArticle(c *fiber.Ctx) error {
 		rawBody = c.Body()
 	}
 
-	article, err := h.seoArticleService.IngestArticle(ctx, &req, rawBody)
+	article, err := h.articleService.IngestArticle(ctx, &req, rawBody)
 	if err != nil {
 		switch err.Error() {
 		case "invalid video_id":
@@ -63,8 +63,8 @@ func (h *SEOArticleHandler) IngestArticle(c *fiber.Ctx) error {
 }
 
 // GetArticle - ดึงรายละเอียดบทความ
-// GET /api/v1/seo-articles/:id
-func (h *SEOArticleHandler) GetArticle(c *fiber.Ctx) error {
+// GET /api/v1/articles/:id
+func (h *ArticleHandler) GetArticle(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
 	id, err := uuid.Parse(c.Params("id"))
@@ -72,7 +72,7 @@ func (h *SEOArticleHandler) GetArticle(c *fiber.Ctx) error {
 		return utils.BadRequestResponse(c, "Invalid article ID")
 	}
 
-	article, err := h.seoArticleService.GetArticle(ctx, id)
+	article, err := h.articleService.GetArticle(ctx, id)
 	if err != nil {
 		if err.Error() == "article not found" {
 			return utils.NotFoundResponse(c, "Article not found")
@@ -85,17 +85,17 @@ func (h *SEOArticleHandler) GetArticle(c *fiber.Ctx) error {
 }
 
 // ListArticles - รายการบทความ
-// GET /api/v1/seo-articles
-func (h *SEOArticleHandler) ListArticles(c *fiber.Ctx) error {
+// GET /api/v1/articles
+func (h *ArticleHandler) ListArticles(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
-	var params dto.SEOArticleListParams
+	var params dto.ArticleListParams
 	if err := c.QueryParser(&params); err != nil {
 		logger.WarnContext(ctx, "Invalid query parameters", "error", err)
 		return utils.BadRequestResponse(c, "Invalid query parameters")
 	}
 
-	articles, total, err := h.seoArticleService.ListArticles(ctx, &params)
+	articles, total, err := h.articleService.ListArticles(ctx, &params)
 	if err != nil {
 		logger.ErrorContext(ctx, "Failed to list articles", "error", err)
 		return utils.InternalServerErrorResponse(c)
@@ -106,11 +106,11 @@ func (h *SEOArticleHandler) ListArticles(c *fiber.Ctx) error {
 }
 
 // GetStats - สถิติบทความ
-// GET /api/v1/seo-articles/stats
-func (h *SEOArticleHandler) GetStats(c *fiber.Ctx) error {
+// GET /api/v1/articles/stats
+func (h *ArticleHandler) GetStats(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
-	stats, err := h.seoArticleService.GetStats(ctx)
+	stats, err := h.articleService.GetStats(ctx)
 	if err != nil {
 		logger.ErrorContext(ctx, "Failed to get article stats", "error", err)
 		return utils.InternalServerErrorResponse(c)
@@ -120,8 +120,8 @@ func (h *SEOArticleHandler) GetStats(c *fiber.Ctx) error {
 }
 
 // UpdateStatus - เปลี่ยนสถานะบทความ
-// PATCH /api/v1/seo-articles/:id/status
-func (h *SEOArticleHandler) UpdateStatus(c *fiber.Ctx) error {
+// PATCH /api/v1/articles/:id/status
+func (h *ArticleHandler) UpdateStatus(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
 	id, err := uuid.Parse(c.Params("id"))
@@ -129,7 +129,7 @@ func (h *SEOArticleHandler) UpdateStatus(c *fiber.Ctx) error {
 		return utils.BadRequestResponse(c, "Invalid article ID")
 	}
 
-	var req dto.UpdateSEOArticleStatusRequest
+	var req dto.UpdateArticleStatusRequest
 	if err := c.BodyParser(&req); err != nil {
 		logger.WarnContext(ctx, "Invalid request body", "error", err)
 		return utils.BadRequestResponse(c, "Invalid request body")
@@ -141,7 +141,7 @@ func (h *SEOArticleHandler) UpdateStatus(c *fiber.Ctx) error {
 		return utils.ValidationErrorResponse(c, errors)
 	}
 
-	if err := h.seoArticleService.UpdateStatus(ctx, id, &req); err != nil {
+	if err := h.articleService.UpdateStatus(ctx, id, &req); err != nil {
 		switch err.Error() {
 		case "article not found":
 			return utils.NotFoundResponse(c, "Article not found")
@@ -157,8 +157,8 @@ func (h *SEOArticleHandler) UpdateStatus(c *fiber.Ctx) error {
 }
 
 // BulkSchedule - ตั้งเวลาเผยแพร่หลายบทความ
-// POST /api/v1/seo-articles/bulk-schedule
-func (h *SEOArticleHandler) BulkSchedule(c *fiber.Ctx) error {
+// POST /api/v1/articles/bulk-schedule
+func (h *ArticleHandler) BulkSchedule(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
 	var req dto.BulkScheduleRequest
@@ -173,7 +173,7 @@ func (h *SEOArticleHandler) BulkSchedule(c *fiber.Ctx) error {
 		return utils.ValidationErrorResponse(c, errors)
 	}
 
-	if err := h.seoArticleService.BulkSchedule(ctx, &req); err != nil {
+	if err := h.articleService.BulkSchedule(ctx, &req); err != nil {
 		if err.Error() == "no valid article IDs provided" {
 			return utils.BadRequestResponse(c, "No valid article IDs provided")
 		}
@@ -189,8 +189,8 @@ func (h *SEOArticleHandler) BulkSchedule(c *fiber.Ctx) error {
 }
 
 // DeleteArticle - ลบบทความ
-// DELETE /api/v1/seo-articles/:id
-func (h *SEOArticleHandler) DeleteArticle(c *fiber.Ctx) error {
+// DELETE /api/v1/articles/:id
+func (h *ArticleHandler) DeleteArticle(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
 	id, err := uuid.Parse(c.Params("id"))
@@ -198,7 +198,7 @@ func (h *SEOArticleHandler) DeleteArticle(c *fiber.Ctx) error {
 		return utils.BadRequestResponse(c, "Invalid article ID")
 	}
 
-	if err := h.seoArticleService.DeleteArticle(ctx, id); err != nil {
+	if err := h.articleService.DeleteArticle(ctx, id); err != nil {
 		if err.Error() == "article not found" {
 			return utils.NotFoundResponse(c, "Article not found")
 		}
@@ -215,8 +215,8 @@ func (h *SEOArticleHandler) DeleteArticle(c *fiber.Ctx) error {
 // ========================================
 
 // GetPublishedArticle - ดึงบทความที่เผยแพร่แล้ว (Public)
-// GET /api/v1/articles/:slug
-func (h *SEOArticleHandler) GetPublishedArticle(c *fiber.Ctx) error {
+// GET /api/v1/articles/slug/:slug
+func (h *ArticleHandler) GetPublishedArticle(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
 	slug := c.Params("slug")
@@ -224,7 +224,7 @@ func (h *SEOArticleHandler) GetPublishedArticle(c *fiber.Ctx) error {
 		return utils.BadRequestResponse(c, "Slug is required")
 	}
 
-	article, err := h.seoArticleService.GetPublishedArticle(ctx, slug)
+	article, err := h.articleService.GetPublishedArticle(ctx, slug)
 	if err != nil {
 		if err.Error() == "article not found" {
 			return utils.NotFoundResponse(c, "Article not found")

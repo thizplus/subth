@@ -51,7 +51,7 @@ type Container struct {
 	ActivityLogRepository      repositories.ActivityLogRepository
 	ContactChannelRepository   repositories.ContactChannelRepository
 	ChatRepository             repositories.ChatRepository
-	SEOArticleRepository       repositories.SEOArticleRepository
+	ArticleRepository       repositories.ArticleRepository
 
 	// Activity Queue
 	ActivityQueue  *redis.ActivityQueue
@@ -82,7 +82,7 @@ type Container struct {
 	ActivityLogService     services.ActivityLogService
 	ContactChannelService  services.ContactChannelService
 	CommunityChatService   services.CommunityChatService
-	SEOArticleService      services.SEOArticleService
+	ArticleService      services.ArticleService
 
 	// Handlers that need special initialization
 	CommunityChatHandler *handlers.CommunityChatHandler
@@ -251,7 +251,7 @@ func (c *Container) initRepositories() error {
 	c.ActivityLogRepository = postgres.NewActivityLogRepository(c.DB)
 	c.ContactChannelRepository = postgres.NewContactChannelRepository(c.DB)
 	c.ChatRepository = postgres.NewChatRepository(c.DB)
-	c.SEOArticleRepository = postgres.NewSEOArticleRepository(c.DB)
+	c.ArticleRepository = postgres.NewArticleRepository(c.DB)
 
 	// Activity Queue (Redis)
 	c.ActivityQueue = redis.NewActivityQueue(c.RedisClient)
@@ -318,7 +318,7 @@ func (c *Container) initServices() error {
 	c.CommunityChatService = serviceimpl.NewCommunityChatService(c.ChatRepository, c.VideoRepository)
 
 	// SEO Article Service
-	c.SEOArticleService = serviceimpl.NewSEOArticleService(c.SEOArticleRepository, c.VideoRepository)
+	c.ArticleService = serviceimpl.NewArticleService(c.ArticleRepository, c.VideoRepository)
 
 	// Chat Hub (WebSocket)
 	c.ChatHub = websocket.NewChatHub(c.CommunityChatService)
@@ -447,7 +447,7 @@ func (c *Container) GetHandlerServices() *handlers.Services {
 		ActivityLogService:    c.ActivityLogService,
 		ContactChannelService: c.ContactChannelService,
 		CommunityChatService:  c.CommunityChatService,
-		SEOArticleService:     c.SEOArticleService,
+		ArticleService:     c.ArticleService,
 	}
 }
 

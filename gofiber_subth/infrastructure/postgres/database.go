@@ -93,8 +93,8 @@ func Migrate(db *gorm.DB) error {
 		// Community chat
 		&models.ChatMessage{},
 		&models.ChatBan{},
-		// SEO Articles (from seo_worker)
-		&models.SEOArticle{},
+		// Articles
+		&models.Article{},
 	); err != nil {
 		return err
 	}

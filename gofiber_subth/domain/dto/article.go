@@ -6,9 +6,10 @@ import "time"
 // Request DTOs
 // ========================================
 
-type SEOArticleListParams struct {
+type ArticleListParams struct {
 	Page           int    `query:"page"`
 	Limit          int    `query:"limit"`
+	Type           string `query:"type"`
 	Status         string `query:"status"`
 	IndexingStatus string `query:"indexing_status"`
 	Search         string `query:"search"`
@@ -16,7 +17,7 @@ type SEOArticleListParams struct {
 	Order          string `query:"order"`
 }
 
-func (p *SEOArticleListParams) SetDefaults() {
+func (p *ArticleListParams) SetDefaults() {
 	if p.Page < 1 {
 		p.Page = 1
 	}
@@ -31,7 +32,7 @@ func (p *SEOArticleListParams) SetDefaults() {
 	}
 }
 
-type UpdateSEOArticleStatusRequest struct {
+type UpdateArticleStatusRequest struct {
 	Status      string     `json:"status" validate:"required,oneof=draft scheduled published"`
 	ScheduledAt *time.Time `json:"scheduledAt,omitempty"`
 }
@@ -45,6 +46,7 @@ type BulkScheduleRequest struct {
 // IngestArticleRequest - Worker ส่ง JSON มาเก็บ
 type IngestArticleRequest struct {
 	VideoID         string `json:"video_id" validate:"required,uuid"`
+	Type            string `json:"type"` // seo, news, review (default: seo)
 	Title           string `json:"title" validate:"required"`
 	MetaTitle       string `json:"metaTitle" validate:"required"`
 	MetaDescription string `json:"metaDescription" validate:"required"`
@@ -58,11 +60,12 @@ type IngestArticleRequest struct {
 // Response DTOs
 // ========================================
 
-type SEOArticleListItemResponse struct {
+type ArticleListItemResponse struct {
 	ID             string  `json:"id"`
 	VideoID        string  `json:"videoId"`
 	VideoCode      string  `json:"videoCode"`
 	VideoThumbnail string  `json:"videoThumbnail,omitempty"`
+	Type           string  `json:"type"`
 	Slug           string  `json:"slug"`
 	Title          string  `json:"title"`
 	Status         string  `json:"status"`
@@ -74,10 +77,11 @@ type SEOArticleListItemResponse struct {
 	CreatedAt      string  `json:"createdAt"`
 }
 
-type SEOArticleDetailResponse struct {
+type ArticleDetailResponse struct {
 	ID              string                 `json:"id"`
 	VideoID         string                 `json:"videoId"`
 	VideoCode       string                 `json:"videoCode"`
+	Type            string                 `json:"type"`
 	Slug            string                 `json:"slug"`
 	Title           string                 `json:"title"`
 	MetaTitle       string                 `json:"metaTitle"`
@@ -94,7 +98,7 @@ type SEOArticleDetailResponse struct {
 	UpdatedAt       string                 `json:"updatedAt"`
 }
 
-type SEOArticleStatsResponse struct {
+type ArticleStatsResponse struct {
 	TotalArticles  int `json:"totalArticles"`
 	DraftCount     int `json:"draftCount"`
 	ScheduledCount int `json:"scheduledCount"`

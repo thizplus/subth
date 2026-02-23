@@ -23,6 +23,7 @@ const (
 	ArticleStatusDraft     ArticleStatus = "draft"
 	ArticleStatusScheduled ArticleStatus = "scheduled"
 	ArticleStatusPublished ArticleStatus = "published"
+	ArticleStatusArchived  ArticleStatus = "archived"
 )
 
 // IndexingStatus - สถานะการ index กับ Google

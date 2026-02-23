@@ -33,7 +33,7 @@ func (p *ArticleListParams) SetDefaults() {
 }
 
 type UpdateArticleStatusRequest struct {
-	Status      string     `json:"status" validate:"required,oneof=draft scheduled published"`
+	Status      string     `json:"status" validate:"required,oneof=draft scheduled published archived"`
 	ScheduledAt *time.Time `json:"scheduledAt,omitempty"`
 }
 

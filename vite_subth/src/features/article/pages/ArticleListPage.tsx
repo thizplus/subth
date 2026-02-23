@@ -189,8 +189,10 @@ export function ArticleListPage() {
         payload: { status: newStatus },
       })
       toast.success(`อัพเดทสถานะเป็น "${STATUS_LABELS[newStatus]}" สำเร็จ`)
-    } catch {
-      toast.error('เกิดข้อผิดพลาด')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ'
+      toast.error(`อัพเดทสถานะล้มเหลว: ${message}`)
+      console.error('Update status error:', error)
     }
   }
 

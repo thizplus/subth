@@ -21,8 +21,8 @@ require (
 	github.com/redis/go-redis/v9 v9.4.0
 	golang.org/x/crypto v0.23.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
-	gorm.io/driver/postgres v1.5.4
-	gorm.io/gorm v1.30.0
+	gorm.io/driver/postgres v1.5.11
+	gorm.io/gorm v1.25.12
 )
 
 require (

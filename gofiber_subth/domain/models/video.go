@@ -24,6 +24,11 @@ type Video struct {
 	ReelCoverURL string `gorm:"size:500" json:"reel_cover_url"` // cdn.suekk.com/xxx/cover.jpg
 	HasReel      bool   `gorm:"default:false" json:"has_reel"`  // มี reel หรือยัง
 
+	// SEO Article fields (from seo_worker)
+	GallerySafeCount int    `gorm:"default:0" json:"gallery_safe_count"` // จำนวนภาพ safe
+	GalleryNsfwCount int    `gorm:"default:0" json:"gallery_nsfw_count"` // จำนวนภาพ nsfw
+	SEOStatus        string `gorm:"size:20;default:'pending';index" json:"seo_status"` // pending, draft, published
+
 	// Relations
 	Maker        *Maker             `gorm:"foreignKey:MakerID"`
 	Translations []VideoTranslation `gorm:"foreignKey:VideoID"`

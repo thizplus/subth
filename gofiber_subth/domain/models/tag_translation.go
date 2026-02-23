@@ -8,8 +8,8 @@ import (
 
 type TagTranslation struct {
 	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	TagID     uuid.UUID `gorm:"type:uuid;not null;uniqueIndex:tag_translations_tag_id_lang_key"`
-	Lang      string    `gorm:"size:5;not null;uniqueIndex:tag_translations_tag_id_lang_key"`
+	TagID     uuid.UUID `gorm:"type:uuid;not null;index"`
+	Lang      string    `gorm:"size:5;not null;index"`
 	Name      string    `gorm:"size:255;not null"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 }

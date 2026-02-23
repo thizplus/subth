@@ -54,6 +54,9 @@ type VideoRepository interface {
 
 	// Get videos by embed codes (for cleanup)
 	GetByEmbedCodes(ctx context.Context, codes []string) ([]models.Video, error)
+
+	// Internal - update gallery info
+	UpdateGallery(ctx context.Context, id uuid.UUID, galleryPath string, galleryCount, safeCount, nsfwCount int) error
 }
 
 type VideoListParams struct {

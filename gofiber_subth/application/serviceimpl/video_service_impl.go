@@ -937,3 +937,29 @@ func (s *VideoServiceImpl) DeleteVideosByEmbedCodes(ctx context.Context, codes [
 	return deleted, nil
 }
 
+// UpdateVideoGallery อัพเดท gallery info จาก worker
+func (s *VideoServiceImpl) UpdateVideoGallery(ctx context.Context, id uuid.UUID, req *dto.UpdateGalleryRequest) error {
+	// Calculate total count if not provided
+	galleryCount := req.GalleryCount
+	if galleryCount == 0 {
+		galleryCount = req.SafeCount + req.NsfwCount
+	}
+
+	err := s.videoRepo.UpdateGallery(ctx, id, req.GalleryPath, galleryCount, req.SafeCount, req.NsfwCount)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("video not found")
+		}
+		logger.ErrorContext(ctx, "Failed to update video gallery", "video_id", id, "error", err)
+		return err
+	}
+
+	logger.InfoContext(ctx, "Video gallery updated",
+		"video_id", id,
+		"gallery_path", req.GalleryPath,
+		"safe_count", req.SafeCount,
+		"nsfw_count", req.NsfwCount,
+	)
+	return nil
+}
+

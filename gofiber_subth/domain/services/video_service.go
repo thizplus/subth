@@ -36,4 +36,7 @@ type VideoService interface {
 	// Cleanup - get videos by embed codes
 	GetVideosByEmbedCodes(ctx context.Context, codes []string) ([]dto.VideoIDWithCode, error)
 	DeleteVideosByEmbedCodes(ctx context.Context, codes []string) (int, error)
+
+	// Internal - update gallery from worker
+	UpdateVideoGallery(ctx context.Context, id uuid.UUID, req *dto.UpdateGalleryRequest) error
 }

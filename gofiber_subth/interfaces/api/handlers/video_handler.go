@@ -510,3 +510,35 @@ func (h *VideoHandler) GetVideosByEmbedCodes(c *fiber.Ctx) error {
 
 	return utils.SuccessResponse(c, videos)
 }
+
+// UpdateVideoGallery อัพเดท gallery info จาก worker (internal API)
+func (h *VideoHandler) UpdateVideoGallery(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return utils.BadRequestResponse(c, "Invalid video ID")
+	}
+
+	var req dto.UpdateGalleryRequest
+	if err := c.BodyParser(&req); err != nil {
+		logger.WarnContext(ctx, "Invalid request body", "error", err)
+		return utils.BadRequestResponse(c, "Invalid request body")
+	}
+
+	err = h.videoService.UpdateVideoGallery(ctx, id, &req)
+	if err != nil {
+		if err.Error() == "video not found" {
+			return utils.NotFoundResponse(c, "Video not found")
+		}
+		logger.ErrorContext(ctx, "Failed to update video gallery", "video_id", id, "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	logger.InfoContext(ctx, "Video gallery updated",
+		"video_id", id,
+		"safe_count", req.SafeCount,
+		"nsfw_count", req.NsfwCount,
+	)
+	return utils.SuccessResponse(c, map[string]string{"status": "ok"})
+}

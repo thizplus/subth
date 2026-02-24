@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"encoding/json"
 	"strings"
 	"time"
 
@@ -346,9 +347,11 @@ func (r *articleRepositoryImpl) enrichArticlesWithVideoData(ctx context.Context,
 			Article: a,
 		}
 
+		// Extract thumbnailUrl from article content JSON
+		item.VideoThumbnail = extractThumbnailFromContent(a.Content)
+
 		if video, ok := videoMap[a.VideoID.String()]; ok {
 			item.VideoCode = video.Code
-			item.VideoThumbnail = video.Thumbnail
 
 			if video.Maker != nil {
 				item.MakerName = video.Maker.Name
@@ -370,4 +373,21 @@ func (r *articleRepositoryImpl) enrichArticlesWithVideoData(ctx context.Context,
 	}
 
 	return result
+}
+
+// extractThumbnailFromContent ดึง thumbnailUrl จาก article content JSON
+func extractThumbnailFromContent(content []byte) string {
+	if len(content) == 0 {
+		return ""
+	}
+
+	var data struct {
+		ThumbnailUrl string `json:"thumbnailUrl"`
+	}
+
+	if err := json.Unmarshal(content, &data); err != nil {
+		return ""
+	}
+
+	return data.ThumbnailUrl
 }

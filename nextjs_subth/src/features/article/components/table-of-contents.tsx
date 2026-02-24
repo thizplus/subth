@@ -1,13 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronsUpDown } from "lucide-react";
+import { ChevronDown, List } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
 import { ArticleContent } from "../types";
 
 interface TOCItem {
@@ -61,29 +60,39 @@ export function TableOfContents({ content }: TableOfContentsProps) {
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mt-6">
-      <div className="rounded-lg border">
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex w-full items-center justify-between px-4 py-3 h-auto hover:bg-muted/50"
-          >
-            <span className="text-sm font-medium">
-              ยาวไป อยากเลือกอ่าน?
-            </span>
-            <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
-          </Button>
+      <div className="overflow-hidden rounded-xl border bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
+        <CollapsibleTrigger className="flex w-full items-center justify-between p-4 transition-colors hover:bg-primary/5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <List className="h-5 w-5 text-primary" />
+            </div>
+            <div className="text-left">
+              <p className="font-medium">สารบัญ</p>
+              <p className="text-sm text-muted-foreground">
+                {tocItems.length} หัวข้อ - กดเพื่อข้ามไปอ่าน
+              </p>
+            </div>
+          </div>
+          <ChevronDown
+            className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className="border-t px-2 py-2">
-            {tocItems.map(({ id, label }) => (
+          <div className="grid gap-1 border-t bg-background/50 p-3">
+            {tocItems.map(({ id, label }, index) => (
               <a
                 key={id}
                 href={`#${id}`}
                 onClick={() => setIsOpen(false)}
-                className="flex w-full items-center justify-start rounded-md px-3 h-9 text-sm font-normal hover:bg-muted transition-colors"
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-primary/10"
               >
-                {label}
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                  {index + 1}
+                </span>
+                <span>{label}</span>
               </a>
             ))}
           </div>

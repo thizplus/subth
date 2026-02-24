@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { PublicLayout } from "@/components/layout";
+import { PublicLayout } from "@/components/layout/server";
 import { ArticleBreadcrumb } from "@/features/article";
 import { User, Calendar, FileText, Award, ExternalLink } from "lucide-react";
 

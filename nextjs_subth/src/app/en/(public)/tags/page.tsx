@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { tagService } from "@/features/tag";
-import { PublicLayout } from "@/components/layout";
+import { PublicLayout } from "@/components/layout/server";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 

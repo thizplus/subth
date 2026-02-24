@@ -30,10 +30,9 @@ export {
   // Author
   AuthorByline,
   // Trust & E-E-A-T
-  FactCheckBadge,
+  TrustBadge,
   RelatedArticles,
   ThematicKeywords,
-  SafetyBadge,
 } from "./components";
 
 // Service

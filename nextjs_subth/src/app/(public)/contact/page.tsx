@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { PublicLayout } from "@/components/layout";
+import { PublicLayout } from "@/components/layout/server";
 import { ArticleBreadcrumb } from "@/features/article";
 import { Mail, MessageCircle, Clock, AlertCircle } from "lucide-react";
 

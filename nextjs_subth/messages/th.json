@@ -3,8 +3,10 @@
     "search": "ค้นหา",
     "home": "หน้าแรก",
     "videos": "วิดีโอ",
+    "articles": "บทความ",
     "casts": "นักแสดง",
     "tags": "แท็ก",
+    "categories": "หมวดหมู่",
     "makers": "ค่าย",
     "loading": "กำลังโหลด...",
     "error": "เกิดข้อผิดพลาด",
@@ -12,7 +14,12 @@
     "noData": "ไม่มีข้อมูล",
     "viewAll": "ดูทั้งหมด",
     "back": "กลับ",
-    "smartMode": "โหมดอัจฉริยะ"
+    "smartMode": "โหมดอัจฉริยะ",
+    "login": "เข้าสู่ระบบ",
+    "logout": "ออกจากระบบ",
+    "watchVideo": "ดูวิดีโอ",
+    "member": "สมาชิก",
+    "needXp": "อีก"
   },
   "home": {
     "title": "SubTH",

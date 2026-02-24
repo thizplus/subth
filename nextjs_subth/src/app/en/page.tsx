@@ -1,4 +1,4 @@
-import { PublicLayout } from "@/components/layout";
+import { PublicLayout } from "@/components/layout/server";
 import { feedService, FeedPageClient, type FeedListResponse } from "@/features/feed";
 import type { Metadata } from "next";
 

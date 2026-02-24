@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tagService } from "@/features/tag";
 import { articleService, ArticleCard, ArticleBreadcrumb } from "@/features/article";
-import { PublicLayout } from "@/components/layout";
+import { PublicLayout } from "@/components/layout/server";
 import { Pagination } from "@/components/ui/pagination";
 
 const ITEMS_PER_PAGE = 24;

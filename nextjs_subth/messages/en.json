@@ -3,8 +3,10 @@
     "search": "Search",
     "home": "Home",
     "videos": "Videos",
+    "articles": "Articles",
     "casts": "Casts",
     "tags": "Tags",
+    "categories": "Categories",
     "makers": "Makers",
     "loading": "Loading...",
     "error": "An error occurred",
@@ -12,7 +14,12 @@
     "noData": "No data available",
     "viewAll": "View All",
     "back": "Back",
-    "smartMode": "Smart Mode"
+    "smartMode": "Smart Mode",
+    "login": "Login",
+    "logout": "Logout",
+    "watchVideo": "Watch",
+    "member": "Member",
+    "needXp": "Need"
   },
   "home": {
     "title": "SubTH",

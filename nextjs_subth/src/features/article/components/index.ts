@@ -26,10 +26,9 @@ export { ArticleBreadcrumb } from "./article-breadcrumb";
 export { AuthorByline } from "./author-byline";
 
 // Trust & E-E-A-T
-export { FactCheckBadge } from "./fact-check-badge";
+export { TrustBadge } from "./trust-badge";
 export { RelatedArticles } from "./related-articles";
 export { ThematicKeywords } from "./thematic-keywords";
-export { SafetyBadge } from "./safety-badge";
 
 // Schema components
 export {

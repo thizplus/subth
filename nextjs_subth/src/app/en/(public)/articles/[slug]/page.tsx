@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { PublicLayout } from "@/components/layout";
+import { PublicLayout } from "@/components/layout/server";
 import {
   articleService,
   ThumbnailWithCTA,
@@ -26,10 +26,9 @@ import {
   AudioPlayer,
   ArticleBreadcrumb,
   AuthorByline,
-  FactCheckBadge,
+  TrustBadge,
   RelatedArticles,
   ThematicKeywords,
-  SafetyBadge,
   HowToSchema,
 } from "@/features/article";
 
@@ -173,10 +172,9 @@ export default async function ArticlePageEN({ params }: PageProps) {
           />
         </div>
 
-        {/* Fact-Check Badge & Safety Badge */}
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <FactCheckBadge updatedAt={content.updatedAt} locale="en" />
-          <SafetyBadge locale="en" />
+        {/* Trust Badge */}
+        <div className="mt-3">
+          <TrustBadge updatedAt={content.updatedAt} locale="en" />
         </div>
 
         <div className="mt-6 space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">

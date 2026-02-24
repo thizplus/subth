@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { articleService, ArticleCard } from "@/features/article";
-import { PublicLayout } from "@/components/layout";
+import { PublicLayout } from "@/components/layout/server";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 

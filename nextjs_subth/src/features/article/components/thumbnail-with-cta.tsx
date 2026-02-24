@@ -27,6 +27,7 @@ export function ThumbnailWithCTA({
         alt={thumbnailAlt || title}
         fill
         priority
+        fetchPriority="high"
         className="object-cover"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
       />

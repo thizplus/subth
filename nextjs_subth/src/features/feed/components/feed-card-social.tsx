@@ -176,6 +176,7 @@ export function FeedCardSocial({ item, locale = "th" }: FeedCardSocialProps) {
             className="object-contain"
             sizes="(max-width: 768px) 100vw, 672px"
             priority
+            fetchPriority="high"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">

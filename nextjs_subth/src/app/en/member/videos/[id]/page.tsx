@@ -66,6 +66,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
             height={538}
             className="w-full h-auto"
             priority
+            fetchPriority="high"
           />
         </div>
 

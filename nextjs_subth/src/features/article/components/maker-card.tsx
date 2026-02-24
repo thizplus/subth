@@ -13,10 +13,10 @@ export function MakerCard({ maker }: MakerCardProps) {
 
   return (
     <div className="space-y-3">
-      <h3 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+      <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <Building2 className="h-4 w-4" />
         ค่าย
-      </h3>
+      </p>
 
       <Link
         href={maker.profileUrl}

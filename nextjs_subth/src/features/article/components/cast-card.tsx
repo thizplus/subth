@@ -14,10 +14,10 @@ export function CastCard({ casts }: CastCardProps) {
 
   return (
     <div className="space-y-3">
-      <h3 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+      <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <User className="h-4 w-4" />
         นักแสดง
-      </h3>
+      </p>
 
       <div className="flex flex-wrap gap-2">
         {casts.map((cast) => (

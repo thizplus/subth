@@ -55,8 +55,8 @@ export function ViewingTipsSection({
       <div className="grid gap-4 md:grid-cols-2">
         {/* Audience Match */}
         {audienceMatch && (
-          <div className="rounded-lg border bg-gradient-to-br from-green-500/5 to-transparent p-4">
-            <h3 className="mb-2 font-medium text-green-600 dark:text-green-400">
+          <div className="rounded-lg border bg-gradient-to-br from-success/5 to-transparent p-4">
+            <h3 className="mb-2 font-medium text-success">
               เหมาะกับใคร
             </h3>
             <p className="text-sm text-muted-foreground">{audienceMatch}</p>
@@ -65,8 +65,8 @@ export function ViewingTipsSection({
 
         {/* Replay Value */}
         {replayValue && (
-          <div className="rounded-lg border bg-gradient-to-br from-blue-500/5 to-transparent p-4">
-            <h3 className="mb-2 font-medium text-blue-600 dark:text-blue-400">
+          <div className="rounded-lg border bg-gradient-to-br from-primary/5 to-transparent p-4">
+            <h3 className="mb-2 font-medium text-primary">
               ความคุ้มค่าดูซ้ำ
             </h3>
             <p className="text-sm text-muted-foreground">{replayValue}</p>

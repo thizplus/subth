@@ -37,13 +37,13 @@ export function KeyMomentsPreview({
 
   return (
     <div className="space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">
-      <h3 className="flex items-center gap-2 text-sm font-semibold">
+      <p className="flex items-center gap-2 text-sm font-semibold">
         <Play className="h-4 w-4 fill-primary text-primary" />
         {locale === "th" ? "ฉากสำคัญ" : "Key Moments"}
         <span className="text-xs font-normal text-muted-foreground">
           ({keyMoments.length} {locale === "th" ? "ฉาก" : "scenes"})
         </span>
-      </h3>
+      </p>
 
       {/* Progress bar with markers */}
       <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted">

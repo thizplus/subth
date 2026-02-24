@@ -145,7 +145,7 @@ export default async function ArticlePage({ params }: PageProps) {
         <ThumbnailWithCTA
           thumbnailUrl={content.thumbnailUrl}
           thumbnailAlt={content.thumbnailAlt}
-          videoId={content.video_id}
+          videoId={content.videoId}
           title={article.title}
         />
 
@@ -170,7 +170,7 @@ export default async function ArticlePage({ params }: PageProps) {
           <KeyMomentsPreview
             keyMoments={content.keyMoments}
             duration={content.duration}
-            videoId={content.video_id}
+            videoId={content.videoId}
           />
         </div>
 
@@ -241,7 +241,7 @@ export default async function ArticlePage({ params }: PageProps) {
           <GallerySection
             images={content.galleryImages || []}
             memberCount={content.memberGalleryCount}
-            videoId={content.video_id}
+            videoId={content.videoId}
             videoCode={article.videoCode}
           />
         </div>
@@ -250,7 +250,7 @@ export default async function ArticlePage({ params }: PageProps) {
         <div className="mt-8">
           <QuoteCard
             quotes={content.topQuotes || []}
-            videoId={content.video_id}
+            videoId={content.videoId}
           />
         </div>
 

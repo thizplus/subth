@@ -16,7 +16,7 @@ export interface Article {
 
 export interface ArticleContent {
   // === Core SEO ===
-  video_id: string; // snake_case from seo_worker
+  videoId: string;
   title: string;
   metaTitle: string;
   metaDescription: string;

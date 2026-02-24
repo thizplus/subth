@@ -66,7 +66,7 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
 
   if (isLoading) {
     return (
-      <SidebarMenu>
+      <div>
         {showTitle && (
           <div className="px-2 mb-2">
             <h3 className="font-medium text-sm flex items-center gap-2 text-muted-foreground">
@@ -75,18 +75,20 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
             </h3>
           </div>
         )}
-        {[1, 2].map((i) => (
-          <SidebarMenuItem key={i}>
-            <SidebarMenuButton size="lg" className="cursor-default">
-              <div className="h-8 w-8 shrink-0 rounded-lg bg-muted animate-pulse" />
-              <div className="grid flex-1 gap-1 text-left text-sm leading-tight">
-                <div className="h-4 w-24 bg-muted rounded animate-pulse" />
-                <div className="h-3 w-20 bg-muted rounded animate-pulse" />
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
-      </SidebarMenu>
+        <SidebarMenu>
+          {[1, 2].map((i) => (
+            <SidebarMenuItem key={i}>
+              <SidebarMenuButton size="lg" className="cursor-default">
+                <div className="h-8 w-8 shrink-0 rounded-lg bg-muted animate-pulse" />
+                <div className="grid flex-1 gap-1 text-left text-sm leading-tight">
+                  <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+                  <div className="h-3 w-20 bg-muted rounded animate-pulse" />
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </div>
     );
   }
 
@@ -95,7 +97,7 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
   }
 
   return (
-    <SidebarMenu>
+    <div>
       {showTitle && (
         <div className="px-2 mb-2">
           <h3 className="font-medium text-sm flex items-center gap-2 text-muted-foreground">
@@ -104,7 +106,8 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
           </h3>
         </div>
       )}
-      {channels.map((channel) => {
+      <SidebarMenu>
+        {channels.map((channel) => {
         const Icon = PLATFORM_ICONS[channel.platform] || Globe;
 
         return (
@@ -141,6 +144,7 @@ export function ContactChannels({ locale = "th", showTitle = true }: ContactChan
           </SidebarMenuItem>
         );
       })}
-    </SidebarMenu>
+      </SidebarMenu>
+    </div>
   );
 }

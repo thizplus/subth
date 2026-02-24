@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import {
@@ -50,7 +51,7 @@ export function ArticleBreadcrumb({ items, locale = "th" }: ArticleBreadcrumbPro
             const isLast = index === items.length - 1;
 
             return (
-              <span key={index} className="contents">
+              <React.Fragment key={index}>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   {isLast || !item.href ? (
@@ -70,7 +71,7 @@ export function ArticleBreadcrumb({ items, locale = "th" }: ArticleBreadcrumbPro
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
-              </span>
+              </React.Fragment>
             );
           })}
         </BreadcrumbList>

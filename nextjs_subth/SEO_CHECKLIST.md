@@ -48,7 +48,7 @@
 - [x] เพิ่ม `WebSite` schema พร้อม SearchAction ✅ (root layout)
 - [x] เพิ่ม `Person` schema สำหรับ Cast profiles ✅ (TH+EN)
 - [ ] ตรวจสอบ schema ผ่าน Google Rich Results Test
-- [ ] เพิ่ม `ItemList` schema สำหรับหน้า list
+- [x] เพิ่ม `ItemList` schema สำหรับหน้า list ✅
 
 ### 1.5 Core Web Vitals (Priority: HIGH)
 
@@ -174,7 +174,7 @@
 - [x] Article schema
 - [x] BreadcrumbList schema
 - [ ] Review/Rating schema (ถ้ามี rating system)
-- [ ] HowTo schema (สำหรับ viewing tips)
+- [x] HowTo schema (สำหรับ viewing tips) ✅
 
 ### 4.3 Content Quality (Priority: HIGH)
 
@@ -275,7 +275,7 @@
 **หลักการ:** เว็บสายนี้ต้องแสดงความโปร่งใสเป็นพิเศษ
 
 **สิ่งที่ต้องทำ:**
-- [ ] **Safety Badges** - แสดงว่า "เนื้อหาผ่านการตรวจสอบ" / "No Malware"
+- [x] **Safety Badges** - แสดงว่า "เนื้อหาผ่านการตรวจสอบ" / "No Malware" ✅
 - [ ] **Encryption Notice** - ระบุเรื่อง Privacy-Focused Payment ในหน้าสมัคร
 - [x] **Editorial Fact-Check** - FactCheckBadge component "ตรวจสอบโดย SubTH Editorial Team" + วันที่ ✅
 

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { articleService, ArticleCard } from "@/features/article";
+import { articleService, ArticleCard, ItemListSchema } from "@/features/article";
 import { PublicLayout } from "@/components/layout";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
@@ -42,6 +42,13 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
 
   return (
     <PublicLayout locale="th">
+      {/* ItemList Schema for SEO */}
+      <ItemListSchema
+        articles={articles}
+        listName="บทความทั้งหมด"
+        listDescription="รวมบทความรีวิววิดีโอซับไทยทั้งหมด พร้อมเรื่องย่อและวิเคราะห์เชิงลึก"
+        locale="th"
+      />
       <div className="mx-auto max-w-7xl px-4">
         <h1 className="text-2xl font-bold mb-2">
           บทความทั้งหมด

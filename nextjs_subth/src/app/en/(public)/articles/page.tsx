@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { articleService, ArticleCard } from "@/features/article";
+import { articleService, ArticleCard, ItemListSchema } from "@/features/article";
 import { PublicLayout } from "@/components/layout";
 import { Pagination } from "@/components/ui/pagination";
 
@@ -37,6 +37,13 @@ export default async function ArticlesPageEN({ searchParams }: PageProps) {
 
   return (
     <PublicLayout locale="en">
+      {/* ItemList Schema for SEO */}
+      <ItemListSchema
+        articles={articles}
+        listName="All Articles"
+        listDescription="Browse all articles with reviews and detailed analysis on SubTH"
+        locale="en"
+      />
       <div className="mx-auto max-w-7xl px-4">
         <h1 className="text-2xl font-bold mb-2">
           All Articles

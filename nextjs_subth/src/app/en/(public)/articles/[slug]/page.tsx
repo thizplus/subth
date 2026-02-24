@@ -29,6 +29,8 @@ import {
   FactCheckBadge,
   RelatedArticles,
   ThematicKeywords,
+  SafetyBadge,
+  HowToSchema,
 } from "@/features/article";
 
 interface PageProps {
@@ -109,6 +111,16 @@ export default async function ArticlePageEN({ params }: PageProps) {
         locale="en"
       />
       <BreadcrumbSchema title={article.title} slug={article.slug} />
+      {/* HowTo Schema for Viewing Tips */}
+      {content.viewingTips && (
+        <HowToSchema
+          title={`How to Watch ${article.title}`}
+          description={`Tips for watching ${article.videoCode} for the best experience`}
+          tips={content.viewingTips}
+          videoCode={article.videoCode}
+          locale="en"
+        />
+      )}
 
       <article className="mx-auto max-w-4xl px-4 py-6 md:py-8">
         <ArticleBreadcrumb
@@ -161,9 +173,10 @@ export default async function ArticlePageEN({ params }: PageProps) {
           />
         </div>
 
-        {/* Fact-Check Badge */}
-        <div className="mt-3">
+        {/* Fact-Check Badge & Safety Badge */}
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <FactCheckBadge updatedAt={content.updatedAt} locale="en" />
+          <SafetyBadge locale="en" />
         </div>
 
         <div className="mt-6 space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">

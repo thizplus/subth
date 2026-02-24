@@ -29,6 +29,7 @@ export { AuthorByline } from "./author-byline";
 export { FactCheckBadge } from "./fact-check-badge";
 export { RelatedArticles } from "./related-articles";
 export { ThematicKeywords } from "./thematic-keywords";
+export { SafetyBadge } from "./safety-badge";
 
 // Schema components
 export {
@@ -36,4 +37,6 @@ export {
   FAQPageSchema,
   ArticleSchema,
   BreadcrumbSchema,
+  ItemListSchema,
+  HowToSchema,
 } from "./schema";

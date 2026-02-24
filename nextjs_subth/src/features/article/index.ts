@@ -17,6 +17,8 @@ export {
   FAQPageSchema,
   ArticleSchema,
   BreadcrumbSchema,
+  ItemListSchema,
+  HowToSchema,
   // Chunk 4: Deep Analysis Sections
   CharacterJourneySection,
   CinematographySection,
@@ -31,6 +33,7 @@ export {
   FactCheckBadge,
   RelatedArticles,
   ThematicKeywords,
+  SafetyBadge,
 } from "./components";
 
 // Service

@@ -33,6 +33,8 @@ import {
   FactCheckBadge,
   RelatedArticles,
   ThematicKeywords,
+  SafetyBadge,
+  HowToSchema,
 } from "@/features/article";
 
 interface PageProps {
@@ -115,6 +117,16 @@ export default async function ArticlePage({ params }: PageProps) {
         locale="th"
       />
       <BreadcrumbSchema title={article.title} slug={article.slug} />
+      {/* HowTo Schema for Viewing Tips */}
+      {content.viewingTips && (
+        <HowToSchema
+          title={`วิธีดู ${article.title} ให้สนุก`}
+          description={`เคล็ดลับการดู ${article.videoCode} ให้ได้อรรถรสเต็มที่`}
+          tips={content.viewingTips}
+          videoCode={article.videoCode}
+          locale="th"
+        />
+      )}
 
       <article className="mx-auto max-w-4xl px-4 py-6 md:py-8">
         {/* 0. Breadcrumb Navigation */}
@@ -173,9 +185,10 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 4.6 Fact-Check Badge */}
-        <div className="mt-3">
+        {/* 4.6 Fact-Check Badge & Safety Badge */}
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <FactCheckBadge updatedAt={content.updatedAt} locale="th" />
+          <SafetyBadge locale="th" />
         </div>
 
         {/* 5. Cast/Maker/Tags */}

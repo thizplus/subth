@@ -19,6 +19,24 @@ const organizationSchema = {
   sameAs: [],
 };
 
+// WebSite Schema with SearchAction for site search
+const webSiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "SubTH",
+  alternateName: "ซับไทย",
+  url: "https://subth.com",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: "https://subth.com/member/search?q={search_term_string}",
+    },
+    "query-input": "required name=search_term_string",
+  },
+  inLanguage: ["th", "en"],
+};
+
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
@@ -91,6 +109,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
+        />
+        {/* OpenGraph locale alternates */}
+        <meta property="og:locale:alternate" content="en_US" />
       </head>
       <body className={`${roboto.variable} ${googleSans.variable} font-sans antialiased`}>
         <ThemeProvider

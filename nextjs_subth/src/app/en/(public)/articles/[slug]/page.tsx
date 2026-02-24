@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: article.metaTitle,
       description: article.metaDescription,
       openGraph: {
-        type: "video.other",
+        type: "article",
         title: article.metaTitle,
         description: article.metaDescription,
         images: [
@@ -57,6 +57,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           },
         ],
         siteName: "SubTH",
+        locale: "en_US",
+        publishedTime: article.publishedAt,
+        modifiedTime: article.content.updatedAt,
+        authors: ["SubTH Editorial"],
       },
       twitter: {
         card: "summary_large_image",

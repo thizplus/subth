@@ -69,8 +69,25 @@ export default async function CastDetailPage({ params, searchParams }: PageProps
     console.error("Failed to fetch articles by cast:", e);
   }
 
+  // Person Schema for Cast
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: cast.name,
+    alternateName: cast.nameEn || undefined,
+    url: `https://subth.com/casts/${slug}`,
+    description: cast.bio || `รวมผลงานของ ${cast.name}`,
+    jobTitle: "Actress",
+  };
+
   return (
     <PublicLayout locale="th">
+      {/* Person Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+
       <div className="mx-auto max-w-7xl px-4">
         {/* Breadcrumb */}
         <ArticleBreadcrumb

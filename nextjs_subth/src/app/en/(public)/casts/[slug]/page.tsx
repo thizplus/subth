@@ -66,8 +66,24 @@ export default async function CastDetailPageEN({ params, searchParams }: PagePro
     console.error("Failed to fetch articles by cast:", e);
   }
 
+  // Person Schema for Cast
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: cast.name,
+    url: `https://subth.com/en/casts/${slug}`,
+    description: cast.bio || `All works by ${cast.name}`,
+    jobTitle: "Actress",
+  };
+
   return (
     <PublicLayout locale="en">
+      {/* Person Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+
       <div className="mx-auto max-w-7xl px-4">
         <ArticleBreadcrumb
           items={[

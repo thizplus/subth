@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Images, Lock, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoginDialog, useAuthStore } from "@/features/auth";
+import { useDictionary } from "@/components/dictionary-provider";
 import type { GalleryImage } from "../types";
 
 // Dynamic import Lightbox - โหลดเฉพาะเมื่อเปิด gallery (ลด initial bundle ~50KB)
@@ -27,7 +28,6 @@ interface GallerySectionProps {
   memberCount?: number;
   videoId: string;
   videoCode: string;
-  locale?: "th" | "en";
 }
 
 export function GallerySection({
@@ -35,12 +35,12 @@ export function GallerySection({
   memberCount,
   videoId,
   videoCode,
-  locale = "th",
 }: GallerySectionProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { isAuthenticated } = useAuthStore();
-  const videoPath = locale === "en" ? `/en/member/videos/${videoId}` : `/member/videos/${videoId}`;
+  const { t, locale, getLocalizedPath } = useDictionary();
+  const videoPath = getLocalizedPath(`/member/videos/${videoId}`);
 
   if (!images?.length) {
     return null;
@@ -60,7 +60,7 @@ export function GallerySection({
     <section className="space-y-4">
       <h2 className="flex items-center gap-2 text-lg font-semibold">
         <Images className="h-5 w-5 text-primary" />
-        {locale === "th" ? "แกลเลอรี่" : "Gallery"}
+        {t("article.gallery")}
         <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-normal text-primary">
           {images.length}
           {memberCount && memberCount > 0 ? `+${memberCount}` : ""}
@@ -104,21 +104,17 @@ export function GallerySection({
             >
               <Link href={videoPath}>
                 <Images className="h-4 w-4" />
-                {locale === "th"
-                  ? `ดูเพิ่มอีก ${memberCount} ภาพ`
-                  : `View ${memberCount} more`}
+                {t("article.viewMoreImages").replace("{count}", String(memberCount))}
               </Link>
             </Button>
           ) : (
-            <LoginDialog locale={locale}>
+            <LoginDialog locale={locale as "th" | "en"}>
               <Button
                 variant="outline"
                 className="gap-2 rounded-full border-primary/30 hover:bg-primary/10"
               >
                 <Lock className="h-4 w-4" />
-                {locale === "th"
-                  ? `ดูเพิ่มอีก ${memberCount} ภาพ`
-                  : `View ${memberCount} more`}
+                {t("article.viewMoreImages").replace("{count}", String(memberCount))}
               </Button>
             </LoginDialog>
           )}

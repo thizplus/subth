@@ -5,13 +5,13 @@ import Link from "next/link";
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoginDialog, useAuthStore } from "@/features/auth";
+import { useDictionary } from "@/components/dictionary-provider";
 
 interface ThumbnailWithCTAProps {
   thumbnailUrl: string;
   thumbnailAlt: string;
   videoId: string;
   title: string;
-  locale?: "th" | "en";
 }
 
 export function ThumbnailWithCTA({
@@ -19,11 +19,11 @@ export function ThumbnailWithCTA({
   thumbnailAlt,
   videoId,
   title,
-  locale = "th",
 }: ThumbnailWithCTAProps) {
   const { isAuthenticated } = useAuthStore();
-  const videoPath = locale === "en" ? `/en/member/videos/${videoId}` : `/member/videos/${videoId}`;
-  const buttonText = locale === "th" ? "ดูวิดีโอ" : "Watch Video";
+  const { t, locale, getLocalizedPath } = useDictionary();
+  const videoPath = getLocalizedPath(`/member/videos/${videoId}`);
+  const buttonText = t("common.watchVideo");
 
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
@@ -47,7 +47,7 @@ export function ThumbnailWithCTA({
             </Link>
           </Button>
         ) : (
-          <LoginDialog locale={locale}>
+          <LoginDialog locale={locale as "th" | "en"}>
             <Button size="lg" className="gap-2 rounded-full px-6 py-6">
               <Play className="h-6 w-6 fill-current" />
               <span className="text-lg font-semibold">{buttonText}</span>

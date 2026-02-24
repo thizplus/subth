@@ -21,6 +21,14 @@
     "member": "สมาชิก",
     "needXp": "อีก"
   },
+  "article": {
+    "gallery": "แกลเลอรี่",
+    "viewMoreImages": "ดูเพิ่มอีก {count} ภาพ",
+    "keyMoments": "ฉากสำคัญ",
+    "scenes": "ฉาก",
+    "topQuotes": "ประโยคเด็ด",
+    "goToMoment": "ไปยัง {name}"
+  },
   "home": {
     "title": "SubTH",
     "subtitle": "ค้นหาวิดีโอที่คุณชอบ",

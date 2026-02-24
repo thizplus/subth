@@ -21,6 +21,14 @@
     "member": "Member",
     "needXp": "Need"
   },
+  "article": {
+    "gallery": "Gallery",
+    "viewMoreImages": "View {count} more",
+    "keyMoments": "Key Moments",
+    "scenes": "scenes",
+    "topQuotes": "Top Quotes",
+    "goToMoment": "Go to {name}"
+  },
   "home": {
     "title": "SubTH",
     "subtitle": "Find videos you love",

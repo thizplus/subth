@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { LoginDialog, useAuthStore } from "@/features/auth";
+import { useDictionary } from "@/components/dictionary-provider";
 import { formatTimestamp, parseDuration } from "../utils";
 import type { KeyMoment } from "../types";
 
@@ -17,17 +18,16 @@ interface KeyMomentsPreviewProps {
   keyMoments: KeyMoment[];
   duration: string; // ISO 8601
   videoId: string;
-  locale?: "th" | "en";
 }
 
 export function KeyMomentsPreview({
   keyMoments,
   duration,
   videoId,
-  locale = "th",
 }: KeyMomentsPreviewProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { isAuthenticated } = useAuthStore();
+  const { t, locale, getLocalizedPath } = useDictionary();
   const router = useRouter();
   const totalSeconds = parseDuration(duration);
 
@@ -37,9 +37,7 @@ export function KeyMomentsPreview({
 
   const handleMomentClick = (startOffset: number) => {
     if (isAuthenticated) {
-      const videoPath = locale === "en"
-        ? `/en/member/videos/${videoId}?t=${startOffset}`
-        : `/member/videos/${videoId}?t=${startOffset}`;
+      const videoPath = getLocalizedPath(`/member/videos/${videoId}?t=${startOffset}`);
       router.push(videoPath);
     } else {
       setDialogOpen(true);
@@ -50,9 +48,9 @@ export function KeyMomentsPreview({
     <div className="space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">
       <p className="flex items-center gap-2 text-sm font-semibold">
         <Play className="h-4 w-4 fill-primary text-primary" />
-        {locale === "th" ? "ฉากสำคัญ" : "Key Moments"}
+        {t("article.keyMoments")}
         <span className="text-xs font-normal text-muted-foreground">
-          ({keyMoments.length} {locale === "th" ? "ฉาก" : "scenes"})
+          ({keyMoments.length} {t("article.scenes")})
         </span>
       </p>
 
@@ -75,7 +73,7 @@ export function KeyMomentsPreview({
                       minWidth: "10px",
                     }}
                     onClick={() => handleMomentClick(moment.startOffset)}
-                    aria-label={`ไปยัง ${moment.name}`}
+                    aria-label={t("article.goToMoment").replace("{name}", moment.name)}
                   />
                 </TooltipTrigger>
                 <TooltipContent side="top" className="max-w-xs">
@@ -120,7 +118,7 @@ export function KeyMomentsPreview({
       </div>
 
       {/* Login Dialog - controlled */}
-      <LoginDialog locale={locale} open={dialogOpen} onOpenChange={setDialogOpen}>
+      <LoginDialog locale={locale as "th" | "en"} open={dialogOpen} onOpenChange={setDialogOpen}>
         <span className="hidden" />
       </LoginDialog>
     </div>

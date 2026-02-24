@@ -5,18 +5,19 @@ import { useRouter } from "next/navigation";
 import { Quote } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { LoginDialog, useAuthStore } from "@/features/auth";
+import { useDictionary } from "@/components/dictionary-provider";
 import { formatTimestamp } from "../utils";
 import type { TopQuote } from "../types";
 
 interface QuoteCardProps {
   quotes: TopQuote[];
   videoId: string;
-  locale?: "th" | "en";
 }
 
-export function QuoteCard({ quotes, videoId, locale = "th" }: QuoteCardProps) {
+export function QuoteCard({ quotes, videoId }: QuoteCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { isAuthenticated } = useAuthStore();
+  const { t, locale, getLocalizedPath } = useDictionary();
   const router = useRouter();
 
   if (!quotes?.length) {
@@ -25,9 +26,7 @@ export function QuoteCard({ quotes, videoId, locale = "th" }: QuoteCardProps) {
 
   const handleQuoteClick = (timestamp: number) => {
     if (isAuthenticated) {
-      const videoPath = locale === "en"
-        ? `/en/member/videos/${videoId}?t=${timestamp}`
-        : `/member/videos/${videoId}?t=${timestamp}`;
+      const videoPath = getLocalizedPath(`/member/videos/${videoId}?t=${timestamp}`);
       router.push(videoPath);
     } else {
       setDialogOpen(true);
@@ -38,7 +37,7 @@ export function QuoteCard({ quotes, videoId, locale = "th" }: QuoteCardProps) {
     <section className="space-y-4">
       <h2 className="flex items-center gap-2 text-lg font-semibold">
         <Quote className="h-5 w-5 text-primary" />
-        {locale === "th" ? "ประโยคเด็ด" : "Top Quotes"}
+        {t("article.topQuotes")}
       </h2>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -78,7 +77,7 @@ export function QuoteCard({ quotes, videoId, locale = "th" }: QuoteCardProps) {
       </div>
 
       {/* Login Dialog - controlled */}
-      <LoginDialog locale={locale} open={dialogOpen} onOpenChange={setDialogOpen}>
+      <LoginDialog locale={locale as "th" | "en"} open={dialogOpen} onOpenChange={setDialogOpen}>
         <span className="hidden" />
       </LoginDialog>
     </section>

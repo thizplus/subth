@@ -147,7 +147,6 @@ export default async function ArticlePage({ params }: PageProps) {
           thumbnailAlt={content.thumbnailAlt}
           videoId={content.videoId}
           title={article.title}
-          locale="th"
         />
 
         {/* 2. Summary Short */}
@@ -172,7 +171,6 @@ export default async function ArticlePage({ params }: PageProps) {
             keyMoments={content.keyMoments}
             duration={content.duration}
             videoId={content.videoId}
-            locale="th"
           />
         </div>
 
@@ -245,7 +243,6 @@ export default async function ArticlePage({ params }: PageProps) {
             memberCount={content.memberGalleryCount}
             videoId={content.videoId}
             videoCode={article.videoCode}
-            locale="th"
           />
         </div>
 
@@ -254,7 +251,6 @@ export default async function ArticlePage({ params }: PageProps) {
           <QuoteCard
             quotes={content.topQuotes || []}
             videoId={content.videoId}
-            locale="th"
           />
         </div>
 

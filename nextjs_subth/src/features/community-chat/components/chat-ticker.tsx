@@ -34,9 +34,10 @@ export function ChatTicker({ locale = "th" }: ChatTickerProps) {
         <button
           onClick={() => setSheetOpen(true)}
           className="flex items-center gap-1.5 px-3 h-full bg-primary/10 hover:bg-primary/20 transition-colors z-10 shrink-0"
+          aria-label={locale === "th" ? "เปิดแชท" : "Open chat"}
         >
           <MessageCircle className="h-4 w-4 text-primary" />
-          <span className="text-xs font-medium text-primary hidden sm:inline">แชท</span>
+          <span className="text-xs font-medium text-primary hidden sm:inline" aria-hidden="true">แชท</span>
         </button>
 
         {/* Marquee container */}
@@ -104,6 +105,7 @@ function TickerItem({ message, locale, onChatClick }: TickerItemProps) {
             <button
               className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
               onClick={(e) => e.stopPropagation()}
+              aria-label={`${locale === "th" ? "ดู" : "View"} ${message.mentionedVideo.code || message.mentionedVideo.title}`}
             >
               <Film className="h-3 w-3" />
               {message.mentionedVideo.code || message.mentionedVideo.title}

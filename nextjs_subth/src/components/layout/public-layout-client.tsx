@@ -152,9 +152,10 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
                     variant="default"
                     size="icon"
                     className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 sm:gap-2"
+                    aria-label={t.login}
                   >
                     <LogIn className="h-4 w-4" />
-                    <span className="hidden sm:inline">{t.login}</span>
+                    <span className="hidden sm:inline" aria-hidden="true">{t.login}</span>
                   </Button>
                 </LoginDialog>
               )}

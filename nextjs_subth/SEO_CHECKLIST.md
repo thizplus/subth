@@ -45,8 +45,8 @@
 
 **สิ่งที่ต้องทำ:**
 - [x] เพิ่ม `Organization` schema ที่ root layout ✅
-- [ ] เพิ่ม `WebSite` schema พร้อม SearchAction
-- [ ] เพิ่ม `Person` schema สำหรับ Cast profiles
+- [x] เพิ่ม `WebSite` schema พร้อม SearchAction ✅ (root layout)
+- [x] เพิ่ม `Person` schema สำหรับ Cast profiles ✅ (TH+EN)
 - [ ] ตรวจสอบ schema ผ่าน Google Rich Results Test
 - [ ] เพิ่ม `ItemList` schema สำหรับหน้า list
 
@@ -79,8 +79,8 @@
 **สิ่งที่ต้องทำ:**
 - [ ] ตรวจสอบ title length (50-60 chars)
 - [ ] ตรวจสอบ meta description length (150-160 chars)
-- [ ] เพิ่ม `og:locale` และ `og:locale:alternate`
-- [ ] เพิ่ม `article:published_time` และ `article:modified_time`
+- [x] เพิ่ม `og:locale` และ `og:locale:alternate` ✅ (root layout + articles)
+- [x] เพิ่ม `article:published_time` และ `article:modified_time` ✅
 
 ### 2.2 Heading Hierarchy (Priority: MEDIUM)
 
@@ -258,7 +258,8 @@
 | `/about` | HIGH | ✅ Done |
 | `/contact` | HIGH | ✅ Done |
 | `/privacy-policy` | HIGH | ✅ Done (รวม Warrant Canary) |
-| `/terms-of-service` | MEDIUM | ❌ ยังไม่มี |
+| `/terms-of-service` | MEDIUM | ✅ Done |
+| `/en/terms-of-service` | MEDIUM | ✅ Done |
 | `/en/about` | HIGH | ✅ Done |
 | `/en/contact` | HIGH | ✅ Done |
 | `/en/privacy-policy` | HIGH | ✅ Done (รวม Warrant Canary) |

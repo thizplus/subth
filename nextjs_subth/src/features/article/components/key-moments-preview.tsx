@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Play } from "lucide-react";
 import {
   Tooltip,
@@ -8,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { LoginDialog } from "@/features/auth";
+import { LoginDialog, useAuthStore } from "@/features/auth";
 import { formatTimestamp, parseDuration } from "../utils";
 import type { KeyMoment } from "../types";
 
@@ -22,17 +23,27 @@ interface KeyMomentsPreviewProps {
 export function KeyMomentsPreview({
   keyMoments,
   duration,
+  videoId,
   locale = "th",
 }: KeyMomentsPreviewProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { isAuthenticated } = useAuthStore();
+  const router = useRouter();
   const totalSeconds = parseDuration(duration);
 
   if (!keyMoments?.length || totalSeconds === 0) {
     return null;
   }
 
-  const handleMomentClick = () => {
-    setDialogOpen(true);
+  const handleMomentClick = (startOffset: number) => {
+    if (isAuthenticated) {
+      const videoPath = locale === "en"
+        ? `/en/member/videos/${videoId}?t=${startOffset}`
+        : `/member/videos/${videoId}?t=${startOffset}`;
+      router.push(videoPath);
+    } else {
+      setDialogOpen(true);
+    }
   };
 
   return (
@@ -63,7 +74,7 @@ export function KeyMomentsPreview({
                       width: `${Math.max(width, 2)}%`,
                       minWidth: "10px",
                     }}
-                    onClick={handleMomentClick}
+                    onClick={() => handleMomentClick(moment.startOffset)}
                     aria-label={`ไปยัง ${moment.name}`}
                   />
                 </TooltipTrigger>
@@ -86,7 +97,7 @@ export function KeyMomentsPreview({
             <Tooltip key={index}>
               <TooltipTrigger asChild>
                 <button
-                  onClick={handleMomentClick}
+                  onClick={() => handleMomentClick(moment.startOffset)}
                   className="group inline-flex items-center gap-2 rounded-lg border bg-background px-4 py-2.5 min-h-11 text-xs transition-all hover:border-primary/50 hover:bg-primary/5"
                 >
                   <span className="shrink-0 rounded bg-primary/10 px-2 py-1 font-mono text-[11px] font-medium text-primary">

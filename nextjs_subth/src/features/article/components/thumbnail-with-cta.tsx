@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LoginDialog } from "@/features/auth";
+import { LoginDialog, useAuthStore } from "@/features/auth";
 
 interface ThumbnailWithCTAProps {
   thumbnailUrl: string;
@@ -20,6 +21,10 @@ export function ThumbnailWithCTA({
   title,
   locale = "th",
 }: ThumbnailWithCTAProps) {
+  const { isAuthenticated } = useAuthStore();
+  const videoPath = locale === "en" ? `/en/member/videos/${videoId}` : `/member/videos/${videoId}`;
+  const buttonText = locale === "th" ? "ดูวิดีโอ" : "Watch Video";
+
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
       <Image
@@ -34,17 +39,21 @@ export function ThumbnailWithCTA({
 
       {/* Play overlay */}
       <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors hover:bg-black/40">
-        <LoginDialog locale={locale}>
-          <Button
-            size="lg"
-            className="gap-2 rounded-full px-6 py-6"
-          >
-            <Play className="h-6 w-6 fill-current" />
-            <span className="text-lg font-semibold">
-              {locale === "th" ? "ดูวิดีโอ" : "Watch Video"}
-            </span>
+        {isAuthenticated ? (
+          <Button size="lg" className="gap-2 rounded-full px-6 py-6" asChild>
+            <Link href={videoPath}>
+              <Play className="h-6 w-6 fill-current" />
+              <span className="text-lg font-semibold">{buttonText}</span>
+            </Link>
           </Button>
-        </LoginDialog>
+        ) : (
+          <LoginDialog locale={locale}>
+            <Button size="lg" className="gap-2 rounded-full px-6 py-6">
+              <Play className="h-6 w-6 fill-current" />
+              <span className="text-lg font-semibold">{buttonText}</span>
+            </Button>
+          </LoginDialog>
+        )}
       </div>
     </div>
   );

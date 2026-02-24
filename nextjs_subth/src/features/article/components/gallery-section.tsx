@@ -3,9 +3,10 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import Link from "next/link";
 import { Images, Lock, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LoginDialog } from "@/features/auth";
+import { LoginDialog, useAuthStore } from "@/features/auth";
 import type { GalleryImage } from "../types";
 
 // Dynamic import Lightbox - โหลดเฉพาะเมื่อเปิด gallery (ลด initial bundle ~50KB)
@@ -32,11 +33,14 @@ interface GallerySectionProps {
 export function GallerySection({
   images,
   memberCount,
+  videoId,
   videoCode,
   locale = "th",
 }: GallerySectionProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { isAuthenticated } = useAuthStore();
+  const videoPath = locale === "en" ? `/en/member/videos/${videoId}` : `/member/videos/${videoId}`;
 
   if (!images?.length) {
     return null;
@@ -92,17 +96,32 @@ export function GallerySection({
       {/* View more CTA */}
       {memberCount && memberCount > 0 && (
         <div className="flex justify-center pt-2">
-          <LoginDialog locale={locale}>
+          {isAuthenticated ? (
             <Button
               variant="outline"
               className="gap-2 rounded-full border-primary/30 hover:bg-primary/10"
+              asChild
             >
-              <Lock className="h-4 w-4" />
-              {locale === "th"
-                ? `ดูเพิ่มอีก ${memberCount} ภาพ`
-                : `View ${memberCount} more`}
+              <Link href={videoPath}>
+                <Images className="h-4 w-4" />
+                {locale === "th"
+                  ? `ดูเพิ่มอีก ${memberCount} ภาพ`
+                  : `View ${memberCount} more`}
+              </Link>
             </Button>
-          </LoginDialog>
+          ) : (
+            <LoginDialog locale={locale}>
+              <Button
+                variant="outline"
+                className="gap-2 rounded-full border-primary/30 hover:bg-primary/10"
+              >
+                <Lock className="h-4 w-4" />
+                {locale === "th"
+                  ? `ดูเพิ่มอีก ${memberCount} ภาพ`
+                  : `View ${memberCount} more`}
+              </Button>
+            </LoginDialog>
+          )}
         </div>
       )}
 

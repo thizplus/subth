@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Quote } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { LoginDialog } from "@/features/auth";
+import { LoginDialog, useAuthStore } from "@/features/auth";
 import { formatTimestamp } from "../utils";
 import type { TopQuote } from "../types";
 
@@ -13,15 +14,24 @@ interface QuoteCardProps {
   locale?: "th" | "en";
 }
 
-export function QuoteCard({ quotes, locale = "th" }: QuoteCardProps) {
+export function QuoteCard({ quotes, videoId, locale = "th" }: QuoteCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { isAuthenticated } = useAuthStore();
+  const router = useRouter();
 
   if (!quotes?.length) {
     return null;
   }
 
-  const handleClick = () => {
-    setDialogOpen(true);
+  const handleQuoteClick = (timestamp: number) => {
+    if (isAuthenticated) {
+      const videoPath = locale === "en"
+        ? `/en/member/videos/${videoId}?t=${timestamp}`
+        : `/member/videos/${videoId}?t=${timestamp}`;
+      router.push(videoPath);
+    } else {
+      setDialogOpen(true);
+    }
   };
 
   return (
@@ -35,7 +45,7 @@ export function QuoteCard({ quotes, locale = "th" }: QuoteCardProps) {
         {quotes.slice(0, 4).map((quote, index) => (
           <button
             key={index}
-            onClick={handleClick}
+            onClick={() => handleQuoteClick(quote.timestamp)}
             className="group relative overflow-hidden rounded-xl border bg-gradient-to-br from-primary/5 to-transparent p-4 text-left transition-all hover:border-primary/30 hover:shadow-md"
           >
             {/* Large quote mark background */}

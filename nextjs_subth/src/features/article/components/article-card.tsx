@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { CDN_URL } from "@/lib/constants";
 import type { ArticleSummary } from "../types";
 
 interface ArticleCardProps {
@@ -7,8 +8,16 @@ interface ArticleCardProps {
   locale?: "th" | "en";
 }
 
+// Build full thumbnail URL
+function getThumbnailUrl(url?: string): string {
+  if (!url) return "/placeholder-video.jpg";
+  if (url.startsWith("http")) return url;
+  return `${CDN_URL}${url}`;
+}
+
 export function ArticleCard({ article, locale = "th" }: ArticleCardProps) {
   const basePath = locale === "en" ? "/en" : "";
+  const thumbnailUrl = getThumbnailUrl(article.thumbnailUrl);
 
   return (
     <Link
@@ -18,7 +27,7 @@ export function ArticleCard({ article, locale = "th" }: ArticleCardProps) {
       {/* Thumbnail */}
       <div className="relative aspect-video overflow-hidden">
         <Image
-          src={article.thumbnailUrl}
+          src={thumbnailUrl}
           alt={article.title}
           fill
           className="object-cover transition-transform group-hover:scale-105"

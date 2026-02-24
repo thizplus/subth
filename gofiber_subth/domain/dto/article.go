@@ -45,7 +45,7 @@ type BulkScheduleRequest struct {
 
 // IngestArticleRequest - Worker ส่ง JSON มาเก็บ
 type IngestArticleRequest struct {
-	VideoID         string `json:"video_id" validate:"required,uuid"`
+	VideoID         string `json:"videoId" validate:"required,uuid"`
 	Type            string `json:"type"` // seo, news, review (default: seo)
 	Title           string `json:"title" validate:"required"`
 	MetaTitle       string `json:"metaTitle" validate:"required"`

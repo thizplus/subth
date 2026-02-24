@@ -70,7 +70,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         images: [article.content.thumbnailUrl],
       },
       alternates: {
-        canonical: `/en/articles/${slug}`,
+        canonical: `https://subth.com/en/articles/${slug}`,
+        languages: {
+          "th": `https://subth.com/articles/${slug}`,
+          "en": `https://subth.com/en/articles/${slug}`,
+        },
       },
     };
   } catch {

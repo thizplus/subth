@@ -30,6 +30,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: `${cast.name} - บทความและผลงาน | SubTH`,
       description: `รวมบทความรีวิวผลงานของ ${cast.name} พร้อมวิเคราะห์เชิงลึกและเรื่องย่อ`,
+      alternates: {
+        canonical: `https://subth.com/casts/${slug}`,
+        languages: {
+          "th": `https://subth.com/casts/${slug}`,
+          "en": `https://subth.com/en/casts/${slug}`,
+        },
+      },
     };
   } catch {
     return {

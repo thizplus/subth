@@ -29,6 +29,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: `${maker.name} - Articles & Works | SubTH`,
       description: `Browse all articles and reviews from ${maker.name} studio`,
+      alternates: {
+        canonical: `https://subth.com/en/makers/${slug}`,
+        languages: {
+          "th": `https://subth.com/makers/${slug}`,
+          "en": `https://subth.com/en/makers/${slug}`,
+        },
+      },
     };
   } catch {
     return {

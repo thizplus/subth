@@ -20,6 +20,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: `${tag.name} - Articles | SubTH`,
       description: `Browse all articles tagged with ${tag.name}`,
+      alternates: {
+        canonical: `https://subth.com/en/tags/${slug}`,
+        languages: {
+          "th": `https://subth.com/tags/${slug}`,
+          "en": `https://subth.com/en/tags/${slug}`,
+        },
+      },
     };
   } catch {
     return {

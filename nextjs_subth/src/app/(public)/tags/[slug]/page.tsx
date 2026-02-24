@@ -21,6 +21,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: `${tag.name} - บทความและรีวิว | SubTH`,
       description: tag.description || `รวมบทความรีวิวในแท็ก ${tag.name} พร้อมวิเคราะห์เชิงลึก`,
+      alternates: {
+        canonical: `https://subth.com/tags/${slug}`,
+        languages: {
+          "th": `https://subth.com/tags/${slug}`,
+          "en": `https://subth.com/en/tags/${slug}`,
+        },
+      },
     };
   } catch {
     return {

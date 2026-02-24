@@ -30,6 +30,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: `${maker.name} - บทความและผลงาน | SubTH`,
       description: `รวมบทความรีวิวผลงานจากค่าย ${maker.name} พร้อมวิเคราะห์เชิงลึกและเรื่องย่อ`,
+      alternates: {
+        canonical: `https://subth.com/makers/${slug}`,
+        languages: {
+          "th": `https://subth.com/makers/${slug}`,
+          "en": `https://subth.com/en/makers/${slug}`,
+        },
+      },
     };
   } catch {
     return {

@@ -41,6 +41,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${author.name} - Author | SubTH`,
     description: author.bio.slice(0, 160),
+    alternates: {
+      canonical: `https://subth.com/en/author/${slug}`,
+      languages: {
+        "th": `https://subth.com/author/${slug}`,
+        "en": `https://subth.com/en/author/${slug}`,
+      },
+    },
   };
 }
 

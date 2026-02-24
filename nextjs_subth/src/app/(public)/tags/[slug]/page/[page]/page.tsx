@@ -41,7 +41,7 @@ export default async function TagDetailPagePaginated({ params }: PageProps) {
   }
 
   // Fetch articles by this tag
-  let articles = [];
+  let articles: import("@/features/article").ArticleSummary[] = [];
   let total = 0;
   let totalPages = 1;
 

@@ -10,6 +10,8 @@ export interface Cast {
 
 // For detail endpoint (CastDetailResponse)
 export interface CastDetail extends Cast {
+  nameEn?: string;
+  bio?: string;
   translations?: Record<string, string>; // { en: "...", th: "...", ja: "..." }
   createdAt: string;
 }

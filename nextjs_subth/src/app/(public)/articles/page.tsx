@@ -20,7 +20,7 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
   const currentPage = parseInt(params.page || "1", 10);
   const searchQuery = params.q || "";
 
-  let articles = [];
+  let articles: import("@/features/article").ArticleSummary[] = [];
   let total = 0;
   let totalPages = 1;
   let hasError = false;

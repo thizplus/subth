@@ -24,7 +24,7 @@ export default async function TagsPagePaginated({ params, searchParams }: PagePr
   const currentPage = parseInt(page || "1", 10);
   const searchQuery = sp.q || "";
 
-  let tags = [];
+  let tags: import("@/features/tag").Tag[] = [];
   let total = 0;
   let totalPages = 1;
 

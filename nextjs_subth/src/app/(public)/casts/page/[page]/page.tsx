@@ -41,7 +41,7 @@ export default async function CastsPagePaginated({ params, searchParams }: PageP
   const currentPage = parseInt(page || "1", 10);
   const searchQuery = sp.q || "";
 
-  let casts = [];
+  let casts: import("@/features/cast").Cast[] = [];
   let total = 0;
   let totalPages = 1;
 

@@ -39,7 +39,7 @@ export default async function CastsPage({ searchParams }: PageProps) {
   const currentPage = parseInt(params.page || "1", 10);
   const searchQuery = params.q || "";
 
-  let casts = [];
+  let casts: import("@/features/cast").Cast[] = [];
   let total = 0;
   let totalPages = 1;
 

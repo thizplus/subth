@@ -10,6 +10,7 @@ export interface Tag {
 
 // For detail endpoint (TagDetailResponse)
 export interface TagDetail extends Tag {
+  description?: string;
   translations?: Record<string, string>; // { en: "...", th: "...", ja: "..." }
   createdAt: string;
 }

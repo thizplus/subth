@@ -22,7 +22,7 @@ export default async function ArticlesPagePaginated({ params, searchParams }: Pa
   const currentPage = parseInt(page || "1", 10);
   const searchQuery = sp.q || "";
 
-  let articles = [];
+  let articles: import("@/features/article").ArticleSummary[] = [];
   let total = 0;
   let totalPages = 1;
 

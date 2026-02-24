@@ -22,7 +22,7 @@ export default async function TagsPage({ searchParams }: PageProps) {
   const currentPage = parseInt(params.page || "1", 10);
   const searchQuery = params.q || "";
 
-  let tags = [];
+  let tags: import("@/features/tag").Tag[] = [];
   let total = 0;
   let totalPages = 1;
 

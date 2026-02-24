@@ -276,7 +276,7 @@
 **สิ่งที่ต้องทำ:**
 - [ ] **Safety Badges** - แสดงว่า "เนื้อหาผ่านการตรวจสอบ" / "No Malware"
 - [ ] **Encryption Notice** - ระบุเรื่อง Privacy-Focused Payment ในหน้าสมัคร
-- [ ] **Editorial Fact-Check** - เพิ่มบรรทัด "Fact-checked by SubTH Editorial Team" + วันที่ตรวจสอบ
+- [x] **Editorial Fact-Check** - FactCheckBadge component "ตรวจสอบโดย SubTH Editorial Team" + วันที่ ✅
 
 ### 9.2 Social Signal & Engagement (Priority: MEDIUM)
 
@@ -288,9 +288,9 @@
 ### 9.3 Dynamic Internal Linking (Priority: HIGH)
 
 **สิ่งที่ต้องทำ:**
-- [ ] **Top Performances Section** - ในหน้า `/casts/[slug]` แสดง "Top 3 Best Performances" จาก qualityScore
-- [ ] **Thematic Keywords Cloud** - ท้ายบทความ ดึง `thematicKeywords` ทำเป็นปุ่มกด
-- [ ] **Related Articles** - แสดงบทความที่เกี่ยวข้องท้ายบทความ
+- [x] **Top Performances Section** - TopPerformances component ใน `/casts/[slug]` แสดง "Top 3 Best Performances" ✅
+- [x] **Thematic Keywords Cloud** - ThematicKeywords component ท้ายบทความ ✅
+- [x] **Related Articles** - RelatedArticles component แสดงบทความที่เกี่ยวข้องท้ายบทความ ✅
 
 ### 9.4 Author Entity / Persona (Priority: HIGH)
 
@@ -321,10 +321,10 @@
 10. [x] **Add Author schema** - ในทุกบทความ (Person schema + AuthorByline component) ✅
 
 ### 2 สัปดาห์:
-11. [ ] **Add Fact-Check line** - ในบทความทั้งหมด
-12. [ ] **Add Related Articles** - ท้ายบทความ
-13. [ ] **Add Thematic Keywords** - ท้ายบทความ
-14. [ ] **Top Performances section** - ในหน้า cast
+11. [x] **Add Fact-Check line** - FactCheckBadge component (TH+EN) ✅
+12. [x] **Add Related Articles** - RelatedArticles component ท้ายบทความ (TH+EN) ✅
+13. [x] **Add Thematic Keywords** - ThematicKeywords component ท้ายบทความ (TH+EN) ✅
+14. [x] **Top Performances section** - TopPerformances component ในหน้า cast (TH+EN) ✅
 
 ### เดือนหน้า:
 15. [ ] **Setup Google Search Console**

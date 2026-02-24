@@ -1,5 +1,5 @@
 import { DictionaryProvider } from "@/components/dictionary-provider";
-import { MemberSidebar, MemberHeader } from "@/components/member";
+import { MemberSidebar, MemberHeader, MemberBottomNav } from "@/components/member";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { categoryService, Category } from "@/features/category";
@@ -36,11 +36,12 @@ export default async function EnglishMemberLayout({
             <SidebarInset className="overflow-x-hidden">
               <MemberHeader locale="en" />
               <ChatTicker locale="en" />
-              <main className="flex-1 overflow-auto p-4">
+              <main className="flex-1 overflow-auto p-4 pb-20 md:pb-4">
                 {children}
               </main>
               <SemanticSearchProvider />
               <ChatFab />
+              <MemberBottomNav />
             </SidebarInset>
           </SidebarProvider>
         </ChatProvider>

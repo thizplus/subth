@@ -19,7 +19,8 @@
     "logout": "ออกจากระบบ",
     "watchVideo": "ดูวิดีโอ",
     "member": "สมาชิก",
-    "needXp": "อีก"
+    "needXp": "อีก",
+    "profile": "โปรไฟล์"
   },
   "article": {
     "gallery": "แกลเลอรี่",

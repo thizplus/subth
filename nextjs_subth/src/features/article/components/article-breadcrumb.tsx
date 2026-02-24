@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import {
@@ -41,9 +42,9 @@ export function ArticleBreadcrumb({ items, locale = "th" }: ArticleBreadcrumbPro
           const isLast = index === items.length - 1;
 
           return (
-            <>
-              <BreadcrumbSeparator key={`sep-${index}`} />
-              <BreadcrumbItem key={`item-${index}`}>
+            <Fragment key={index}>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
                 {isLast || !item.href ? (
                   <BreadcrumbPage
                     className="line-clamp-1 max-w-[200px]"
@@ -57,7 +58,7 @@ export function ArticleBreadcrumb({ items, locale = "th" }: ArticleBreadcrumbPro
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
-            </>
+            </Fragment>
           );
         })}
       </BreadcrumbList>

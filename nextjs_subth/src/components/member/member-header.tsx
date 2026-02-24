@@ -42,15 +42,15 @@ export function MemberHeader({ locale }: MemberHeaderProps) {
           className="mx-2 data-[orientation=vertical]:h-4"
         />
 
-        {/* Search */}
-        <form onSubmit={handleSearch} className="relative flex-1 max-w-md">
+        {/* Search - hidden on mobile, visible on md+ */}
+        <form onSubmit={handleSearch} className="relative hidden md:flex flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder={searchPlaceholder}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="pl-9 h-9"
+            className="pl-9 h-9 w-full"
           />
         </form>
 

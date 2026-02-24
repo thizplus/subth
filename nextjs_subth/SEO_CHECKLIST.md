@@ -11,23 +11,23 @@
 **สถานะปัจจุบัน:** มี `sitemap.ts` แต่เป็น static pages เท่านั้น
 
 **สิ่งที่ต้องทำ:**
-- [ ] สร้าง Dynamic Sitemap ดึงข้อมูลจาก API
+- [x] สร้าง Dynamic Sitemap ดึงข้อมูลจาก API ✅
   - `/articles/*` - ทุกบทความที่ published
   - `/casts/*` - ทุก cast
   - `/tags/*` - ทุก tag
   - `/makers/*` - ทุก maker
   - `/en/*` - EN versions ทั้งหมด
 - [ ] แบ่ง Sitemap เป็นหลายไฟล์ (Sitemap Index) ถ้ามี URL > 50,000
-- [ ] ใส่ `lastModified` ที่ถูกต้องจาก `updatedAt`
-- [ ] ใส่ `priority` ตามความสำคัญ (articles > lists)
+- [x] ใส่ `lastModified` ที่ถูกต้องจาก `publishedAt` ✅
+- [x] ใส่ `priority` ตามความสำคัญ (articles > lists) ✅
 
 ### 1.2 Robots.txt (Priority: MEDIUM)
 
-**สถานะปัจจุบัน:** มี แต่ยังไม่ครบ
+**สถานะปัจจุบัน:** ✅ Done
 
 **สิ่งที่ต้องทำ:**
-- [ ] เพิ่ม `Disallow: /en/member/`
-- [ ] เพิ่ม `Disallow: /api/`
+- [x] เพิ่ม `Disallow: /en/member/` ✅
+- [x] เพิ่ม `Disallow: /api/` ✅ (มีอยู่แล้ว)
 - [ ] พิจารณา Allow specific paths ที่ต้องการ index
 
 ### 1.3 Canonical URLs (Priority: HIGH)
@@ -41,10 +41,10 @@
 
 ### 1.4 Structured Data / Schema.org (Priority: HIGH)
 
-**สถานะปัจจุบัน:** มี VideoObject, FAQPage, Article, Breadcrumb
+**สถานะปัจจุบัน:** มี VideoObject, FAQPage, Article, Breadcrumb, Organization
 
 **สิ่งที่ต้องทำ:**
-- [ ] เพิ่ม `Organization` schema ที่ root layout
+- [x] เพิ่ม `Organization` schema ที่ root layout ✅
 - [ ] เพิ่ม `WebSite` schema พร้อม SearchAction
 - [ ] เพิ่ม `Person` schema สำหรับ Cast profiles
 - [ ] ตรวจสอบ schema ผ่าน Google Rich Results Test
@@ -215,11 +215,13 @@
 
 ### 6.1 Hreflang Tags (Priority: HIGH)
 
+**สถานะปัจจุบัน:** ✅ Done (root layout)
+
 **สิ่งที่ต้องทำ:**
-- [ ] เพิ่ม `<link rel="alternate" hreflang="th" href="..." />`
-- [ ] เพิ่ม `<link rel="alternate" hreflang="en" href="..." />`
-- [ ] เพิ่ม `<link rel="alternate" hreflang="x-default" href="..." />` → **ใช้ EN version** (ขยาย Global Reach)
-- [ ] ใส่ใน sitemap ด้วย
+- [x] เพิ่ม `<link rel="alternate" hreflang="th" href="..." />` ✅
+- [x] เพิ่ม `<link rel="alternate" hreflang="en" href="..." />` ✅
+- [x] เพิ่ม `<link rel="alternate" hreflang="x-default" href="..." />` → **ใช้ EN version** ✅
+- [ ] ใส่ใน sitemap ด้วย (optional - alternates ใน metadata ดีกว่า)
 
 ### 6.2 Language-Specific Content (Priority: MEDIUM)
 
@@ -303,10 +305,10 @@
 ## 10. Quick Wins (ทำได้เลยตอนนี้)
 
 ### ทำทันที (สัปดาห์นี้):
-1. [ ] **Update Sitemap** - เพิ่ม dynamic pages (articles, casts, tags, makers)
-2. [ ] **Update robots.txt** - เพิ่ม disallow /en/member/
-3. [ ] **Add hreflang tags** - TH/EN + self-referencing (ห้ามลืม!)
-4. [ ] **Add Organization schema** - ที่ root layout
+1. [x] **Update Sitemap** - เพิ่ม dynamic pages (articles, casts, tags, makers) ✅
+2. [x] **Update robots.txt** - เพิ่ม disallow /en/member/ ✅
+3. [x] **Add hreflang tags** - TH/EN + x-default=EN ✅
+4. [x] **Add Organization schema** - ที่ root layout ✅
 5. [ ] **Add Breadcrumb UI** - Last breadcrumb ลิงก์ไป category/tag
 
 ### สัปดาห์หน้า:

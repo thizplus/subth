@@ -6,6 +6,19 @@ import { QueryProvider } from "@/providers/query-provider";
 import { XPNotificationProvider } from "@/features/engagement";
 import "./globals.css";
 
+// Organization Schema for E-E-A-T
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "SubTH",
+  alternateName: "ซับไทย",
+  url: "https://subth.com",
+  logo: "https://subth.com/logo.png",
+  description: "เว็บรีวิววิดีโอซับไทย JAV AV จีน ฝรั่ง OnlyFans พร้อมข้อมูลนักแสดง ค่าย แท็ก",
+  foundingDate: "2024",
+  sameAs: [],
+};
+
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
@@ -61,6 +74,7 @@ export const metadata: Metadata = {
     languages: {
       "th": "https://subth.com",
       "en": "https://subth.com/en",
+      "x-default": "https://subth.com/en",
     },
   },
 };
@@ -72,6 +86,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </head>
       <body className={`${roboto.variable} ${googleSans.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"

@@ -1,44 +1,184 @@
 import type { MetadataRoute } from "next";
+import { API_URL } from "@/lib/constants";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://subth.com";
+const BASE_URL = "https://subth.com";
+
+// Types for sitemap data
+interface SitemapArticle {
+  slug: string;
+  publishedAt: string;
+}
+
+interface SitemapEntity {
+  slug: string;
+}
+
+interface ArticleListResponse {
+  success: boolean;
+  data: SitemapArticle[];
+  meta: { total: number; page: number; limit: number; totalPages: number };
+}
+
+interface EntityListResponse {
+  success: boolean;
+  data: SitemapEntity[];
+  meta: { total: number };
+}
+
+// Fetch all articles (paginated)
+async function fetchAllArticles(): Promise<SitemapArticle[]> {
+  const articles: SitemapArticle[] = [];
+  let page = 1;
+  const limit = 100;
+
+  try {
+    while (true) {
+      const response = await fetch(
+        `${API_URL}/api/v1/articles/public?page=${page}&limit=${limit}`,
+        { next: { revalidate: 3600 } } // Cache for 1 hour
+      );
+
+      if (!response.ok) break;
+
+      const data: ArticleListResponse = await response.json();
+      articles.push(...data.data);
+
+      if (page >= data.meta.totalPages) break;
+      page++;
+    }
+  } catch (error) {
+    console.error("Failed to fetch articles for sitemap:", error);
+  }
+
+  return articles;
+}
+
+// Fetch all entities (casts, tags, makers)
+async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
+  const entities: SitemapEntity[] = [];
+  let offset = 0;
+  const limit = 500;
+
+  try {
+    while (true) {
+      const response = await fetch(
+        `${API_URL}${endpoint}?limit=${limit}&offset=${offset}`,
+        { next: { revalidate: 3600 } }
+      );
+
+      if (!response.ok) break;
+
+      const data: EntityListResponse = await response.json();
+      entities.push(...data.data);
+
+      if (data.data.length < limit) break;
+      offset += limit;
+    }
+  } catch (error) {
+    console.error(`Failed to fetch ${endpoint} for sitemap:`, error);
+  }
+
+  return entities;
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const now = new Date();
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
+    // TH
+    { url: BASE_URL, lastModified: now, changeFrequency: "daily", priority: 1 },
+    { url: `${BASE_URL}/articles`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/casts`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/tags`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/makers`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/reels`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
+    // EN
+    { url: `${BASE_URL}/en`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/en/articles`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { url: `${BASE_URL}/en/casts`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/en/tags`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/en/makers`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/en/reels`, lastModified: now, changeFrequency: "daily", priority: 0.6 },
+  ];
+
+  // Fetch dynamic content
+  const [articles, casts, tags, makers] = await Promise.all([
+    fetchAllArticles(),
+    fetchAllEntities("/api/v1/casts"),
+    fetchAllEntities("/api/v1/tags"),
+    fetchAllEntities("/api/v1/makers"),
+  ]);
+
+  // Article pages (TH & EN)
+  const articlePages: MetadataRoute.Sitemap = articles.flatMap((article) => [
     {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/en`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/reels`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
+      url: `${BASE_URL}/articles/${article.slug}`,
+      lastModified: new Date(article.publishedAt),
+      changeFrequency: "weekly" as const,
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/en/reels`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
+      url: `${BASE_URL}/en/articles/${article.slug}`,
+      lastModified: new Date(article.publishedAt),
+      changeFrequency: "weekly" as const,
       priority: 0.7,
     },
+  ]);
+
+  // Cast pages (TH & EN)
+  const castPages: MetadataRoute.Sitemap = casts.flatMap((cast) => [
+    {
+      url: `${BASE_URL}/casts/${cast.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/en/casts/${cast.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    },
+  ]);
+
+  // Tag pages (TH & EN)
+  const tagPages: MetadataRoute.Sitemap = tags.flatMap((tag) => [
+    {
+      url: `${BASE_URL}/tags/${tag.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/en/tags/${tag.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    },
+  ]);
+
+  // Maker pages (TH & EN)
+  const makerPages: MetadataRoute.Sitemap = makers.flatMap((maker) => [
+    {
+      url: `${BASE_URL}/makers/${maker.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/en/makers/${maker.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    },
+  ]);
+
+  return [
+    ...staticPages,
+    ...articlePages,
+    ...castPages,
+    ...tagPages,
+    ...makerPages,
   ];
-
-  // TODO: Add dynamic pages from API (videos, casts, tags, makers)
-  // const videos = await fetchVideos();
-  // const videoPages = videos.map((video) => ({
-  //   url: `${baseUrl}/member/videos/${video.id}`,
-  //   lastModified: video.updatedAt,
-  //   changeFrequency: "weekly" as const,
-  //   priority: 0.6,
-  // }));
-
-  return staticPages;
 }

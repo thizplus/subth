@@ -299,8 +299,8 @@
 **สิ่งที่ต้องทำ:**
 - [x] **สร้าง Author Persona** - "SubTH Editorial" ✅
 - [x] **สร้างหน้า /author/[name]** - /author/subth-editorial (TH+EN) พร้อม Person schema ✅
-- [ ] **Author Schema ในบทความ** - ผูก Person schema กับทุกบทความ
-- [ ] **แสดง Author ในบทความ** - "Written by SubTH Editorial" พร้อมลิงก์
+- [x] **Author Schema ในบทความ** - ผูก Person schema กับทุกบทความ ✅
+- [x] **แสดง Author ในบทความ** - AuthorByline component "เขียนโดย SubTH Editorial" พร้อมลิงก์ ✅
 
 ---
 
@@ -318,7 +318,7 @@
 7. [x] **Create Contact page** - ข้อมูลติดต่อ ✅
 8. [x] **Create Privacy Policy page** - รวม Warrant Canary ✅
 9. [x] **Create Author page** - /author/subth-editorial ✅
-10. [ ] **Add Author schema** - ในทุกบทความ
+10. [x] **Add Author schema** - ในทุกบทความ (Person schema + AuthorByline component) ✅
 
 ### 2 สัปดาห์:
 11. [ ] **Add Fact-Check line** - ในบทความทั้งหมด

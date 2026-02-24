@@ -233,9 +233,11 @@ func (s *ArticleServiceImpl) ListArticles(ctx context.Context, params *dto.Artic
 			CreatedAt:      a.CreatedAt.Format(time.RFC3339),
 		}
 
+		// ใช้ thumbnail จาก article content (SEO-safe) แทน video.Thumbnail
+		item.VideoThumbnail = extractThumbnailFromContent(a.Content)
+
 		if video, ok := videoMap[a.VideoID]; ok && video != nil {
 			item.VideoCode = video.Code
-			item.VideoThumbnail = video.Thumbnail
 		}
 
 		if a.ScheduledAt != nil {
@@ -532,4 +534,21 @@ func (s *ArticleServiceImpl) mapToDetailResponse(article *models.Article, video 
 	}
 
 	return resp
+}
+
+// extractThumbnailFromContent ดึง thumbnailUrl จาก article content JSON
+func extractThumbnailFromContent(content []byte) string {
+	if len(content) == 0 {
+		return ""
+	}
+
+	var data struct {
+		ThumbnailUrl string `json:"thumbnailUrl"`
+	}
+
+	if err := json.Unmarshal(content, &data); err != nil {
+		return ""
+	}
+
+	return data.ThumbnailUrl
 }

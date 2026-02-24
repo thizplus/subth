@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto, Google_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme";
 import { AuthProvider } from "@/features/auth";
 import { QueryProvider } from "@/providers/query-provider";
@@ -38,16 +38,13 @@ const webSiteSchema = {
   inLanguage: ["th", "en"],
 };
 
-const roboto = Roboto({
+// Inter - single font, variable weight (ลด network requests)
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-  variable: "--font-roboto",
-});
-
-const googleSans = Google_Sans({
-  subsets: ["latin"],
-  variable: "--font-google-sans",
-  adjustFontFallback: false,
+  display: "swap", // แสดง fallback font ก่อน แล้วค่อย swap
+  variable: "--font-inter",
+  // preload เฉพาะ latin subset ที่ใช้บ่อย
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -106,6 +103,13 @@ export default async function RootLayout({
   return (
     <html lang="th" suppressHydrationWarning>
       <head>
+        {/* Preconnect to external origins for faster loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://files.subth.com" />
+        {/* DNS prefetch for analytics */}
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -119,7 +123,7 @@ export default async function RootLayout({
         {/* Google Tag Manager */}
         <GoogleTagManager />
       </head>
-      <body className={`${roboto.variable} ${googleSans.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`}>
         {/* Google Tag Manager (noscript) */}
         <GoogleTagManagerNoScript />
         <ThemeProvider

@@ -62,6 +62,9 @@ const OnlineUsersPage = lazy(() =>
 const ArticleListPage = lazy(() =>
   import('@/features/article').then((m) => ({ default: m.ArticleListPage }))
 )
+const SiteSettingPage = lazy(() =>
+  import('@/features/site-setting').then((m) => ({ default: m.SiteSettingPage }))
+)
 
 export default function AppRoutes() {
   return (
@@ -111,6 +114,9 @@ export default function AppRoutes() {
               {/* Article routes */}
               <Route path="/articles" element={<ArticleListPage />} />
               <Route path="/articles/page/:page" element={<ArticleListPage />} />
+
+              {/* Settings */}
+              <Route path="/settings" element={<SiteSettingPage />} />
             </Route>
           </Route>
 

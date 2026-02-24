@@ -104,3 +104,8 @@ export const ARTICLE_ROUTES = {
   BULK_SCHEDULE: '/api/v1/articles/bulk-schedule',
   BY_SLUG: (slug: string) => `/api/v1/articles/slug/${slug}`,
 }
+
+export const SITE_SETTING_ROUTES = {
+  GET: '/api/v1/settings',
+  UPDATE: '/api/v1/settings',
+}

@@ -53,6 +53,9 @@ func SetupRoutes(app *fiber.App, h *handlers.Handlers, communityChatHandler *han
 	// Article routes
 	SetupArticleRoutes(api, h)
 
+	// Site setting routes
+	SetupSiteSettingRoutes(api, h)
+
 	// Community chat routes
 	if communityChatHandler != nil {
 		SetupCommunityChatRoutes(api, communityChatHandler)

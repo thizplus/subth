@@ -51,7 +51,8 @@ type Container struct {
 	ActivityLogRepository      repositories.ActivityLogRepository
 	ContactChannelRepository   repositories.ContactChannelRepository
 	ChatRepository             repositories.ChatRepository
-	ArticleRepository       repositories.ArticleRepository
+	ArticleRepository          repositories.ArticleRepository
+	SiteSettingRepository      repositories.SiteSettingRepository
 
 	// Activity Queue
 	ActivityQueue  *redis.ActivityQueue
@@ -82,7 +83,8 @@ type Container struct {
 	ActivityLogService     services.ActivityLogService
 	ContactChannelService  services.ContactChannelService
 	CommunityChatService   services.CommunityChatService
-	ArticleService      services.ArticleService
+	ArticleService         services.ArticleService
+	SiteSettingService     services.SiteSettingService
 
 	// Handlers that need special initialization
 	CommunityChatHandler *handlers.CommunityChatHandler
@@ -252,6 +254,7 @@ func (c *Container) initRepositories() error {
 	c.ContactChannelRepository = postgres.NewContactChannelRepository(c.DB)
 	c.ChatRepository = postgres.NewChatRepository(c.DB)
 	c.ArticleRepository = postgres.NewArticleRepository(c.DB)
+	c.SiteSettingRepository = postgres.NewSiteSettingRepository(c.DB)
 
 	// Activity Queue (Redis)
 	c.ActivityQueue = redis.NewActivityQueue(c.RedisClient)
@@ -319,6 +322,9 @@ func (c *Container) initServices() error {
 
 	// SEO Article Service (with Storage for R2 cleanup on delete)
 	c.ArticleService = serviceimpl.NewArticleService(c.ArticleRepository, c.VideoRepository, c.Storage)
+
+	// Site Setting Service
+	c.SiteSettingService = serviceimpl.NewSiteSettingService(c.SiteSettingRepository)
 
 	// Chat Hub (WebSocket)
 	c.ChatHub = websocket.NewChatHub(c.CommunityChatService)
@@ -447,7 +453,8 @@ func (c *Container) GetHandlerServices() *handlers.Services {
 		ActivityLogService:    c.ActivityLogService,
 		ContactChannelService: c.ContactChannelService,
 		CommunityChatService:  c.CommunityChatService,
-		ArticleService:     c.ArticleService,
+		ArticleService:        c.ArticleService,
+		SiteSettingService:    c.SiteSettingService,
 	}
 }
 

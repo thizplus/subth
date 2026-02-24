@@ -29,6 +29,7 @@ type Services struct {
 	ContactChannelService  services.ContactChannelService
 	CommunityChatService   services.CommunityChatService
 	ArticleService         services.ArticleService
+	SiteSettingService     services.SiteSettingService
 }
 
 // Repositories contains repositories needed for handlers that don't use services
@@ -61,6 +62,7 @@ type Handlers struct {
 	ContactChannelHandler  *ContactChannelHandler
 	CommunityChatHandler   *CommunityChatHandler
 	ArticleHandler         *ArticleHandler
+	SiteSettingHandler     *SiteSettingHandler
 }
 
 // NewHandlers creates a new instance of Handlers with all dependencies
@@ -88,5 +90,6 @@ func NewHandlers(services *Services, repos *Repositories, googleConfig config.Go
 		ActivityLogHandler:    NewActivityLogHandler(services.ActivityLogService),
 		ContactChannelHandler: NewContactChannelHandler(services.ContactChannelService),
 		ArticleHandler:        NewArticleHandler(services.ArticleService),
+		SiteSettingHandler:    NewSiteSettingHandler(services.SiteSettingService),
 	}
 }

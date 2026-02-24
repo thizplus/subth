@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme";
 import { AuthProvider } from "@/features/auth";
 import { QueryProvider } from "@/providers/query-provider";
 import { XPNotificationProvider } from "@/features/engagement";
+import { GoogleTagManager, GoogleTagManagerNoScript } from "@/components/analytics";
 import "./globals.css";
 
 // Organization Schema for E-E-A-T
@@ -97,7 +98,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -115,8 +116,12 @@ export default function RootLayout({
         />
         {/* OpenGraph locale alternates */}
         <meta property="og:locale:alternate" content="en_US" />
+        {/* Google Tag Manager */}
+        <GoogleTagManager />
       </head>
       <body className={`${roboto.variable} ${googleSans.variable} font-sans antialiased`}>
+        {/* Google Tag Manager (noscript) */}
+        <GoogleTagManagerNoScript />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

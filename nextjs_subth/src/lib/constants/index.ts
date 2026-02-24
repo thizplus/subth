@@ -141,6 +141,11 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/api/v1/community-chat/messages/${id}`,
     WS: "/ws/chat",
   },
+
+  // Site Settings
+  SETTINGS: {
+    GET: "/api/v1/settings",
+  },
 };
 
 // Pagination

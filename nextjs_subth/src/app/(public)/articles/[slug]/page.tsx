@@ -27,6 +27,8 @@ import {
   // Navigation
   TableOfContents,
   ArticleBreadcrumb,
+  // Author
+  AuthorByline,
 } from "@/features/article";
 
 interface PageProps {
@@ -102,6 +104,7 @@ export default async function ArticlePage({ params }: PageProps) {
         updatedAt={content.updatedAt}
         slug={article.slug}
         videoCode={article.videoCode}
+        locale="th"
       />
       <BreadcrumbSchema title={article.title} slug={article.slug} />
 
@@ -152,6 +155,15 @@ export default async function ArticlePage({ params }: PageProps) {
 
         {/* 4. Title (H1) */}
         <h1 className="mt-8 text-2xl font-bold md:text-3xl">{article.title}</h1>
+
+        {/* 4.5 Author Byline */}
+        <div className="mt-3">
+          <AuthorByline
+            publishedAt={article.publishedAt}
+            updatedAt={content.updatedAt}
+            locale="th"
+          />
+        </div>
 
         {/* 5. Cast/Maker/Tags */}
         <div className="mt-6 space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">

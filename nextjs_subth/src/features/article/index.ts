@@ -25,6 +25,8 @@ export {
   // Navigation
   TableOfContents,
   ArticleBreadcrumb,
+  // Author
+  AuthorByline,
 } from "./components";
 
 // Service

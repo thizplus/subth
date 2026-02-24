@@ -22,6 +22,9 @@ export { ViewingTipsSection } from "./viewing-tips-section";
 export { TableOfContents } from "./table-of-contents";
 export { ArticleBreadcrumb } from "./article-breadcrumb";
 
+// Author
+export { AuthorByline } from "./author-byline";
+
 // Schema components
 export {
   VideoObjectSchema,

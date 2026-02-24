@@ -25,6 +25,7 @@ import {
   TableOfContents,
   AudioPlayer,
   ArticleBreadcrumb,
+  AuthorByline,
 } from "@/features/article";
 
 interface PageProps {
@@ -98,6 +99,7 @@ export default async function ArticlePageEN({ params }: PageProps) {
         updatedAt={content.updatedAt}
         slug={article.slug}
         videoCode={article.videoCode}
+        locale="en"
       />
       <BreadcrumbSchema title={article.title} slug={article.slug} />
 
@@ -142,6 +144,15 @@ export default async function ArticlePageEN({ params }: PageProps) {
         </div>
 
         <h1 className="mt-8 text-2xl font-bold md:text-3xl">{article.title}</h1>
+
+        {/* Author Byline */}
+        <div className="mt-3">
+          <AuthorByline
+            publishedAt={article.publishedAt}
+            updatedAt={content.updatedAt}
+            locale="en"
+          />
+        </div>
 
         <div className="mt-6 space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">
           <div className="flex flex-wrap gap-6">

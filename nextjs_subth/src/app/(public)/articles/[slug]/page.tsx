@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { PublicLayout } from "@/components/layout";
 import {
   articleService,
+  AudioPlayer,
   ThumbnailWithCTA,
   KeyMomentsPreview,
   GallerySection,
@@ -120,7 +121,13 @@ export default async function ArticlePage({ params }: PageProps) {
           </p>
         )}
 
-        {/* 2.5 Table of Contents (Mobile-first, Dynamic) */}
+        {/* 2.5 Audio Summary Player */}
+        <AudioPlayer
+          audioUrl={content.audioSummaryUrl}
+          audioDuration={content.audioDuration}
+        />
+
+        {/* 2.6 Table of Contents (Mobile-first, Dynamic) */}
         <TableOfContents content={content} />
 
         {/* 3. Key Moments Preview */}

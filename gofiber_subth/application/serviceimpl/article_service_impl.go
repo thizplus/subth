@@ -157,16 +157,27 @@ func (s *ArticleServiceImpl) DeleteArticle(ctx context.Context, id uuid.UUID) er
 		return err
 	}
 
-	// Delete R2 files (articles/{videoCode}/)
-	// SEO Worker เก็บที่ articles/{videoCode}/ ไม่ใช่ {slug}
+	// Delete R2 files
+	// SEO Worker เก็บที่:
+	// - articles/{videoCode}/ (cover, images)
+	// - audio/articles/{videoCode}/ (TTS audio)
 	if s.storage != nil && video != nil && video.Code != "" {
-		prefix := fmt.Sprintf("articles/%s/", video.Code)
-		deletedCount, err := s.storage.DeleteByPrefix(ctx, prefix)
+		// Delete article files (cover, gallery)
+		articlePrefix := fmt.Sprintf("articles/%s/", video.Code)
+		deletedCount, err := s.storage.DeleteByPrefix(ctx, articlePrefix)
 		if err != nil {
-			// Log warning แต่ไม่ fail เพราะ DB ลบไปแล้ว
-			logger.WarnContext(ctx, "Failed to delete R2 files", "article_id", id, "prefix", prefix, "error", err)
+			logger.WarnContext(ctx, "Failed to delete R2 article files", "article_id", id, "prefix", articlePrefix, "error", err)
 		} else if deletedCount > 0 {
-			logger.InfoContext(ctx, "R2 files deleted", "article_id", id, "prefix", prefix, "count", deletedCount)
+			logger.InfoContext(ctx, "R2 article files deleted", "article_id", id, "prefix", articlePrefix, "count", deletedCount)
+		}
+
+		// Delete audio files (TTS summary)
+		audioPrefix := fmt.Sprintf("audio/articles/%s/", video.Code)
+		audioDeleted, err := s.storage.DeleteByPrefix(ctx, audioPrefix)
+		if err != nil {
+			logger.WarnContext(ctx, "Failed to delete R2 audio files", "article_id", id, "prefix", audioPrefix, "error", err)
+		} else if audioDeleted > 0 {
+			logger.InfoContext(ctx, "R2 audio files deleted", "article_id", id, "prefix", audioPrefix, "count", audioDeleted)
 		}
 	}
 

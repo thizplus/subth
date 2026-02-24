@@ -1,6 +1,7 @@
 // Components
 export {
   ArticleCard,
+  AudioPlayer,
   ThumbnailWithCTA,
   KeyMomentsPreview,
   GallerySection,

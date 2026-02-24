@@ -1,4 +1,5 @@
 export { ArticleCard } from "./article-card";
+export { AudioPlayer } from "./audio-player";
 export { ThumbnailWithCTA } from "./thumbnail-with-cta";
 export { KeyMomentsPreview } from "./key-moments-preview";
 export { GallerySection } from "./gallery-section";

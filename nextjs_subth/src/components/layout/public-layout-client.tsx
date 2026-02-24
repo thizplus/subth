@@ -74,7 +74,7 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
                     <Button variant="ghost" className="h-auto px-2 py-1.5">
                       <div className="flex items-center gap-2">
                         <Avatar className="h-8 w-8 rounded-lg">
-                          <AvatarImage src={user.avatar} />
+                          <AvatarImage src={user.avatar} alt={user.displayName || user.email || "User avatar"} />
                           <AvatarFallback className="rounded-lg">
                             {getInitials()}
                           </AvatarFallback>
@@ -96,7 +96,7 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
                       <div className="flex flex-col gap-2 px-2 py-2">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-10 w-10 rounded-lg">
-                            <AvatarImage src={user.avatar || ""} />
+                            <AvatarImage src={user.avatar || ""} alt={user.displayName || user.email || "User avatar"} />
                             <AvatarFallback className="rounded-lg">
                               {getInitials()}
                             </AvatarFallback>

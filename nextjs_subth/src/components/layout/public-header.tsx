@@ -65,7 +65,7 @@ export function PublicHeader({ locale = "th" }: PublicHeaderProps) {
                 <Button variant="ghost" className="h-auto px-2 py-1.5">
                   <div className="flex items-center gap-2">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={user.avatar} />
+                      <AvatarImage src={user.avatar} alt={user.displayName || "User avatar"} />
                       <AvatarFallback className="rounded-lg">
                         {getInitials()}
                       </AvatarFallback>
@@ -87,7 +87,7 @@ export function PublicHeader({ locale = "th" }: PublicHeaderProps) {
                     {/* Avatar & DisplayName */}
                     <div className="flex items-center gap-2">
                       <Avatar className="h-10 w-10 rounded-lg">
-                        <AvatarImage src={user.avatar || ""} />
+                        <AvatarImage src={user.avatar || ""} alt={user.displayName || "User avatar"} />
                         <AvatarFallback className="rounded-lg">
                           {getInitials()}
                         </AvatarFallback>

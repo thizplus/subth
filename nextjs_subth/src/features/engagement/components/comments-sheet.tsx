@@ -176,7 +176,7 @@ export function CommentsSheet({
               {isAuthenticated ? (
                 <form onSubmit={handleSubmit} className="flex items-center gap-2.5">
                   <Avatar className="h-10 w-10 rounded-lg">
-                    <AvatarImage src={user?.avatar} />
+                    <AvatarImage src={user?.avatar} alt="User avatar" />
                     <AvatarFallback className="text-sm rounded-lg">
                       {user?.displayName?.slice(0, 2) || "TH"}
                     </AvatarFallback>
@@ -249,7 +249,7 @@ function CommentItem({
   return (
     <div className="flex gap-2.5">
       <Avatar className="h-8 w-8 flex-shrink-0 rounded-lg">
-        <AvatarImage src={comment.user?.avatar} />
+        <AvatarImage src={comment.user?.avatar} alt={comment.user?.displayName || "User avatar"} />
         <AvatarFallback className="text-xs rounded-lg">{getInitials(comment)}</AvatarFallback>
       </Avatar>
 

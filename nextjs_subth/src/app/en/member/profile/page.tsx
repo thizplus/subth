@@ -48,7 +48,7 @@ export default function ProfilePage() {
       <div className="flex flex-col items-center text-center mb-6">
         {/* Avatar */}
         <Avatar className="h-24 w-24 mb-4">
-          <AvatarImage src={user?.avatar} />
+          <AvatarImage src={user?.avatar} alt={user?.displayName || "Profile avatar"} />
           <AvatarFallback className="text-3xl">
             {user?.displayName?.slice(0, 2) || "TH"}
           </AvatarFallback>

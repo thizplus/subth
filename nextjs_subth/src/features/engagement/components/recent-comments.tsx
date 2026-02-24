@@ -83,7 +83,7 @@ export function RecentComments({ locale = "th", limit = 5 }: RecentCommentsProps
         {comments.map((comment) => (
           <div key={comment.id} className="flex gap-2">
             <Avatar className="h-7 w-7 flex-shrink-0 rounded-md">
-              <AvatarImage src={comment.user?.avatar} />
+              <AvatarImage src={comment.user?.avatar} alt={comment.user?.displayName || "User avatar"} />
               <AvatarFallback className="text-[10px] rounded-md">
                 {getInitials(comment)}
               </AvatarFallback>

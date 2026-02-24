@@ -232,7 +232,7 @@ export function ChatSheet({ locale = "th" }: ChatSheetProps) {
               )}
 
               <Avatar className="h-8 w-8 rounded-lg shrink-0">
-                <AvatarImage src={user?.avatar} />
+                <AvatarImage src={user?.avatar} alt="User avatar" />
                 <AvatarFallback className="text-xs rounded-lg">
                   {user?.displayName?.slice(0, 2) || "TH"}
                 </AvatarFallback>
@@ -368,7 +368,7 @@ function ChatMessageItem({
   return (
     <div className={`flex gap-2 ${isOwn ? "flex-row-reverse" : ""}`}>
       <Avatar className="h-8 w-8 flex-shrink-0 rounded-lg">
-        <AvatarImage src={message.user.avatar} />
+        <AvatarImage src={message.user.avatar} alt={message.user.displayName || "User avatar"} />
         <AvatarFallback className="text-xs rounded-lg">
           {message.user.displayName?.slice(0, 2) || "TH"}
         </AvatarFallback>

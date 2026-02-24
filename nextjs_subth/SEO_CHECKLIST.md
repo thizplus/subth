@@ -262,6 +262,8 @@
 | `/en/about` | HIGH | ✅ Done |
 | `/en/contact` | HIGH | ✅ Done |
 | `/en/privacy-policy` | HIGH | ✅ Done (รวม Warrant Canary) |
+| `/author/[slug]` | HIGH | ✅ Done (Person schema) |
+| `/en/author/[slug]` | HIGH | ✅ Done (Person schema) |
 
 ---
 
@@ -295,9 +297,9 @@
 **หลักการ:** Google ชอบมี "คนเขียน" แม้จะเป็น Persona
 
 **สิ่งที่ต้องทำ:**
-- [ ] **สร้าง Author Persona** - เช่น "SubTH Editorial" หรือ "J-Expert"
-- [ ] **สร้างหน้า /author/[name]** - รวบรวมบทความที่เขียน
-- [ ] **Author Schema** - ผูก Person schema กับทุกบทความ
+- [x] **สร้าง Author Persona** - "SubTH Editorial" ✅
+- [x] **สร้างหน้า /author/[name]** - /author/subth-editorial (TH+EN) พร้อม Person schema ✅
+- [ ] **Author Schema ในบทความ** - ผูก Person schema กับทุกบทความ
 - [ ] **แสดง Author ในบทความ** - "Written by SubTH Editorial" พร้อมลิงก์
 
 ---
@@ -315,7 +317,7 @@
 6. [x] **Create About page** - แนะนำทีม/Persona ✅
 7. [x] **Create Contact page** - ข้อมูลติดต่อ ✅
 8. [x] **Create Privacy Policy page** - รวม Warrant Canary ✅
-9. [ ] **Create Author page** - /author/subth-editorial
+9. [x] **Create Author page** - /author/subth-editorial ✅
 10. [ ] **Add Author schema** - ในทุกบทความ
 
 ### 2 สัปดาห์:

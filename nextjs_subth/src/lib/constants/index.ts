@@ -125,6 +125,15 @@ export const API_ROUTES = {
     LIST: "/api/v1/contact-channels",
   },
 
+  // Articles (Public SEO pages)
+  ARTICLES: {
+    LIST: "/api/v1/articles/public",
+    BY_SLUG: (slug: string) => `/api/v1/articles/slug/${slug}`,
+    BY_CAST: (slug: string) => `/api/v1/articles/cast/${slug}`,
+    BY_TAG: (slug: string) => `/api/v1/articles/tag/${slug}`,
+    BY_MAKER: (slug: string) => `/api/v1/articles/maker/${slug}`,
+  },
+
   // Community Chat
   COMMUNITY_CHAT: {
     MESSAGES: "/api/v1/community-chat/messages",

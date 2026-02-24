@@ -121,3 +121,32 @@ type PublicArticleResponse struct {
 	VideoCode       string                 `json:"videoCode"`
 	PublishedAt     string                 `json:"publishedAt"`
 }
+
+// Public Article List (for SEO pages)
+type PublicArticleListParams struct {
+	Page   int    `query:"page"`
+	Limit  int    `query:"limit"`
+	Lang   string `query:"lang"`
+	Search string `query:"search"`
+}
+
+func (p *PublicArticleListParams) SetDefaults() {
+	if p.Page < 1 {
+		p.Page = 1
+	}
+	if p.Limit < 1 || p.Limit > 100 {
+		p.Limit = 24
+	}
+}
+
+type PublicArticleSummary struct {
+	Slug            string   `json:"slug"`
+	Title           string   `json:"title"`
+	MetaDescription string   `json:"metaDescription"`
+	ThumbnailUrl    string   `json:"thumbnailUrl"`
+	VideoCode       string   `json:"videoCode"`
+	PublishedAt     string   `json:"publishedAt"`
+	CastNames       []string `json:"castNames,omitempty"`
+	MakerName       string   `json:"makerName,omitempty"`
+	Tags            []string `json:"tags,omitempty"`
+}

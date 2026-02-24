@@ -35,6 +35,32 @@ type ArticleRepository interface {
 
 	// Public
 	GetPublishedBySlug(ctx context.Context, slug string) (*models.Article, error)
+
+	// Public Listing (for SEO pages)
+	ListPublished(ctx context.Context, params PublicArticleListParams) ([]PublishedArticleWithVideo, int64, error)
+	ListPublishedByCast(ctx context.Context, castSlug string, params PublicArticleListParams) ([]PublishedArticleWithVideo, int64, error)
+	ListPublishedByTag(ctx context.Context, tagSlug string, params PublicArticleListParams) ([]PublishedArticleWithVideo, int64, error)
+	ListPublishedByMaker(ctx context.Context, makerSlug string, params PublicArticleListParams) ([]PublishedArticleWithVideo, int64, error)
+}
+
+// PublicArticleListParams สำหรับ public API
+type PublicArticleListParams struct {
+	Limit  int
+	Offset int
+	Search string
+}
+
+// PublishedArticleWithVideo เก็บ article พร้อม video data
+type PublishedArticleWithVideo struct {
+	models.Article
+	VideoCode      string
+	VideoThumbnail string
+	MakerName      string
+	MakerSlug      string
+	CastNames      []string
+	CastSlugs      []string
+	TagNames       []string
+	TagSlugs       []string
 }
 
 type ArticleListParams struct {

@@ -191,3 +191,183 @@ func (r *articleRepositoryImpl) GetPublishedBySlug(ctx context.Context, slug str
 	}
 	return &article, nil
 }
+
+// ========================================
+// Public Listing Methods (for SEO pages)
+// ========================================
+
+func (r *articleRepositoryImpl) ListPublished(ctx context.Context, params repositories.PublicArticleListParams) ([]repositories.PublishedArticleWithVideo, int64, error) {
+	var total int64
+
+	// Count total
+	countQuery := r.db.WithContext(ctx).Model(&models.Article{}).
+		Where("status = ?", models.ArticleStatusPublished)
+	if params.Search != "" {
+		countQuery = countQuery.Where("title ILIKE ? OR slug ILIKE ?", "%"+params.Search+"%", "%"+params.Search+"%")
+	}
+	countQuery.Count(&total)
+
+	// Get articles with video
+	var articles []models.Article
+	query := r.db.WithContext(ctx).
+		Where("status = ?", models.ArticleStatusPublished)
+	if params.Search != "" {
+		query = query.Where("title ILIKE ? OR slug ILIKE ?", "%"+params.Search+"%", "%"+params.Search+"%")
+	}
+	err := query.Order("published_at DESC").
+		Offset(params.Offset).
+		Limit(params.Limit).
+		Find(&articles).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return r.enrichArticlesWithVideoData(ctx, articles), total, nil
+}
+
+func (r *articleRepositoryImpl) ListPublishedByCast(ctx context.Context, castSlug string, params repositories.PublicArticleListParams) ([]repositories.PublishedArticleWithVideo, int64, error) {
+	var total int64
+
+	// Subquery to find video IDs that have this cast
+	videoIDsSubquery := r.db.Table("video_casts").
+		Select("video_casts.video_id").
+		Joins("JOIN casts ON casts.id = video_casts.cast_id").
+		Where("casts.slug = ?", castSlug)
+
+	// Count total
+	r.db.WithContext(ctx).Model(&models.Article{}).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
+		Count(&total)
+
+	// Get articles
+	var articles []models.Article
+	err := r.db.WithContext(ctx).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
+		Order("published_at DESC").
+		Offset(params.Offset).
+		Limit(params.Limit).
+		Find(&articles).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return r.enrichArticlesWithVideoData(ctx, articles), total, nil
+}
+
+func (r *articleRepositoryImpl) ListPublishedByTag(ctx context.Context, tagSlug string, params repositories.PublicArticleListParams) ([]repositories.PublishedArticleWithVideo, int64, error) {
+	var total int64
+
+	// Subquery to find video IDs that have this tag
+	videoIDsSubquery := r.db.Table("video_tags").
+		Select("video_tags.video_id").
+		Joins("JOIN tags ON tags.id = video_tags.tag_id").
+		Where("tags.slug = ?", tagSlug)
+
+	// Count total
+	r.db.WithContext(ctx).Model(&models.Article{}).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
+		Count(&total)
+
+	// Get articles
+	var articles []models.Article
+	err := r.db.WithContext(ctx).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
+		Order("published_at DESC").
+		Offset(params.Offset).
+		Limit(params.Limit).
+		Find(&articles).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return r.enrichArticlesWithVideoData(ctx, articles), total, nil
+}
+
+func (r *articleRepositoryImpl) ListPublishedByMaker(ctx context.Context, makerSlug string, params repositories.PublicArticleListParams) ([]repositories.PublishedArticleWithVideo, int64, error) {
+	var total int64
+
+	// Subquery to find video IDs that have this maker
+	videoIDsSubquery := r.db.Table("videos").
+		Select("videos.id").
+		Joins("JOIN makers ON makers.id = videos.maker_id").
+		Where("makers.slug = ?", makerSlug)
+
+	// Count total
+	r.db.WithContext(ctx).Model(&models.Article{}).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
+		Count(&total)
+
+	// Get articles
+	var articles []models.Article
+	err := r.db.WithContext(ctx).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
+		Order("published_at DESC").
+		Offset(params.Offset).
+		Limit(params.Limit).
+		Find(&articles).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return r.enrichArticlesWithVideoData(ctx, articles), total, nil
+}
+
+// enrichArticlesWithVideoData ดึงข้อมูล video, cast, tag, maker สำหรับ articles
+func (r *articleRepositoryImpl) enrichArticlesWithVideoData(ctx context.Context, articles []models.Article) []repositories.PublishedArticleWithVideo {
+	if len(articles) == 0 {
+		return []repositories.PublishedArticleWithVideo{}
+	}
+
+	// Collect video IDs
+	videoIDs := make([]interface{}, len(articles))
+	for i, a := range articles {
+		videoIDs[i] = a.VideoID
+	}
+
+	// Get videos with preloaded relations
+	var videos []models.Video
+	r.db.WithContext(ctx).
+		Preload("Maker").
+		Preload("Casts").
+		Preload("Tags").
+		Where("id IN ?", videoIDs).
+		Find(&videos)
+
+	// Create video map
+	videoMap := make(map[string]*models.Video)
+	for i := range videos {
+		videoMap[videos[i].ID.String()] = &videos[i]
+	}
+
+	// Build result
+	result := make([]repositories.PublishedArticleWithVideo, len(articles))
+	for i, a := range articles {
+		item := repositories.PublishedArticleWithVideo{
+			Article: a,
+		}
+
+		if video, ok := videoMap[a.VideoID.String()]; ok {
+			item.VideoCode = video.Code
+			item.VideoThumbnail = video.Thumbnail
+
+			if video.Maker != nil {
+				item.MakerName = video.Maker.Name
+				item.MakerSlug = video.Maker.Slug
+			}
+
+			for _, cast := range video.Casts {
+				item.CastNames = append(item.CastNames, cast.Name)
+				item.CastSlugs = append(item.CastSlugs, cast.Slug)
+			}
+
+			for _, tag := range video.Tags {
+				item.TagNames = append(item.TagNames, tag.Name)
+				item.TagSlugs = append(item.TagSlugs, tag.Slug)
+			}
+		}
+
+		result[i] = item
+	}
+
+	return result
+}

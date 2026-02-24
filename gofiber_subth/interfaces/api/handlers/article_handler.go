@@ -229,3 +229,102 @@ func (h *ArticleHandler) GetPublishedArticle(c *fiber.Ctx) error {
 
 	return utils.SuccessResponse(c, article)
 }
+
+// ListPublishedArticles - รายการบทความที่เผยแพร่แล้ว (Public)
+// GET /api/v1/articles/public
+func (h *ArticleHandler) ListPublishedArticles(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	var params dto.PublicArticleListParams
+	if err := c.QueryParser(&params); err != nil {
+		logger.WarnContext(ctx, "Invalid query parameters", "error", err)
+		return utils.BadRequestResponse(c, "Invalid query parameters")
+	}
+
+	articles, total, err := h.articleService.ListPublishedArticles(ctx, &params)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list published articles", "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	params.SetDefaults()
+	return utils.PaginatedSuccessResponse(c, articles, total, params.Page, params.Limit)
+}
+
+// ListArticlesByCast - รายการบทความตามนักแสดง (Public)
+// GET /api/v1/articles/cast/:slug
+func (h *ArticleHandler) ListArticlesByCast(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	castSlug := c.Params("slug")
+	if castSlug == "" {
+		return utils.BadRequestResponse(c, "Cast slug is required")
+	}
+
+	var params dto.PublicArticleListParams
+	if err := c.QueryParser(&params); err != nil {
+		logger.WarnContext(ctx, "Invalid query parameters", "error", err)
+		return utils.BadRequestResponse(c, "Invalid query parameters")
+	}
+
+	articles, total, err := h.articleService.ListArticlesByCast(ctx, castSlug, &params)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list articles by cast", "cast_slug", castSlug, "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	params.SetDefaults()
+	return utils.PaginatedSuccessResponse(c, articles, total, params.Page, params.Limit)
+}
+
+// ListArticlesByTag - รายการบทความตาม Tag (Public)
+// GET /api/v1/articles/tag/:slug
+func (h *ArticleHandler) ListArticlesByTag(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	tagSlug := c.Params("slug")
+	if tagSlug == "" {
+		return utils.BadRequestResponse(c, "Tag slug is required")
+	}
+
+	var params dto.PublicArticleListParams
+	if err := c.QueryParser(&params); err != nil {
+		logger.WarnContext(ctx, "Invalid query parameters", "error", err)
+		return utils.BadRequestResponse(c, "Invalid query parameters")
+	}
+
+	articles, total, err := h.articleService.ListArticlesByTag(ctx, tagSlug, &params)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list articles by tag", "tag_slug", tagSlug, "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	params.SetDefaults()
+	return utils.PaginatedSuccessResponse(c, articles, total, params.Page, params.Limit)
+}
+
+// ListArticlesByMaker - รายการบทความตามค่าย (Public)
+// GET /api/v1/articles/maker/:slug
+func (h *ArticleHandler) ListArticlesByMaker(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	makerSlug := c.Params("slug")
+	if makerSlug == "" {
+		return utils.BadRequestResponse(c, "Maker slug is required")
+	}
+
+	var params dto.PublicArticleListParams
+	if err := c.QueryParser(&params); err != nil {
+		logger.WarnContext(ctx, "Invalid query parameters", "error", err)
+		return utils.BadRequestResponse(c, "Invalid query parameters")
+	}
+
+	articles, total, err := h.articleService.ListArticlesByMaker(ctx, makerSlug, &params)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list articles by maker", "maker_slug", makerSlug, "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	params.SetDefaults()
+	return utils.PaginatedSuccessResponse(c, articles, total, params.Page, params.Limit)
+}

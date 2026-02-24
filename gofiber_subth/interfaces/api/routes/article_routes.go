@@ -13,7 +13,11 @@ func SetupArticleRoutes(api fiber.Router, h *handlers.Handlers) {
 	articles.Post("/ingest", h.ArticleHandler.IngestArticle)
 
 	// Public API (must be before :id to avoid conflict)
-	articles.Get("/slug/:slug", h.ArticleHandler.GetPublishedArticle)
+	articles.Get("/public", h.ArticleHandler.ListPublishedArticles)        // List published articles
+	articles.Get("/slug/:slug", h.ArticleHandler.GetPublishedArticle)      // Get single article by slug
+	articles.Get("/cast/:slug", h.ArticleHandler.ListArticlesByCast)       // List articles by cast
+	articles.Get("/tag/:slug", h.ArticleHandler.ListArticlesByTag)         // List articles by tag
+	articles.Get("/maker/:slug", h.ArticleHandler.ListArticlesByMaker)     // List articles by maker
 
 	// Admin routes
 	articles.Get("/", middleware.Protected(), middleware.AdminOnly(), h.ArticleHandler.ListArticles)

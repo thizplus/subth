@@ -382,6 +382,103 @@ func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug strin
 	return response, nil
 }
 
+// ========================================
+// Public Listing Methods (for SEO pages)
+// ========================================
+
+func (s *ArticleServiceImpl) ListPublishedArticles(ctx context.Context, params *dto.PublicArticleListParams) ([]dto.PublicArticleSummary, int64, error) {
+	params.SetDefaults()
+
+	repoParams := repositories.PublicArticleListParams{
+		Limit:  params.Limit,
+		Offset: (params.Page - 1) * params.Limit,
+		Search: params.Search,
+	}
+
+	articles, total, err := s.articleRepo.ListPublished(ctx, repoParams)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list published articles", "error", err)
+		return nil, 0, err
+	}
+
+	return s.mapToPublicSummaries(articles), total, nil
+}
+
+func (s *ArticleServiceImpl) ListArticlesByCast(ctx context.Context, castSlug string, params *dto.PublicArticleListParams) ([]dto.PublicArticleSummary, int64, error) {
+	params.SetDefaults()
+
+	repoParams := repositories.PublicArticleListParams{
+		Limit:  params.Limit,
+		Offset: (params.Page - 1) * params.Limit,
+	}
+
+	articles, total, err := s.articleRepo.ListPublishedByCast(ctx, castSlug, repoParams)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list articles by cast", "cast_slug", castSlug, "error", err)
+		return nil, 0, err
+	}
+
+	return s.mapToPublicSummaries(articles), total, nil
+}
+
+func (s *ArticleServiceImpl) ListArticlesByTag(ctx context.Context, tagSlug string, params *dto.PublicArticleListParams) ([]dto.PublicArticleSummary, int64, error) {
+	params.SetDefaults()
+
+	repoParams := repositories.PublicArticleListParams{
+		Limit:  params.Limit,
+		Offset: (params.Page - 1) * params.Limit,
+	}
+
+	articles, total, err := s.articleRepo.ListPublishedByTag(ctx, tagSlug, repoParams)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list articles by tag", "tag_slug", tagSlug, "error", err)
+		return nil, 0, err
+	}
+
+	return s.mapToPublicSummaries(articles), total, nil
+}
+
+func (s *ArticleServiceImpl) ListArticlesByMaker(ctx context.Context, makerSlug string, params *dto.PublicArticleListParams) ([]dto.PublicArticleSummary, int64, error) {
+	params.SetDefaults()
+
+	repoParams := repositories.PublicArticleListParams{
+		Limit:  params.Limit,
+		Offset: (params.Page - 1) * params.Limit,
+	}
+
+	articles, total, err := s.articleRepo.ListPublishedByMaker(ctx, makerSlug, repoParams)
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to list articles by maker", "maker_slug", makerSlug, "error", err)
+		return nil, 0, err
+	}
+
+	return s.mapToPublicSummaries(articles), total, nil
+}
+
+// mapToPublicSummaries แปลง repository result เป็น DTO
+func (s *ArticleServiceImpl) mapToPublicSummaries(articles []repositories.PublishedArticleWithVideo) []dto.PublicArticleSummary {
+	result := make([]dto.PublicArticleSummary, len(articles))
+	for i, a := range articles {
+		item := dto.PublicArticleSummary{
+			Slug:            a.Slug,
+			Title:           a.Title,
+			MetaDescription: a.MetaDescription,
+			ThumbnailUrl:    a.VideoThumbnail,
+			VideoCode:       a.VideoCode,
+			CastNames:       a.CastNames,
+			MakerName:       a.MakerName,
+			Tags:            a.TagNames,
+		}
+
+		if a.PublishedAt != nil {
+			item.PublishedAt = a.PublishedAt.Format(time.RFC3339)
+		}
+
+		result[i] = item
+	}
+	return result
+}
+
 // Helper to map article to detail response
 func (s *ArticleServiceImpl) mapToDetailResponse(article *models.Article, video *models.Video) *dto.ArticleDetailResponse {
 	var content map[string]interface{}

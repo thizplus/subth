@@ -167,8 +167,8 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
           {/* Chat Ticker */}
           <ChatTicker locale={locale as "th" | "en"} />
 
-          {/* Main Content - pb-16 for slim bottom nav */}
-          <main className="flex-1 px-0 py-4 pb-16 sm:px-4 md:pb-4">
+          {/* Main Content - pb-24 for bottom nav + breathing room */}
+          <main className="flex-1 px-0 py-4 pb-24 sm:px-4 md:pb-4">
             {children}
           </main>
 

@@ -255,13 +255,13 @@
 
 | หน้า | Priority | สถานะ |
 |------|----------|-------|
-| `/about` | HIGH | ❌ ยังไม่มี |
-| `/contact` | HIGH | ❌ ยังไม่มี |
-| `/privacy-policy` | HIGH | ❌ ยังไม่มี |
+| `/about` | HIGH | ✅ Done |
+| `/contact` | HIGH | ✅ Done |
+| `/privacy-policy` | HIGH | ✅ Done (รวม Warrant Canary) |
 | `/terms-of-service` | MEDIUM | ❌ ยังไม่มี |
-| `/en/about` | HIGH | ❌ ยังไม่มี |
-| `/en/contact` | HIGH | ❌ ยังไม่มี |
-| `/en/privacy-policy` | HIGH | ❌ ยังไม่มี |
+| `/en/about` | HIGH | ✅ Done |
+| `/en/contact` | HIGH | ✅ Done |
+| `/en/privacy-policy` | HIGH | ✅ Done (รวม Warrant Canary) |
 
 ---
 
@@ -312,9 +312,9 @@
 5. [x] **Add Breadcrumb UI** - เพิ่มใน articles, casts, tags, makers (TH+EN) ✅
 
 ### สัปดาห์หน้า:
-6. [ ] **Create About page** - แนะนำทีม/Persona
-7. [ ] **Create Contact page** - ข้อมูลติดต่อ
-8. [ ] **Create Privacy Policy page** - รวม Encryption Notice
+6. [x] **Create About page** - แนะนำทีม/Persona ✅
+7. [x] **Create Contact page** - ข้อมูลติดต่อ ✅
+8. [x] **Create Privacy Policy page** - รวม Warrant Canary ✅
 9. [ ] **Create Author page** - /author/subth-editorial
 10. [ ] **Add Author schema** - ในทุกบทความ
 
@@ -406,7 +406,7 @@
 **หลักการ:** สร้าง Trust สำหรับเว็บ Offshore
 
 **สิ่งที่ต้องทำ:**
-- [ ] เพิ่มใน Privacy Policy: "นับตั้งแต่ก่อตั้ง เราไม่เคยได้รับคำสั่งให้เปิดเผยข้อมูลผู้ใช้แก่หน่วยงานใด"
+- [x] เพิ่มใน Privacy Policy: "นับตั้งแต่ก่อตั้ง เราไม่เคยได้รับคำสั่งให้เปิดเผยข้อมูลผู้ใช้แก่หน่วยงานใด" ✅
 - [ ] Update วันที่ทุกเดือน (หรือเมื่อสถานะเปลี่ยน)
 
 ---

@@ -1,0 +1,97 @@
+import { Metadata } from "next";
+import Link from "next/link";
+import { tagService } from "@/features/tag";
+import { PublicLayout } from "@/components/layout";
+import { Pagination } from "@/components/ui/pagination";
+import { SearchInput } from "@/components/ui/search-input";
+
+const ITEMS_PER_PAGE = 60;
+
+export const metadata: Metadata = {
+  title: "All Tags | SubTH",
+  description: "Browse all tags and categories on SubTH",
+};
+
+interface PageProps {
+  searchParams: Promise<{ page?: string; q?: string }>;
+}
+
+export default async function TagsPageEN({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const currentPage = parseInt(params.page || "1", 10);
+  const searchQuery = params.q || "";
+
+  let tags: import("@/features/tag").Tag[] = [];
+  let total = 0;
+  let totalPages = 1;
+
+  try {
+    const response = await tagService.getList({
+      page: currentPage,
+      limit: ITEMS_PER_PAGE,
+      lang: "en",
+      search: searchQuery,
+    });
+    tags = response.data;
+    total = response.meta.total;
+    totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+  } catch (e) {
+    console.error("Failed to fetch tags:", e);
+  }
+
+  return (
+    <PublicLayout locale="en">
+      <div className="mx-auto max-w-7xl px-4">
+        <h1 className="text-2xl font-bold mb-2">
+          All Tags
+          <span className="text-muted-foreground font-normal ml-2">
+            ({total.toLocaleString()})
+          </span>
+        </h1>
+        <p className="text-muted-foreground mb-6">
+          Browse all tags and categories
+        </p>
+
+        <div className="mb-6">
+          <SearchInput
+            placeholder="Search tags..."
+            defaultValue={searchQuery}
+            basePath="/en/tags"
+          />
+        </div>
+
+        {tags.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <Link
+                key={tag.id}
+                href={`/en/tags/${tag.slug}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary hover:bg-secondary/80 transition-colors"
+              >
+                <span className="text-sm">{tag.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  ({tag.videoCount?.toLocaleString() || 0})
+                </span>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-muted-foreground">
+            {searchQuery ? "No tags found" : "No tag data available"}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="mt-8">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              basePath="/en/tags"
+              searchQuery={searchQuery}
+            />
+          </div>
+        )}
+      </div>
+    </PublicLayout>
+  );
+}

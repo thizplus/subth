@@ -110,7 +110,7 @@ export default async function ArticlePage({ params }: PageProps) {
         <ArticleBreadcrumb
           items={[
             { label: "บทความ", href: "/articles" },
-            { label: article.videoCode },
+            { label: article.title.split(" ")[0] || article.videoCode },
           ]}
           locale="th"
         />

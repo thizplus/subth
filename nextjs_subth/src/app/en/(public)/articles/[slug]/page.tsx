@@ -105,7 +105,7 @@ export default async function ArticlePageEN({ params }: PageProps) {
         <ArticleBreadcrumb
           items={[
             { label: "Articles", href: "/en/articles" },
-            { label: article.videoCode },
+            { label: article.title.split(" ")[0] || article.videoCode },
           ]}
           locale="en"
         />

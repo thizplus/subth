@@ -24,6 +24,7 @@ export {
   ViewingTipsSection,
   // Navigation
   TableOfContents,
+  ArticleBreadcrumb,
 } from "./components";
 
 // Service

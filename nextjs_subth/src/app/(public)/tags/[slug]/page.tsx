@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tagService } from "@/features/tag";
-import { articleService, ArticleCard } from "@/features/article";
+import { articleService, ArticleCard, ArticleBreadcrumb } from "@/features/article";
 import { PublicLayout } from "@/components/layout";
 import { Pagination } from "@/components/ui/pagination";
 import { Tag } from "lucide-react";
@@ -63,6 +63,15 @@ export default async function TagDetailPage({ params, searchParams }: PageProps)
   return (
     <PublicLayout locale="th">
       <div className="mx-auto max-w-7xl px-4">
+        {/* Breadcrumb */}
+        <ArticleBreadcrumb
+          items={[
+            { label: "แท็ก", href: "/tags" },
+            { label: tag.name },
+          ]}
+          locale="th"
+        />
+
         {/* Tag Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">

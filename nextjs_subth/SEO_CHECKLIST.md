@@ -95,7 +95,7 @@
 
 **สิ่งที่ต้องทำ:**
 - [ ] เพิ่ม "Related Articles" section ท้ายบทความ
-- [ ] เพิ่ม breadcrumbs ที่แสดงผล (ไม่ใช่แค่ schema)
+- [x] เพิ่ม breadcrumbs ที่แสดงผล (ไม่ใช่แค่ schema) ✅
 - [ ] Link จาก cast/tag/maker pages กลับไป articles
 - [ ] เพิ่ม "More from this actress" section
 
@@ -309,7 +309,7 @@
 2. [x] **Update robots.txt** - เพิ่ม disallow /en/member/ ✅
 3. [x] **Add hreflang tags** - TH/EN + x-default=EN ✅
 4. [x] **Add Organization schema** - ที่ root layout ✅
-5. [ ] **Add Breadcrumb UI** - Last breadcrumb ลิงก์ไป category/tag
+5. [x] **Add Breadcrumb UI** - เพิ่มใน articles, casts, tags, makers (TH+EN) ✅
 
 ### สัปดาห์หน้า:
 6. [ ] **Create About page** - แนะนำทีม/Persona

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { makerService } from "@/features/maker";
-import { articleService, ArticleCard } from "@/features/article";
+import { articleService, ArticleCard, ArticleBreadcrumb } from "@/features/article";
 import { PublicLayout } from "@/components/layout";
 import { Pagination } from "@/components/ui/pagination";
 
@@ -72,6 +72,15 @@ export default async function MakerDetailPage({ params, searchParams }: PageProp
   return (
     <PublicLayout locale="th">
       <div className="mx-auto max-w-7xl px-4">
+        {/* Breadcrumb */}
+        <ArticleBreadcrumb
+          items={[
+            { label: "ค่าย", href: "/makers" },
+            { label: maker.name },
+          ]}
+          locale="th"
+        />
+
         {/* Maker Header */}
         <div className="flex items-center gap-4 mb-6">
           <div

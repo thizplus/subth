@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tagService } from "@/features/tag";
-import { articleService, ArticleCard } from "@/features/article";
+import { articleService, ArticleCard, ArticleBreadcrumb } from "@/features/article";
 import { PublicLayout } from "@/components/layout";
 import { Pagination } from "@/components/ui/pagination";
 
@@ -60,6 +60,14 @@ export default async function TagDetailPageEN({ params, searchParams }: PageProp
   return (
     <PublicLayout locale="en">
       <div className="mx-auto max-w-7xl px-4">
+        <ArticleBreadcrumb
+          items={[
+            { label: "Tags", href: "/en/tags" },
+            { label: tag.name },
+          ]}
+          locale="en"
+        />
+
         <div className="mb-6">
           <h1 className="text-2xl font-bold">{tag.name}</h1>
           {tag.description && (

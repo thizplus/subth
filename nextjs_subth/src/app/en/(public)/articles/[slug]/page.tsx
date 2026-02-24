@@ -24,6 +24,7 @@ import {
   ViewingTipsSection,
   TableOfContents,
   AudioPlayer,
+  ArticleBreadcrumb,
 } from "@/features/article";
 
 interface PageProps {
@@ -101,6 +102,14 @@ export default async function ArticlePageEN({ params }: PageProps) {
       <BreadcrumbSchema title={article.title} slug={article.slug} />
 
       <article className="mx-auto max-w-4xl px-4 py-6 md:py-8">
+        <ArticleBreadcrumb
+          items={[
+            { label: "Articles", href: "/en/articles" },
+            { label: article.videoCode },
+          ]}
+          locale="en"
+        />
+
         <ThumbnailWithCTA
           thumbnailUrl={content.thumbnailUrl}
           thumbnailAlt={content.thumbnailAlt}

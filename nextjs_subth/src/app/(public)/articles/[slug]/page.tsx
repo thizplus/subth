@@ -26,6 +26,7 @@ import {
   ViewingTipsSection,
   // Navigation
   TableOfContents,
+  ArticleBreadcrumb,
 } from "@/features/article";
 
 interface PageProps {
@@ -105,6 +106,15 @@ export default async function ArticlePage({ params }: PageProps) {
       <BreadcrumbSchema title={article.title} slug={article.slug} />
 
       <article className="mx-auto max-w-4xl px-4 py-6 md:py-8">
+        {/* 0. Breadcrumb Navigation */}
+        <ArticleBreadcrumb
+          items={[
+            { label: "บทความ", href: "/articles" },
+            { label: article.videoCode },
+          ]}
+          locale="th"
+        />
+
         {/* 1. Thumbnail with CTA (above the fold) */}
         <ThumbnailWithCTA
           thumbnailUrl={content.thumbnailUrl}

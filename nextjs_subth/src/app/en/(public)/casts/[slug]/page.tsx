@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { castService } from "@/features/cast";
-import { articleService, ArticleCard } from "@/features/article";
+import { articleService, ArticleCard, ArticleBreadcrumb } from "@/features/article";
 import { PublicLayout } from "@/components/layout";
 import { Pagination } from "@/components/ui/pagination";
 
@@ -69,6 +69,14 @@ export default async function CastDetailPageEN({ params, searchParams }: PagePro
   return (
     <PublicLayout locale="en">
       <div className="mx-auto max-w-7xl px-4">
+        <ArticleBreadcrumb
+          items={[
+            { label: "Actresses", href: "/en/casts" },
+            { label: cast.name },
+          ]}
+          locale="en"
+        />
+
         <div className="flex items-center gap-4 mb-6">
           <div
             className="w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl font-bold shrink-0"

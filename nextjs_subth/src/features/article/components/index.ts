@@ -20,6 +20,7 @@ export { ViewingTipsSection } from "./viewing-tips-section";
 
 // Navigation
 export { TableOfContents } from "./table-of-contents";
+export { ArticleBreadcrumb } from "./article-breadcrumb";
 
 // Schema components
 export {

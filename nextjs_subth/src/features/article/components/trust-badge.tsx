@@ -22,46 +22,36 @@ export function TrustBadge({ updatedAt, locale = "th" }: TrustBadgeProps) {
   });
 
   return (
-    <div className="inline-flex items-center gap-1.5 rounded-lg border border-green-500/20 bg-green-500/5 px-3 py-1.5 text-xs">
-      <ShieldCheck className="h-3.5 w-3.5 text-green-600 dark:text-green-400 shrink-0" />
+    <div className="inline-flex items-center gap-1.5 rounded-lg border border-success/20 bg-success/5 px-3 py-1.5 text-xs">
+      <ShieldCheck className="h-3.5 w-3.5 text-success shrink-0" />
       <span className="text-muted-foreground">
         {locale === "en" ? (
           <>
             Verified by{" "}
             <Link
               href={authorPath}
-              className="font-medium text-green-700 dark:text-green-300 hover:underline"
+              className="font-medium text-success hover:underline"
             >
-              SubTH
+              SubTH Editorial
             </Link>
             {" · "}
             {formattedDate}
-            <span className="text-green-600/50 dark:text-green-400/50">
-              {" "}
-              •{" "}
-            </span>
-            <span className="text-green-700 dark:text-green-300">
-              Malware-Free
-            </span>
+            <span className="text-success/50"> • </span>
+            <span className="text-success">Malware-Free</span>
           </>
         ) : (
           <>
             ตรวจสอบโดย{" "}
             <Link
               href={authorPath}
-              className="font-medium text-green-700 dark:text-green-300 hover:underline"
+              className="font-medium text-success hover:underline"
             >
-              SubTH
+              SubTH Editorial
             </Link>
             {" · "}
             {formattedDate}
-            <span className="text-green-600/50 dark:text-green-400/50">
-              {" "}
-              •{" "}
-            </span>
-            <span className="text-green-700 dark:text-green-300">
-              ปลอดมัลแวร์
-            </span>
+            <span className="text-success/50"> • </span>
+            <span className="text-success">ปลอดมัลแวร์</span>
           </>
         )}
       </span>

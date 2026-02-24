@@ -121,11 +121,11 @@ export default function PrivacyPolicyPage() {
         </div>
 
         {/* Warrant Canary */}
-        <div className="mt-8 rounded-xl border border-green-500/20 bg-green-500/5 p-6">
+        <div className="mt-8 rounded-xl border border-success/20 bg-success/5 p-6">
           <div className="flex items-start gap-3">
-            <Shield className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
+            <Shield className="h-5 w-5 text-success mt-0.5" />
             <div>
-              <h3 className="font-semibold mb-2 text-green-700 dark:text-green-300">
+              <h3 className="font-semibold mb-2 text-success">
                 Warrant Canary
               </h3>
               <p className="text-sm text-muted-foreground mb-2">

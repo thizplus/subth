@@ -1,18 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Images, Lock, ZoomIn } from "lucide-react";
-import Lightbox from "yet-another-react-lightbox";
-import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
-import Counter from "yet-another-react-lightbox/plugins/counter";
-import "yet-another-react-lightbox/styles.css";
-import "yet-another-react-lightbox/plugins/thumbnails.css";
-import "yet-another-react-lightbox/plugins/counter.css";
 import { Button } from "@/components/ui/button";
 import { LoginDialog } from "@/features/auth";
 import type { GalleryImage } from "../types";
+
+// Dynamic import Lightbox - โหลดเฉพาะเมื่อเปิด gallery (ลด initial bundle ~50KB)
+const GalleryLightbox = dynamic(
+  () => import("./gallery-lightbox").then((mod) => mod.GalleryLightbox),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
+        <div className="text-white text-sm">Loading gallery...</div>
+      </div>
+    ),
+  }
+);
 
 interface GallerySectionProps {
   images: GalleryImage[];
@@ -99,33 +106,13 @@ export function GallerySection({
         </div>
       )}
 
-      {/* Lightbox - Lazy render: จะ render เฉพาะเมื่อเปิด */}
+      {/* Lightbox - Dynamic import: โหลดเฉพาะเมื่อเปิด */}
       {lightboxOpen && (
-        <Lightbox
+        <GalleryLightbox
           open={lightboxOpen}
-          close={() => setLightboxOpen(false)}
+          onClose={() => setLightboxOpen(false)}
           index={currentIndex}
           slides={slides}
-          plugins={[Zoom, Thumbnails, Counter]}
-          zoom={{
-            maxZoomPixelRatio: 3,
-            scrollToZoom: true,
-          }}
-          thumbnails={{
-            position: "bottom",
-            width: 100,
-            height: 60,
-            gap: 8,
-          }}
-          counter={{
-            container: { style: { top: 0, bottom: "unset" } },
-          }}
-          carousel={{
-            finite: false,
-          }}
-          styles={{
-            container: { backgroundColor: "rgba(0, 0, 0, 0.95)" },
-          }}
         />
       )}
     </section>

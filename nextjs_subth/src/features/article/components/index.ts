@@ -25,6 +25,11 @@ export { ArticleBreadcrumb } from "./article-breadcrumb";
 // Author
 export { AuthorByline } from "./author-byline";
 
+// Trust & E-E-A-T
+export { FactCheckBadge } from "./fact-check-badge";
+export { RelatedArticles } from "./related-articles";
+export { ThematicKeywords } from "./thematic-keywords";
+
 // Schema components
 export {
   VideoObjectSchema,

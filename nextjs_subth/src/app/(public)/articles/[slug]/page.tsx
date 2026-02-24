@@ -29,6 +29,10 @@ import {
   ArticleBreadcrumb,
   // Author
   AuthorByline,
+  // Trust & E-E-A-T
+  FactCheckBadge,
+  RelatedArticles,
+  ThematicKeywords,
 } from "@/features/article";
 
 interface PageProps {
@@ -165,6 +169,11 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
+        {/* 4.6 Fact-Check Badge */}
+        <div className="mt-3">
+          <FactCheckBadge updatedAt={content.updatedAt} locale="th" />
+        </div>
+
         {/* 5. Cast/Maker/Tags */}
         <div className="mt-6 space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">
           <div className="flex flex-wrap gap-6">
@@ -278,6 +287,12 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
+        {/* 16.5 Thematic Keywords */}
+        <ThematicKeywords
+          keywords={content.thematicKeywords || []}
+          locale="th"
+        />
+
         {/* 17. Technical Specs */}
         <div className="mt-8">
           <TechnicalSpecs
@@ -312,6 +327,12 @@ export default async function ArticlePage({ params }: PageProps) {
             )}
           </section>
         )}
+
+        {/* 19. Related Articles */}
+        <RelatedArticles
+          articles={content.relatedVideos || []}
+          locale="th"
+        />
       </article>
     </PublicLayout>
   );

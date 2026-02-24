@@ -26,6 +26,9 @@ import {
   AudioPlayer,
   ArticleBreadcrumb,
   AuthorByline,
+  FactCheckBadge,
+  RelatedArticles,
+  ThematicKeywords,
 } from "@/features/article";
 
 interface PageProps {
@@ -154,6 +157,11 @@ export default async function ArticlePageEN({ params }: PageProps) {
           />
         </div>
 
+        {/* Fact-Check Badge */}
+        <div className="mt-3">
+          <FactCheckBadge updatedAt={content.updatedAt} locale="en" />
+        </div>
+
         <div className="mt-6 space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">
           <div className="flex flex-wrap gap-6">
             <CastCard casts={content.castProfiles} />
@@ -255,6 +263,12 @@ export default async function ArticlePageEN({ params }: PageProps) {
           />
         </div>
 
+        {/* Thematic Keywords */}
+        <ThematicKeywords
+          keywords={content.thematicKeywords || []}
+          locale="en"
+        />
+
         <div className="mt-8">
           <TechnicalSpecs
             videoQuality={content.videoQuality}
@@ -287,6 +301,12 @@ export default async function ArticlePageEN({ params }: PageProps) {
             )}
           </section>
         )}
+
+        {/* Related Articles */}
+        <RelatedArticles
+          articles={content.relatedVideos || []}
+          locale="en"
+        />
       </article>
     </PublicLayout>
   );

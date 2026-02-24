@@ -27,6 +27,10 @@ export {
   ArticleBreadcrumb,
   // Author
   AuthorByline,
+  // Trust & E-E-A-T
+  FactCheckBadge,
+  RelatedArticles,
+  ThematicKeywords,
 } from "./components";
 
 // Service

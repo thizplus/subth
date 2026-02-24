@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { castService } from "@/features/cast";
+import { castService, TopPerformances } from "@/features/cast";
 import { articleService, ArticleCard, ArticleBreadcrumb } from "@/features/article";
 import { PublicLayout } from "@/components/layout";
 import { Pagination } from "@/components/ui/pagination";
@@ -101,6 +101,13 @@ export default async function CastDetailPageEN({ params, searchParams }: PagePro
             </p>
           </div>
         )}
+
+        {/* Top Performances */}
+        <TopPerformances
+          articles={articles}
+          castName={cast.name}
+          locale="en"
+        />
 
         <h2 className="text-xl font-semibold mb-4">
           Articles

@@ -75,7 +75,7 @@ export function OnlineStats({ locale = "th" }: OnlineStatsProps) {
         </span>
         <span>
           {onlineText}{" "}
-          <span className="font-semibold text-green-600 dark:text-green-400">
+          <span className="font-semibold text-success">
             {online.toLocaleString()}
           </span>{" "}
           {locale === "th" ? "คน" : ""}

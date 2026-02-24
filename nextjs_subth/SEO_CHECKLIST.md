@@ -36,7 +36,7 @@
 
 **สิ่งที่ต้องทำ:**
 - [ ] ตรวจสอบว่าทุกหน้ามี canonical URL
-- [ ] หน้า TH และ EN ควรมี `hreflang` tags
+- [x] หน้า TH และ EN ควรมี `hreflang` tags ✅ (root layout)
 - [ ] Pagination pages ควรมี `rel="prev"` และ `rel="next"` (ถ้ายังใช้ได้)
 
 ### 1.4 Structured Data / Schema.org (Priority: HIGH)
@@ -94,10 +94,10 @@
 **สถานะปัจจุบัน:** มี ContextualLinks ในบทความ
 
 **สิ่งที่ต้องทำ:**
-- [ ] เพิ่ม "Related Articles" section ท้ายบทความ
+- [x] เพิ่ม "Related Articles" section ท้ายบทความ ✅ (RelatedArticles component)
 - [x] เพิ่ม breadcrumbs ที่แสดงผล (ไม่ใช่แค่ schema) ✅
 - [ ] Link จาก cast/tag/maker pages กลับไป articles
-- [ ] เพิ่ม "More from this actress" section
+- [x] เพิ่ม "More from this actress" section ✅ (TopPerformances component)
 
 ### 2.4 URL Structure (Priority: LOW)
 
@@ -126,10 +126,10 @@
 **หลักการ:** แสดงความเชี่ยวชาญในหัวข้อ
 
 **สิ่งที่ต้องทำ:**
-- [ ] เพิ่ม "About Us" page อธิบายว่าทีมคือใคร
-- [ ] เพิ่ม Author bio ในบทความ (ถ้าเหมาะสม)
-- [ ] แสดง "years of experience" หรือ "articles written"
-- [ ] เพิ่ม detailed analysis sections (มีแล้ว - cinematography, character journey)
+- [x] เพิ่ม "About Us" page อธิบายว่าทีมคือใคร ✅ (TH+EN)
+- [x] เพิ่ม Author bio ในบทความ ✅ (AuthorByline + Author page)
+- [x] แสดง "years of experience" หรือ "articles written" ✅ (ในหน้า Author)
+- [x] เพิ่ม detailed analysis sections (มีแล้ว - cinematography, character journey) ✅
 
 ### 3.3 Authoritativeness (Priority: MEDIUM)
 
@@ -146,11 +146,11 @@
 **หลักการ:** สร้างความน่าเชื่อถือ
 
 **สิ่งที่ต้องทำ:**
-- [ ] สร้าง "Privacy Policy" page
+- [x] สร้าง "Privacy Policy" page ✅ (TH+EN รวม Warrant Canary)
 - [ ] สร้าง "Terms of Service" page
-- [ ] สร้าง "Contact Us" page พร้อมข้อมูลติดต่อ
-- [ ] ใช้ HTTPS (มีแล้ว)
-- [ ] แสดง "Last Updated" date ในบทความ
+- [x] สร้าง "Contact Us" page พร้อมข้อมูลติดต่อ ✅ (TH+EN)
+- [x] ใช้ HTTPS (มีแล้ว) ✅
+- [x] แสดง "Last Updated" date ในบทความ ✅ (AuthorByline component)
 - [ ] เพิ่ม "Editorial Guidelines" page
 
 ---

@@ -10,6 +10,13 @@ const ITEMS_PER_PAGE = 48;
 export const metadata: Metadata = {
   title: "ค่ายผู้ผลิตทั้งหมด | SubTH",
   description: "รายชื่อค่ายผู้ผลิตทั้งหมดใน SubTH พร้อมบทความรีวิวและวิเคราะห์ผลงาน",
+  alternates: {
+    canonical: "https://subth.com/makers",
+    languages: {
+      th: "https://subth.com/makers",
+      en: "https://subth.com/en/makers",
+    },
+  },
 };
 
 // สร้างสีจาก string

@@ -10,6 +10,13 @@ const ITEMS_PER_PAGE = 60;
 export const metadata: Metadata = {
   title: "All Tags | SubTH",
   description: "Browse all tags and categories on SubTH",
+  alternates: {
+    canonical: "https://subth.com/en/tags",
+    languages: {
+      th: "https://subth.com/tags",
+      en: "https://subth.com/en/tags",
+    },
+  },
 };
 
 interface PageProps {

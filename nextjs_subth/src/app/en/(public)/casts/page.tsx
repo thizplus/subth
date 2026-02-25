@@ -10,6 +10,13 @@ const ITEMS_PER_PAGE = 48;
 export const metadata: Metadata = {
   title: "All Actresses | SubTH",
   description: "Browse all actresses on SubTH with reviews and detailed analysis",
+  alternates: {
+    canonical: "https://subth.com/en/casts",
+    languages: {
+      th: "https://subth.com/casts",
+      en: "https://subth.com/en/casts",
+    },
+  },
 };
 
 function stringToColor(str: string): string {

@@ -10,6 +10,13 @@ const ITEMS_PER_PAGE = 48;
 export const metadata: Metadata = {
   title: "นักแสดงทั้งหมด | SubTH",
   description: "รายชื่อนักแสดงทั้งหมดใน SubTH พร้อมบทความรีวิวและประวัติ",
+  alternates: {
+    canonical: "https://subth.com/casts",
+    languages: {
+      th: "https://subth.com/casts",
+      en: "https://subth.com/en/casts",
+    },
+  },
 };
 
 // สร้างสีจาก string

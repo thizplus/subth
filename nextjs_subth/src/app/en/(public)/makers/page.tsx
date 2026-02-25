@@ -10,6 +10,13 @@ const ITEMS_PER_PAGE = 48;
 export const metadata: Metadata = {
   title: "All Studios | SubTH",
   description: "Browse all studios and production companies on SubTH",
+  alternates: {
+    canonical: "https://subth.com/en/makers",
+    languages: {
+      th: "https://subth.com/makers",
+      en: "https://subth.com/en/makers",
+    },
+  },
 };
 
 function stringToColor(str: string): string {

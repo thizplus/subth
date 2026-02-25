@@ -11,6 +11,13 @@ const ITEMS_PER_PAGE = 100;
 export const metadata: Metadata = {
   title: "แท็กทั้งหมด | SubTH",
   description: "รายการแท็กทั้งหมดใน SubTH สำหรับค้นหาบทความตามประเภทที่สนใจ",
+  alternates: {
+    canonical: "https://subth.com/tags",
+    languages: {
+      th: "https://subth.com/tags",
+      en: "https://subth.com/en/tags",
+    },
+  },
 };
 
 interface PageProps {

@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://subth.com/en",
+    languages: {
+      th: "https://subth.com",
+      en: "https://subth.com/en",
+    },
   },
 };
 

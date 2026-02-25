@@ -8,6 +8,13 @@ const ITEMS_PER_PAGE = 24;
 export const metadata: Metadata = {
   title: "All Articles | SubTH",
   description: "Browse all articles with reviews and detailed analysis on SubTH",
+  alternates: {
+    canonical: "https://subth.com/en/articles",
+    languages: {
+      th: "https://subth.com/articles",
+      en: "https://subth.com/en/articles",
+    },
+  },
 };
 
 interface PageProps {

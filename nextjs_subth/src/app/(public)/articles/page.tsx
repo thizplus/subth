@@ -9,6 +9,13 @@ const ITEMS_PER_PAGE = 24;
 export const metadata: Metadata = {
   title: "บทความทั้งหมด | SubTH",
   description: "รวมบทความรีวิววิดีโอซับไทยทั้งหมด พร้อมเรื่องย่อและวิเคราะห์เชิงลึก",
+  alternates: {
+    canonical: "https://subth.com/articles",
+    languages: {
+      th: "https://subth.com/articles",
+      en: "https://subth.com/en/articles",
+    },
+  },
 };
 
 interface PageProps {

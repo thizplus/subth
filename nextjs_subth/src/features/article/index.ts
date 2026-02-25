@@ -38,9 +38,6 @@ export {
 // Service
 export { articleService } from "./service";
 
-// Hooks (client-side)
-export { useKeyMomentClick, useLoginRedirect } from "./hooks";
-
 // Utils (can be used on both server and client)
 export { formatTimestamp, parseDuration, formatDuration } from "./utils";
 

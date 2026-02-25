@@ -51,7 +51,7 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
     <ChatProvider locale={locale as "th" | "en"}>
       <SidebarProvider>
         <PublicSidebar locale={locale as "th" | "en"} />
-        <SidebarInset className="overflow-x-hidden">
+        <SidebarInset className="w-0 min-w-0">
           {/* Header */}
           <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b bg-background transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
             <div className="flex w-full items-center gap-2 px-4">

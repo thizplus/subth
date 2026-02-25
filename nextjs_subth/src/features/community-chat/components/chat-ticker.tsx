@@ -28,7 +28,7 @@ export function ChatTicker({ locale = "th" }: ChatTickerProps) {
   }
 
   return (
-    <div className="bg-muted/50 border-b overflow-hidden w-full max-w-full">
+    <div className="bg-muted/50 border-b overflow-hidden w-full">
       <div className="relative flex items-center h-8 w-full">
         {/* Chat icon - clickable to open sheet */}
         <button

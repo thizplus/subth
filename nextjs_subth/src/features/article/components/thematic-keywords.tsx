@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Tag } from "lucide-react";
+import { LoginDialog, useAuthStore } from "@/features/auth";
+import { useDictionary } from "@/components/dictionary-provider";
 
 interface ThematicKeywordsProps {
   keywords: string[];
@@ -8,11 +12,13 @@ interface ThematicKeywordsProps {
 
 export function ThematicKeywords({
   keywords,
-  locale = "th",
+  locale: localeProp,
 }: ThematicKeywordsProps) {
-  if (!keywords || keywords.length === 0) return null;
+  const { isAuthenticated } = useAuthStore();
+  const { locale: contextLocale, getLocalizedPath } = useDictionary();
+  const locale = localeProp ?? (contextLocale as "th" | "en");
 
-  const basePath = locale === "en" ? "/en" : "";
+  if (!keywords || keywords.length === 0) return null;
 
   // Convert keyword to search-friendly slug
   const toSearchQuery = (keyword: string) => {
@@ -26,15 +32,23 @@ export function ThematicKeywords({
         {locale === "en" ? "Related Topics" : "หัวข้อที่เกี่ยวข้อง"}
       </h2>
       <div className="flex flex-wrap gap-2">
-        {keywords.map((keyword, index) => (
-          <Link
-            key={index}
-            href={`${basePath}/member/search?q=${toSearchQuery(keyword)}`}
-            className="rounded-full border bg-muted/50 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary hover:border-primary/30"
-          >
-            {keyword}
-          </Link>
-        ))}
+        {keywords.map((keyword, index) =>
+          isAuthenticated ? (
+            <Link
+              key={index}
+              href={getLocalizedPath(`/member/search?q=${toSearchQuery(keyword)}`)}
+              className="rounded-full border bg-muted/50 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+            >
+              {keyword}
+            </Link>
+          ) : (
+            <LoginDialog key={index} locale={locale}>
+              <button className="rounded-full border bg-muted/50 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary hover:border-primary/30">
+                {keyword}
+              </button>
+            </LoginDialog>
+          )
+        )}
       </div>
     </section>
   );

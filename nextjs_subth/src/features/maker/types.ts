@@ -18,6 +18,7 @@ export interface MakerListParams {
   page?: number;
   limit?: number;
   search?: string;
+  hasArticles?: boolean; // Filter only makers with published articles
   // Note: lang is NOT supported for makers
 }
 

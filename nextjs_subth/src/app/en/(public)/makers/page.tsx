@@ -46,6 +46,7 @@ export default async function MakersPageEN({ searchParams }: PageProps) {
       page: currentPage,
       limit: ITEMS_PER_PAGE,
       search: searchQuery,
+      hasArticles: true,
     });
     makers = response.data;
     total = response.meta.total;

@@ -7,21 +7,16 @@ import type {
   MakerListResponse,
 } from "./types";
 
-// Helper: แปลง page เป็น offset
-function pageToOffset(page: number, limit: number): number {
-  return (page - 1) * limit;
-}
-
 export const makerService = {
   async getList(params?: MakerListParams): Promise<MakerListResponse> {
     const limit = params?.limit || 24;
     const page = params?.page || 1;
-    const offset = pageToOffset(page, limit);
 
     const searchParams = new URLSearchParams();
     searchParams.set("limit", String(limit));
-    searchParams.set("offset", String(offset));
-    if (params?.search) searchParams.set("q", params.search);
+    searchParams.set("page", String(page));
+    if (params?.search) searchParams.set("search", params.search);
+    if (params?.hasArticles) searchParams.set("hasArticles", "true");
     // Note: Makers ไม่รองรับ lang parameter
 
     return apiClient.serverGetRaw<MakerListResponse>(

@@ -39,6 +39,7 @@ export default async function TagsPage({ searchParams }: PageProps) {
       limit: ITEMS_PER_PAGE,
       lang: "th",
       search: searchQuery,
+      hasArticles: true,
     });
     tags = response.data;
     total = response.meta.total;

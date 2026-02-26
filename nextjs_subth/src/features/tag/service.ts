@@ -18,6 +18,7 @@ export const tagService = {
     searchParams.set("page", String(page));
     if (params?.search) searchParams.set("search", params.search);
     if (params?.lang) searchParams.set("lang", params.lang);
+    if (params?.hasArticles) searchParams.set("hasArticles", "true");
 
     return apiClient.serverGetRaw<TagListResponse>(
       `${API_ROUTES.TAGS.LIST}?${searchParams.toString()}`,

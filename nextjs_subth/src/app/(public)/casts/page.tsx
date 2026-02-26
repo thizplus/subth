@@ -56,6 +56,7 @@ export default async function CastsPage({ searchParams }: PageProps) {
       limit: ITEMS_PER_PAGE,
       lang: "th",
       search: searchQuery,
+      hasArticles: true,
     });
     casts = response.data;
     total = response.meta.total;

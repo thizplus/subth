@@ -21,6 +21,7 @@ export interface CastListParams {
   limit?: number;
   search?: string;
   lang?: string;
+  hasArticles?: boolean; // Filter only casts with published articles
 }
 
 // Backend uses offset-based pagination

@@ -27,6 +27,7 @@ export interface TagListParams {
   limit?: number;
   search?: string;
   lang?: string;
+  hasArticles?: boolean; // Filter only tags with published articles
 }
 
 // Backend uses offset-based pagination

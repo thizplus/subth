@@ -101,6 +101,7 @@ async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
 
 // Generate static pages sitemap
 function generateStaticPages(lang: "th" | "en"): MetadataRoute.Sitemap {
+  console.log("[Sitemap] Generating static pages for lang:", lang);
   const now = new Date();
   const prefix = lang === "en" ? "/en" : "";
   const priorityOffset = lang === "en" ? 0.1 : 0;
@@ -188,6 +189,8 @@ export default async function sitemap({
 }): Promise<MetadataRoute.Sitemap> {
   // Convert to number in case it comes as string from URL
   const sitemapId = Number(id);
+  console.log("[Sitemap] Generating sitemap for id:", id, "-> sitemapId:", sitemapId);
+  console.log("[Sitemap] API_URL:", API_URL);
 
   // Use explicit if-else to avoid type inference issues
   if (sitemapId === 0) return generateStaticPages("th");

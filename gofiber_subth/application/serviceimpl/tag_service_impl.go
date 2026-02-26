@@ -184,13 +184,12 @@ func (s *TagServiceImpl) GetTagBySlug(ctx context.Context, slug string, lang str
 
 func (s *TagServiceImpl) ListTags(ctx context.Context, req *dto.TagListRequest) ([]dto.TagResponse, int64, error) {
 	params := repositories.TagListParams{
-		Limit:       req.Limit,
-		Offset:      (req.Page - 1) * req.Limit,
-		Lang:        req.Lang,
-		Search:      req.Search,
-		SortBy:      req.SortBy,
-		Order:       req.Order,
-		HasArticles: req.HasArticles,
+		Limit:  req.Limit,
+		Offset: (req.Page - 1) * req.Limit,
+		Lang:   req.Lang,
+		Search: req.Search,
+		SortBy: req.SortBy,
+		Order:  req.Order,
 	}
 
 	// Parse IDs if provided (batch fetch mode)

@@ -34,10 +34,9 @@ type MakerRepository interface {
 }
 
 type MakerListParams struct {
-	Limit       int
-	Offset      int
-	Search      string
-	SortBy      string
-	Order       string
-	HasArticles bool // Filter only makers with published articles
+	Limit  int
+	Offset int
+	Search string
+	SortBy string
+	Order  string
 }

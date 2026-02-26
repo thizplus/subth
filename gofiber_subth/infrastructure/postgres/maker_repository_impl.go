@@ -65,16 +65,6 @@ func (r *makerRepositoryImpl) List(ctx context.Context, params repositories.Make
 
 	query := r.db.WithContext(ctx).Model(&models.Maker{})
 
-	// Filter only makers with published articles
-	if params.HasArticles {
-		// Subquery: makers that have at least one published article via videos → articles
-		subQuery := r.db.Table("videos").
-			Select("DISTINCT videos.maker_id").
-			Joins("JOIN articles ON articles.video_id = videos.id").
-			Where("articles.status = ? AND videos.maker_id IS NOT NULL", "published")
-		query = query.Where("id IN (?)", subQuery)
-	}
-
 	if params.Search != "" {
 		query = query.Where("name ILIKE ?", "%"+params.Search+"%")
 	}

@@ -182,13 +182,12 @@ func (s *CastServiceImpl) GetCastBySlug(ctx context.Context, slug string, lang s
 
 func (s *CastServiceImpl) ListCasts(ctx context.Context, req *dto.CastListRequest) ([]dto.CastResponse, int64, error) {
 	params := repositories.CastListParams{
-		Limit:       req.Limit,
-		Offset:      (req.Page - 1) * req.Limit,
-		Lang:        req.Lang,
-		Search:      req.Search,
-		SortBy:      req.SortBy,
-		Order:       req.Order,
-		HasArticles: req.HasArticles,
+		Limit:  req.Limit,
+		Offset: (req.Page - 1) * req.Limit,
+		Lang:   req.Lang,
+		Search: req.Search,
+		SortBy: req.SortBy,
+		Order:  req.Order,
 	}
 
 	// Parse IDs if provided (batch fetch mode)

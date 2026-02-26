@@ -40,12 +40,11 @@ type CastRepository interface {
 }
 
 type CastListParams struct {
-	Limit       int
-	Offset      int
-	Lang        string
-	Search      string
-	SortBy      string
-	Order       string
-	IDs         []string // Batch fetch by IDs (comma-separated UUIDs)
-	HasArticles bool     // Filter only casts with published articles
+	Limit  int
+	Offset int
+	Lang   string
+	Search string
+	SortBy string
+	Order  string
+	IDs    []string // Batch fetch by IDs (comma-separated UUIDs)
 }

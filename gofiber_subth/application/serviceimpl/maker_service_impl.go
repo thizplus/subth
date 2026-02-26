@@ -158,12 +158,11 @@ func (s *MakerServiceImpl) GetMakerBySlug(ctx context.Context, slug string) (*dt
 
 func (s *MakerServiceImpl) ListMakers(ctx context.Context, req *dto.MakerListRequest) ([]dto.MakerResponse, int64, error) {
 	params := repositories.MakerListParams{
-		Limit:       req.Limit,
-		Offset:      (req.Page - 1) * req.Limit,
-		Search:      req.Search,
-		SortBy:      req.SortBy,
-		Order:       req.Order,
-		HasArticles: req.HasArticles,
+		Limit:  req.Limit,
+		Offset: (req.Page - 1) * req.Limit,
+		Search: req.Search,
+		SortBy: req.SortBy,
+		Order:  req.Order,
 	}
 
 	makers, total, err := s.makerRepo.List(ctx, params)

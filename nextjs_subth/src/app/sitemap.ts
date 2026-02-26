@@ -3,7 +3,6 @@ import type { MetadataRoute } from "next";
 const BASE_URL = "https://subth.com";
 
 // For server-side sitemap generation, use internal Docker network if available
-// Falls back to public API URL or localhost for local dev
 const API_URL =
   process.env.INTERNAL_API_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
@@ -28,28 +27,7 @@ interface ArticleListResponse {
 interface EntityListResponse {
   success: boolean;
   data: SitemapEntity[];
-  meta: { total: number };
-}
-
-// Force dynamic generation at runtime (not build time)
-// This is needed because during Docker build, the API is not accessible
-export const dynamic = "force-dynamic";
-
-// Generate sitemap index with multiple sitemaps (0-9)
-// Next.js 16 requires NUMERIC IDs, not strings
-export async function generateSitemaps() {
-  return [
-    { id: 0 }, // pages-th
-    { id: 1 }, // pages-en
-    { id: 2 }, // articles-th
-    { id: 3 }, // articles-en
-    { id: 4 }, // casts-th
-    { id: 5 }, // casts-en
-    { id: 6 }, // tags-th
-    { id: 7 }, // tags-en
-    { id: 8 }, // makers-th
-    { id: 9 }, // makers-en
-  ];
+  meta: { total: number; page: number; limit: number; totalPages: number };
 }
 
 // Fetch all articles (paginated)
@@ -88,7 +66,6 @@ async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
 
   try {
     while (true) {
-      // hasArticles=true filters only entities with published articles
       const response = await fetch(
         `${API_URL}${endpoint}?limit=${limit}&page=${page}&hasArticles=true`,
         { next: { revalidate: 3600 } }
@@ -99,7 +76,7 @@ async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
       const data: EntityListResponse = await response.json();
       entities.push(...data.data);
 
-      if (data.data.length < limit) break;
+      if (page >= data.meta.totalPages) break;
       page++;
     }
   } catch (error) {
@@ -109,111 +86,98 @@ async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
   return entities;
 }
 
-// Generate static pages sitemap
-function generateStaticPages(lang: "th" | "en"): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const prefix = lang === "en" ? "/en" : "";
-  const priorityOffset = lang === "en" ? 0.1 : 0;
 
-  return [
-    {
-      url: prefix ? `${BASE_URL}${prefix}` : BASE_URL,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 1 - priorityOffset,
-    },
-    {
-      url: `${BASE_URL}${prefix}/articles`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.9 - priorityOffset,
-    },
-    {
-      url: `${BASE_URL}${prefix}/casts`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8 - priorityOffset,
-    },
-    {
-      url: `${BASE_URL}${prefix}/tags`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8 - priorityOffset,
-    },
-    {
-      url: `${BASE_URL}${prefix}/makers`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8 - priorityOffset,
-    },
-    {
-      url: `${BASE_URL}${prefix}/reels`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.7 - priorityOffset,
-    },
+  // Static pages - TH (priority) and EN
+  const staticPages: MetadataRoute.Sitemap = [
+    // TH
+    { url: BASE_URL, lastModified: now, changeFrequency: "daily", priority: 1 },
+    { url: `${BASE_URL}/articles`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/casts`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/tags`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/makers`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/reels`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
+    // EN
+    { url: `${BASE_URL}/en`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/en/articles`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { url: `${BASE_URL}/en/casts`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/en/tags`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/en/makers`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/en/reels`, lastModified: now, changeFrequency: "daily", priority: 0.6 },
   ];
-}
 
-// Generate article pages sitemap
-async function generateArticlePages(
-  lang: "th" | "en"
-): Promise<MetadataRoute.Sitemap> {
-  const articles = await fetchAllArticles();
-  const prefix = lang === "en" ? "/en" : "";
-  const priority = lang === "en" ? 0.7 : 0.8;
+  // Fetch dynamic content
+  const [articles, casts, tags, makers] = await Promise.all([
+    fetchAllArticles(),
+    fetchAllEntities("/api/v1/casts"),
+    fetchAllEntities("/api/v1/tags"),
+    fetchAllEntities("/api/v1/makers"),
+  ]);
 
-  return articles.map((article) => ({
-    url: `${BASE_URL}${prefix}/articles/${article.slug}`,
-    lastModified: new Date(article.publishedAt),
-    changeFrequency: "weekly" as const,
-    priority,
-  }));
-}
+  // Article pages (TH priority, EN secondary)
+  const articlePages: MetadataRoute.Sitemap = articles.flatMap((article) => [
+    {
+      url: `${BASE_URL}/articles/${article.slug}`,
+      lastModified: new Date(article.publishedAt),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/en/articles/${article.slug}`,
+      lastModified: new Date(article.publishedAt),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
+  ]);
 
-// Generate entity pages sitemap (casts, tags, makers)
-async function generateEntityPages(
-  endpoint: string,
-  pathPrefix: string,
-  lang: "th" | "en"
-): Promise<MetadataRoute.Sitemap> {
-  const entities = await fetchAllEntities(endpoint);
-  const now = new Date();
-  const langPrefix = lang === "en" ? "/en" : "";
-  const priority = lang === "en" ? 0.5 : 0.6;
+  // Cast pages (only those with articles)
+  const castPages: MetadataRoute.Sitemap = casts.flatMap((cast) => [
+    {
+      url: `${BASE_URL}/casts/${cast.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/en/casts/${cast.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    },
+  ]);
 
-  return entities.map((entity) => ({
-    url: `${BASE_URL}${langPrefix}/${pathPrefix}/${entity.slug}`,
-    lastModified: now,
-    changeFrequency: "weekly" as const,
-    priority,
-  }));
-}
+  // Tag pages (only those with articles)
+  const tagPages: MetadataRoute.Sitemap = tags.flatMap((tag) => [
+    {
+      url: `${BASE_URL}/tags/${tag.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/en/tags/${tag.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    },
+  ]);
 
-// Main sitemap function - generates sitemap based on numeric ID
-export default async function sitemap({
-  id,
-}: {
-  id: number;
-}): Promise<MetadataRoute.Sitemap> {
-  // Convert to number in case it comes as string from URL
-  const sitemapId = Number(id);
+  // Maker pages (only those with articles)
+  const makerPages: MetadataRoute.Sitemap = makers.flatMap((maker) => [
+    {
+      url: `${BASE_URL}/makers/${maker.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/en/makers/${maker.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    },
+  ]);
 
-  // Use explicit if-else to avoid type inference issues
-  if (sitemapId === 0) return generateStaticPages("th");
-  if (sitemapId === 1) return generateStaticPages("en");
-  if (sitemapId === 2) return generateArticlePages("th");
-  if (sitemapId === 3) return generateArticlePages("en");
-  if (sitemapId === 4)
-    return generateEntityPages("/api/v1/casts", "casts", "th");
-  if (sitemapId === 5)
-    return generateEntityPages("/api/v1/casts", "casts", "en");
-  if (sitemapId === 6) return generateEntityPages("/api/v1/tags", "tags", "th");
-  if (sitemapId === 7) return generateEntityPages("/api/v1/tags", "tags", "en");
-  if (sitemapId === 8)
-    return generateEntityPages("/api/v1/makers", "makers", "th");
-  if (sitemapId === 9)
-    return generateEntityPages("/api/v1/makers", "makers", "en");
-
-  return [];
+  return [...staticPages, ...articlePages, ...castPages, ...tagPages, ...makerPages];
 }

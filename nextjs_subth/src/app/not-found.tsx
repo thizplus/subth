@@ -1,8 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import { FileQuestion, Home, Search, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
+  const handleGoBack = () => {
+    // ถ้ามี history ให้ย้อนกลับ ถ้าไม่มีให้ไป home
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = "/";
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="text-center max-w-md">
@@ -38,13 +49,13 @@ export default function NotFound() {
 
         {/* Back Link */}
         <div className="mt-8">
-          <Link
-            href="javascript:history.back()"
+          <button
+            onClick={handleGoBack}
             className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1"
           >
             <ArrowLeft className="w-3 h-3" />
             ย้อนกลับ
-          </Link>
+          </button>
         </div>
       </div>
     </div>

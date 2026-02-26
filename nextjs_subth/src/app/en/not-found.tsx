@@ -1,8 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import { FileQuestion, Home, Search, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function NotFoundEN() {
+  const handleGoBack = () => {
+    // If there's history, go back. Otherwise, go to home
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = "/en";
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="text-center max-w-md">
@@ -17,7 +28,8 @@ export default function NotFoundEN() {
         {/* Message */}
         <h2 className="text-xl font-semibold mb-2">Page Not Found</h2>
         <p className="text-muted-foreground mb-8">
-          The page you are looking for might have been moved, deleted, or never existed.
+          The page you are looking for might have been moved, deleted, or never
+          existed.
         </p>
 
         {/* Actions */}
@@ -38,13 +50,13 @@ export default function NotFoundEN() {
 
         {/* Back Link */}
         <div className="mt-8">
-          <Link
-            href="javascript:history.back()"
+          <button
+            onClick={handleGoBack}
             className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1"
           >
             <ArrowLeft className="w-3 h-3" />
             Go Back
-          </Link>
+          </button>
         </div>
       </div>
     </div>

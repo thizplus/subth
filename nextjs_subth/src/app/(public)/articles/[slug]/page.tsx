@@ -34,6 +34,7 @@ import {
   RelatedArticles,
   ThematicKeywords,
   HowToSchema,
+  StarRating,
 } from "@/features/article";
 
 interface PageProps {
@@ -176,6 +177,13 @@ export default async function ArticlePage({ params }: PageProps) {
 
         {/* 4. Title (H1) */}
         <h1 className="mt-8 text-2xl font-bold md:text-3xl">{article.title}</h1>
+
+        {/* 4.1 Quality Score */}
+        {content.qualityScore && (
+          <div className="mt-2">
+            <StarRating score={content.qualityScore} size="md" />
+          </div>
+        )}
 
         {/* 4.5 Author Byline */}
         <div className="mt-3">

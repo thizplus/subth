@@ -146,6 +146,7 @@ type PublicArticleSummary struct {
 	ThumbnailUrl    string   `json:"thumbnailUrl"`
 	VideoCode       string   `json:"videoCode"`
 	PublishedAt     string   `json:"publishedAt"`
+	QualityScore    int      `json:"qualityScore,omitempty"`
 	CastNames       []string `json:"castNames,omitempty"`
 	MakerName       string   `json:"makerName,omitempty"`
 	Tags            []string `json:"tags,omitempty"`

@@ -478,6 +478,7 @@ func (s *ArticleServiceImpl) mapToPublicSummaries(articles []repositories.Publis
 			MetaDescription: a.MetaDescription,
 			ThumbnailUrl:    a.VideoThumbnail,
 			VideoCode:       a.VideoCode,
+			QualityScore:    a.QualityScore,
 			CastNames:       a.CastNames,
 			MakerName:       a.MakerName,
 			Tags:            a.TagNames,

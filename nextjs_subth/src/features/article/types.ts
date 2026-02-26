@@ -186,6 +186,7 @@ export interface ContextualLink {
   linkedSlug: string; // Slug ของ article ที่ลิงก์ไป
   linkedTitle: string; // Title สำหรับแสดง
   thumbnailUrl?: string; // Thumbnail URL สำหรับแสดงภาพ
+  qualityScore?: number; // คะแนนคุณภาพ 1-10
 }
 
 export interface TopQuote {

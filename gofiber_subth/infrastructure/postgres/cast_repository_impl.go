@@ -65,6 +65,16 @@ func (r *castRepositoryImpl) List(ctx context.Context, params repositories.CastL
 
 	query := r.db.WithContext(ctx).Model(&models.Cast{})
 
+	// Filter only casts with published articles
+	if params.HasArticles {
+		subQuery := r.db.Table("video_casts").
+			Select("DISTINCT video_casts.cast_id").
+			Joins("JOIN videos ON videos.id = video_casts.video_id").
+			Joins("JOIN articles ON articles.video_id = videos.id").
+			Where("articles.status = ?", "published")
+		query = query.Where("id IN (?)", subQuery)
+	}
+
 	// Filter by IDs (batch fetch mode) - takes priority over search
 	if len(params.IDs) > 0 {
 		query = query.Where("id IN ?", params.IDs)

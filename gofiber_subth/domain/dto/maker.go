@@ -9,11 +9,12 @@ import (
 // === Requests ===
 
 type MakerListRequest struct {
-	Page   int    `query:"page" validate:"min=1"`
-	Limit  int    `query:"limit" validate:"min=1,max=100"`
-	Search string `query:"search"`
-	SortBy string `query:"sort_by" validate:"omitempty,oneof=name video_count created_at"`
-	Order  string `query:"order" validate:"omitempty,oneof=asc desc"`
+	Page        int    `query:"page" validate:"min=1"`
+	Limit       int    `query:"limit" validate:"min=1,max=100"`
+	Search      string `query:"search"`
+	SortBy      string `query:"sort_by" validate:"omitempty,oneof=name video_count created_at"`
+	Order       string `query:"order" validate:"omitempty,oneof=asc desc"`
+	HasArticles bool   `query:"hasArticles"` // Filter only makers with published articles
 }
 
 type CreateMakerRequest struct {

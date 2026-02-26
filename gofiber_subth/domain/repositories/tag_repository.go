@@ -40,13 +40,14 @@ type TagRepository interface {
 }
 
 type TagListParams struct {
-	Limit  int
-	Offset int
-	Lang   string
-	Search string
-	SortBy string
-	Order  string
-	IDs    []string // Batch fetch by IDs
+	Limit       int
+	Offset      int
+	Lang        string
+	Search      string
+	SortBy      string
+	Order       string
+	IDs         []string // Batch fetch by IDs
+	HasArticles bool     // Filter only tags with published articles
 }
 
 // AutoTagLabel Repository

@@ -1,7 +1,13 @@
 import type { MetadataRoute } from "next";
-import { API_URL } from "@/lib/constants";
 
 const BASE_URL = "https://subth.com";
+
+// For server-side sitemap generation, use internal Docker network if available
+// Falls back to public API URL or localhost for local dev
+const API_URL =
+  process.env.INTERNAL_API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8080";
 
 // Types for sitemap data
 interface SitemapArticle {

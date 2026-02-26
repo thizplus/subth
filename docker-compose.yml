@@ -228,6 +228,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - INTERNAL_API_URL=http://api:8080
     depends_on:
       - api
     networks:

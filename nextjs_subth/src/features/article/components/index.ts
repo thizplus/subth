@@ -39,5 +39,4 @@ export {
   BreadcrumbSchema,
   ItemListSchema,
   HowToSchema,
-  AggregateRatingSchema,
 } from "./schema";

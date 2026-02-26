@@ -19,7 +19,6 @@ export {
   BreadcrumbSchema,
   ItemListSchema,
   HowToSchema,
-  AggregateRatingSchema,
   // Chunk 4: Deep Analysis Sections
   CharacterJourneySection,
   CinematographySection,

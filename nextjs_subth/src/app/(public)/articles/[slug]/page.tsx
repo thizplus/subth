@@ -19,7 +19,6 @@ import {
   FAQPageSchema,
   ArticleSchema,
   BreadcrumbSchema,
-  AggregateRatingSchema,
   // Chunk 4: Deep Analysis Sections
   CharacterJourneySection,
   CinematographySection,
@@ -122,17 +121,6 @@ export default async function ArticlePage({ params }: PageProps) {
         locale="th"
       />
       <BreadcrumbSchema title={article.title} slug={article.slug} />
-      {/* AggregateRating Schema for Google Rich Snippets */}
-      {content.qualityScore && (
-        <AggregateRatingSchema
-          title={article.title}
-          description={article.metaDescription}
-          thumbnailUrl={content.thumbnailUrl}
-          slug={article.slug}
-          qualityScore={content.qualityScore}
-          locale="th"
-        />
-      )}
       {/* HowTo Schema for Viewing Tips */}
       {content.viewingTips && (
         <HowToSchema

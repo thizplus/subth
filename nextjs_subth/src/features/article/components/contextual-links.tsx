@@ -19,12 +19,12 @@ export function ContextualLinks({ links }: ContextualLinksProps) {
         คุณอาจสนใจ
       </h2>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="space-y-3">
         {links.map((link, index) => (
           <Link
             key={index}
             href={`/articles/${link.linkedSlug}`}
-            className="group flex gap-3 rounded-xl border bg-gradient-to-br from-muted/30 to-transparent p-3 transition-all hover:border-primary/30 hover:shadow-md"
+            className="group flex gap-4 rounded-xl border bg-gradient-to-br from-muted/30 to-transparent p-3 transition-all hover:border-primary/30 hover:shadow-md"
           >
             {link.thumbnailUrl && (
               <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-lg">
@@ -38,7 +38,7 @@ export function ContextualLinks({ links }: ContextualLinksProps) {
               </div>
             )}
             <div className="flex flex-1 flex-col justify-between py-0.5">
-              <p className="text-sm text-muted-foreground line-clamp-2">
+              <p className="text-sm text-muted-foreground line-clamp-3">
                 {link.text}
               </p>
               <div className="flex items-center justify-between gap-2">

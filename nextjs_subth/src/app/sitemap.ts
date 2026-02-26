@@ -25,32 +25,20 @@ interface EntityListResponse {
   meta: { total: number };
 }
 
-// Sitemap IDs for generating multiple sitemaps
-type SitemapId =
-  | "pages-th"
-  | "pages-en"
-  | "articles-th"
-  | "articles-en"
-  | "casts-th"
-  | "casts-en"
-  | "tags-th"
-  | "tags-en"
-  | "makers-th"
-  | "makers-en";
-
-// Generate sitemap index with multiple sitemaps
-export async function generateSitemaps(): Promise<{ id: SitemapId }[]> {
+// Generate sitemap index with multiple sitemaps (0-9)
+// Next.js 16 requires NUMERIC IDs, not strings
+export async function generateSitemaps() {
   return [
-    { id: "pages-th" },
-    { id: "pages-en" },
-    { id: "articles-th" },
-    { id: "articles-en" },
-    { id: "casts-th" },
-    { id: "casts-en" },
-    { id: "tags-th" },
-    { id: "tags-en" },
-    { id: "makers-th" },
-    { id: "makers-en" },
+    { id: 0 }, // pages-th
+    { id: 1 }, // pages-en
+    { id: 2 }, // articles-th
+    { id: 3 }, // articles-en
+    { id: 4 }, // casts-th
+    { id: 5 }, // casts-en
+    { id: 6 }, // tags-th
+    { id: 7 }, // tags-en
+    { id: 8 }, // makers-th
+    { id: 9 }, // makers-en
   ];
 }
 
@@ -85,13 +73,13 @@ async function fetchAllArticles(): Promise<SitemapArticle[]> {
 // Fetch all entities (casts, tags, makers)
 async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
   const entities: SitemapEntity[] = [];
-  let offset = 0;
+  let page = 1;
   const limit = 500;
 
   try {
     while (true) {
       const response = await fetch(
-        `${API_URL}${endpoint}?limit=${limit}&offset=${offset}`,
+        `${API_URL}${endpoint}?limit=${limit}&page=${page}`,
         { next: { revalidate: 3600 } }
       );
 
@@ -101,7 +89,7 @@ async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
       entities.push(...data.data);
 
       if (data.data.length < limit) break;
-      offset += limit;
+      page++;
     }
   } catch (error) {
     console.error(`Failed to fetch ${endpoint} for sitemap:`, error);
@@ -191,31 +179,30 @@ async function generateEntityPages(
   }));
 }
 
-// Main sitemap function - generates sitemap based on ID
+// Main sitemap function - generates sitemap based on numeric ID
 export default async function sitemap({
   id,
 }: {
-  id: SitemapId;
+  id: number;
 }): Promise<MetadataRoute.Sitemap> {
-  const [type, lang] = id.split("-") as [string, "th" | "en"];
+  // Convert to number in case it comes as string from URL
+  const sitemapId = Number(id);
 
-  switch (type) {
-    case "pages":
-      return generateStaticPages(lang);
+  // Use explicit if-else to avoid type inference issues
+  if (sitemapId === 0) return generateStaticPages("th");
+  if (sitemapId === 1) return generateStaticPages("en");
+  if (sitemapId === 2) return generateArticlePages("th");
+  if (sitemapId === 3) return generateArticlePages("en");
+  if (sitemapId === 4)
+    return generateEntityPages("/api/v1/casts", "casts", "th");
+  if (sitemapId === 5)
+    return generateEntityPages("/api/v1/casts", "casts", "en");
+  if (sitemapId === 6) return generateEntityPages("/api/v1/tags", "tags", "th");
+  if (sitemapId === 7) return generateEntityPages("/api/v1/tags", "tags", "en");
+  if (sitemapId === 8)
+    return generateEntityPages("/api/v1/makers", "makers", "th");
+  if (sitemapId === 9)
+    return generateEntityPages("/api/v1/makers", "makers", "en");
 
-    case "articles":
-      return generateArticlePages(lang);
-
-    case "casts":
-      return generateEntityPages("/api/v1/casts", "casts", lang);
-
-    case "tags":
-      return generateEntityPages("/api/v1/tags", "tags", lang);
-
-    case "makers":
-      return generateEntityPages("/api/v1/makers", "makers", lang);
-
-    default:
-      return [];
-  }
+  return [];
 }

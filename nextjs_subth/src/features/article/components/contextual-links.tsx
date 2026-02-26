@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Sparkles, ArrowUpRight } from "lucide-react";
 import type { ContextualLink } from "../types";
 
@@ -23,15 +24,30 @@ export function ContextualLinks({ links }: ContextualLinksProps) {
           <Link
             key={index}
             href={`/articles/${link.linkedSlug}`}
-            className="group flex items-start gap-3 rounded-xl border bg-gradient-to-br from-muted/30 to-transparent p-4 transition-all hover:border-primary/30 hover:shadow-md"
+            className="group flex gap-3 rounded-xl border bg-gradient-to-br from-muted/30 to-transparent p-3 transition-all hover:border-primary/30 hover:shadow-md"
           >
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground">{link.text}</p>
-              <p className="mt-1 font-medium group-hover:text-primary">
-                {link.linkedTitle}
+            {link.thumbnailUrl && (
+              <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-lg">
+                <Image
+                  src={link.thumbnailUrl}
+                  alt={link.linkedTitle}
+                  fill
+                  className="object-cover transition-transform group-hover:scale-105"
+                  sizes="128px"
+                />
+              </div>
+            )}
+            <div className="flex flex-1 flex-col justify-between py-0.5">
+              <p className="text-sm text-muted-foreground line-clamp-2">
+                {link.text}
               </p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-medium text-sm line-clamp-1 group-hover:text-primary">
+                  {link.linkedTitle}
+                </p>
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" />
+              </div>
             </div>
-            <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" />
           </Link>
         ))}
       </div>

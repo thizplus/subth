@@ -162,6 +162,7 @@ export interface PreviousWork {
   videoId: string;
   videoCode: string;
   title: string;
+  thumbnailUrl?: string;
 }
 
 export interface RelatedVideo {
@@ -184,6 +185,7 @@ export interface ContextualLink {
   text: string; // ประโยคเชื่อมโยง
   linkedSlug: string; // Slug ของ article ที่ลิงก์ไป
   linkedTitle: string; // Title สำหรับแสดง
+  thumbnailUrl?: string; // Thumbnail URL สำหรับแสดงภาพ
 }
 
 export interface TopQuote {

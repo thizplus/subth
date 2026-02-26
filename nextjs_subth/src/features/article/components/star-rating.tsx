@@ -65,7 +65,7 @@ export function StarRating({
       </div>
       {showScore && (
         <span className={cn(textClasses[size], "text-muted-foreground")}>
-          {score}/10
+          {(score / 2).toFixed(1).replace(/\.0$/, "")}/5
         </span>
       )}
     </div>

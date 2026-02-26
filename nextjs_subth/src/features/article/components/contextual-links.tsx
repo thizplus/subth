@@ -51,7 +51,7 @@ export function ContextualLinks({ links }: ContextualLinksProps) {
               {link.qualityScore && (
                 <StarRating
                   score={link.qualityScore}
-                  showScore={false}
+                  showScore={true}
                   size="sm"
                 />
               )}

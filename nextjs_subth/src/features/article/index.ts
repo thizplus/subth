@@ -33,6 +33,8 @@ export {
   TrustBadge,
   RelatedArticles,
   ThematicKeywords,
+  // Rating
+  StarRating,
 } from "./components";
 
 // Service

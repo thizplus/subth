@@ -25,33 +25,23 @@ interface EntityListResponse {
   meta: { total: number };
 }
 
-// Sitemap IDs for generating multiple sitemaps
-type SitemapId =
-  | "pages-th"
-  | "pages-en"
-  | "articles-th"
-  | "articles-en"
-  | "casts-th"
-  | "casts-en"
-  | "tags-th"
-  | "tags-en"
-  | "makers-th"
-  | "makers-en";
+// Sitemap configuration - map numeric ID to type and language
+const SITEMAP_CONFIG = [
+  { type: "pages", lang: "th" },
+  { type: "pages", lang: "en" },
+  { type: "articles", lang: "th" },
+  { type: "articles", lang: "en" },
+  { type: "casts", lang: "th" },
+  { type: "casts", lang: "en" },
+  { type: "tags", lang: "th" },
+  { type: "tags", lang: "en" },
+  { type: "makers", lang: "th" },
+  { type: "makers", lang: "en" },
+] as const;
 
 // Generate sitemap index with multiple sitemaps
-export async function generateSitemaps(): Promise<{ id: SitemapId }[]> {
-  return [
-    { id: "pages-th" },
-    { id: "pages-en" },
-    { id: "articles-th" },
-    { id: "articles-en" },
-    { id: "casts-th" },
-    { id: "casts-en" },
-    { id: "tags-th" },
-    { id: "tags-en" },
-    { id: "makers-th" },
-    { id: "makers-en" },
-  ];
+export async function generateSitemaps() {
+  return SITEMAP_CONFIG.map((_, index) => ({ id: index }));
 }
 
 // Fetch all articles (paginated)
@@ -192,13 +182,16 @@ async function generateEntityPages(
   }));
 }
 
-// Main sitemap function - generates sitemap based on ID
+// Main sitemap function - generates sitemap based on numeric ID
 export default async function sitemap({
   id,
 }: {
-  id: SitemapId;
+  id: number;
 }): Promise<MetadataRoute.Sitemap> {
-  const [type, lang] = id.split("-") as [string, "th" | "en"];
+  const config = SITEMAP_CONFIG[id];
+  if (!config) return [];
+
+  const { type, lang } = config;
 
   switch (type) {
     case "pages":

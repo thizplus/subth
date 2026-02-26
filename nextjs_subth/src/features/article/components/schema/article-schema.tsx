@@ -9,6 +9,22 @@ interface ArticleSchemaProps {
   locale?: "th" | "en";
 }
 
+// Ensure date has ISO 8601 format with timezone
+function formatDateWithTimezone(dateStr: string): string {
+  if (!dateStr) return "";
+
+  // If already has timezone (Z or +/-), return as-is
+  if (dateStr.includes("T") && (dateStr.endsWith("Z") || /[+-]\d{2}:\d{2}$/.test(dateStr))) {
+    return dateStr;
+  }
+
+  // Parse and convert to ISO with timezone
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+
+  return date.toISOString();
+}
+
 export function ArticleSchema({
   title,
   description,
@@ -28,8 +44,8 @@ export function ArticleSchema({
     headline: title,
     description: description,
     image: thumbnailUrl,
-    datePublished: publishedAt,
-    dateModified: updatedAt,
+    datePublished: formatDateWithTimezone(publishedAt),
+    dateModified: formatDateWithTimezone(updatedAt),
     author: {
       "@type": "Person",
       name: "SubTH Editorial",

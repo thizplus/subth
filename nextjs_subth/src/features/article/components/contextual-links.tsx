@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Sparkles, ArrowUpRight } from "lucide-react";
 import type { ContextualLink } from "../types";
+import { StarRating } from "./star-rating";
 
 interface ContextualLinksProps {
   links?: ContextualLink[];
@@ -37,23 +38,23 @@ export function ContextualLinks({ links }: ContextualLinksProps) {
                 />
               </div>
             )}
-            <div className="flex flex-1 flex-col justify-between gap-1.5 sm:gap-1 sm:py-0.5">
+            <div className="flex flex-1 flex-col gap-1.5 sm:gap-1 sm:py-0.5">
               <p className="text-sm text-muted-foreground">
                 {link.text}
               </p>
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  <p className="font-medium text-sm line-clamp-1 group-hover:text-primary">
-                    {link.linkedTitle}
-                  </p>
-                  {link.qualityScore && (
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {link.qualityScore}/10
-                    </span>
-                  )}
-                </div>
+                <p className="font-medium text-sm line-clamp-1 group-hover:text-primary min-w-0">
+                  {link.linkedTitle}
+                </p>
                 <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" />
               </div>
+              {link.qualityScore && (
+                <StarRating
+                  score={link.qualityScore}
+                  showScore={false}
+                  size="sm"
+                />
+              )}
             </div>
           </Link>
         ))}

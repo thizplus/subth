@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, StarHalf } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StarRatingProps {
@@ -14,13 +14,14 @@ export function StarRating({
   size = "md",
   className,
 }: StarRatingProps) {
-  // Convert 1-10 to 5 stars (e.g., 8 = 4 stars)
-  const stars = Math.round(score / 2);
-  const fullStars = Math.min(stars, 5);
-  const emptyStars = 5 - fullStars;
+  // Convert 1-10 to 5 stars (e.g., 7 = 3.5 stars, 8 = 4 stars)
+  const starValue = score / 2;
+  const fullStars = Math.floor(starValue);
+  const hasHalfStar = starValue % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
   const sizeClasses = {
-    sm: "h-3.5 w-3.5",
+    sm: "h-3 w-3",
     md: "h-4 w-4",
     lg: "h-5 w-5",
   };
@@ -41,6 +42,19 @@ export function StarRating({
             className={cn(sizeClasses[size], "fill-yellow-400 text-yellow-400")}
           />
         ))}
+        {/* Half star */}
+        {hasHalfStar && (
+          <div className="relative">
+            <Star
+              className={cn(sizeClasses[size], "text-muted-foreground/30")}
+            />
+            <div className="absolute inset-0 overflow-hidden w-1/2">
+              <Star
+                className={cn(sizeClasses[size], "fill-yellow-400 text-yellow-400")}
+              />
+            </div>
+          </div>
+        )}
         {/* Empty stars */}
         {Array.from({ length: emptyStars }).map((_, i) => (
           <Star

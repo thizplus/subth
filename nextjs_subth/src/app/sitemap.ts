@@ -25,23 +25,20 @@ interface EntityListResponse {
   meta: { total: number };
 }
 
-// Sitemap configuration - map numeric ID to type and language
-const SITEMAP_CONFIG = [
-  { type: "pages", lang: "th" },
-  { type: "pages", lang: "en" },
-  { type: "articles", lang: "th" },
-  { type: "articles", lang: "en" },
-  { type: "casts", lang: "th" },
-  { type: "casts", lang: "en" },
-  { type: "tags", lang: "th" },
-  { type: "tags", lang: "en" },
-  { type: "makers", lang: "th" },
-  { type: "makers", lang: "en" },
-] as const;
-
-// Generate sitemap index with multiple sitemaps
+// Generate sitemap index with multiple sitemaps (0-9)
 export async function generateSitemaps() {
-  return SITEMAP_CONFIG.map((_, index) => ({ id: index }));
+  return [
+    { id: 0 }, // pages-th
+    { id: 1 }, // pages-en
+    { id: 2 }, // articles-th
+    { id: 3 }, // articles-en
+    { id: 4 }, // casts-th
+    { id: 5 }, // casts-en
+    { id: 6 }, // tags-th
+    { id: 7 }, // tags-en
+    { id: 8 }, // makers-th
+    { id: 9 }, // makers-en
+  ];
 }
 
 // Fetch all articles (paginated)
@@ -188,28 +185,24 @@ export default async function sitemap({
 }: {
   id: number;
 }): Promise<MetadataRoute.Sitemap> {
-  const config = SITEMAP_CONFIG[id];
-  if (!config) return [];
+  // Convert to number in case it comes as string from URL
+  const sitemapId = Number(id);
 
-  const { type, lang } = config;
+  // Use explicit if-else to avoid type inference issues
+  if (sitemapId === 0) return generateStaticPages("th");
+  if (sitemapId === 1) return generateStaticPages("en");
+  if (sitemapId === 2) return generateArticlePages("th");
+  if (sitemapId === 3) return generateArticlePages("en");
+  if (sitemapId === 4)
+    return generateEntityPages("/api/v1/casts", "casts", "th");
+  if (sitemapId === 5)
+    return generateEntityPages("/api/v1/casts", "casts", "en");
+  if (sitemapId === 6) return generateEntityPages("/api/v1/tags", "tags", "th");
+  if (sitemapId === 7) return generateEntityPages("/api/v1/tags", "tags", "en");
+  if (sitemapId === 8)
+    return generateEntityPages("/api/v1/makers", "makers", "th");
+  if (sitemapId === 9)
+    return generateEntityPages("/api/v1/makers", "makers", "en");
 
-  switch (type) {
-    case "pages":
-      return generateStaticPages(lang);
-
-    case "articles":
-      return generateArticlePages(lang);
-
-    case "casts":
-      return generateEntityPages("/api/v1/casts", "casts", lang);
-
-    case "tags":
-      return generateEntityPages("/api/v1/tags", "tags", lang);
-
-    case "makers":
-      return generateEntityPages("/api/v1/makers", "makers", lang);
-
-    default:
-      return [];
-  }
+  return [];
 }

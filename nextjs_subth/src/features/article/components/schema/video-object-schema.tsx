@@ -22,13 +22,19 @@ function formatDateWithTimezone(dateStr: string): string {
 }
 
 export function VideoObjectSchema({ content, videoCode }: VideoObjectSchemaProps) {
-  // Build hasPart (Clip) for key moments
+  // Use actual existing URLs
+  const videoPageUrl = content.videoId
+    ? `https://subth.com/member/videos/${content.videoId}`
+    : null;
+
+  // Build hasPart (Clip) for key moments - link to article page with timestamp
   const hasPart = content.keyMoments?.map((moment: KeyMoment) => ({
     "@type": "Clip",
     name: moment.name,
     startOffset: moment.startOffset,
     endOffset: moment.endOffset,
-    url: `https://subth.com/videos/${videoCode}?t=${moment.startOffset}`,
+    // Link to member video page with timestamp (actual existing page)
+    ...(videoPageUrl ? { url: `${videoPageUrl}?t=${moment.startOffset}` } : {}),
   }));
 
   const schema = {
@@ -39,14 +45,14 @@ export function VideoObjectSchema({ content, videoCode }: VideoObjectSchemaProps
     thumbnailUrl: content.thumbnailUrl,
     uploadDate: formatDateWithTimezone(content.uploadDate),
     duration: content.duration,
-    contentUrl: content.contentUrl,
-    embedUrl: content.embedUrl,
-    // Subscription-based access
+    // Only include contentUrl if we have a valid video page
+    ...(videoPageUrl ? { contentUrl: videoPageUrl } : {}),
+    // Subscription-based access - link to login page (exists)
     isAccessibleForFree: false,
     requiresSubscription: {
       "@type": "MediaSubscription",
-      name: "SubTH Membership",
-      "@id": "https://subth.com/membership",
+      name: "SubTH Premium",
+      "@id": "https://subth.com/login",
     },
     // Key moments
     ...(hasPart?.length ? { hasPart } : {}),

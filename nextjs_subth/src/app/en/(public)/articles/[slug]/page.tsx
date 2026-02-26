@@ -112,7 +112,7 @@ export default async function ArticlePageEN({ params }: PageProps) {
         publishedAt={article.publishedAt}
         updatedAt={content.updatedAt}
         slug={article.slug}
-        videoCode={article.videoCode}
+        videoId={content.videoId}
         locale="en"
       />
       <BreadcrumbSchema title={article.title} slug={article.slug} />

@@ -5,7 +5,7 @@ interface ArticleSchemaProps {
   publishedAt: string;
   updatedAt: string;
   slug: string;
-  videoCode: string;
+  videoId?: string; // UUID for member video page
   locale?: "th" | "en";
 }
 
@@ -32,11 +32,14 @@ export function ArticleSchema({
   publishedAt,
   updatedAt,
   slug,
-  videoCode,
+  videoId,
   locale = "th",
 }: ArticleSchemaProps) {
   const basePath = locale === "en" ? "/en" : "";
   const authorPath = locale === "en" ? "/en/author/subth-editorial" : "/author/subth-editorial";
+
+  // Only include potentialAction if we have a valid video page
+  const videoPageUrl = videoId ? `https://subth.com/member/videos/${videoId}` : null;
 
   const schema = {
     "@context": "https://schema.org",
@@ -70,10 +73,15 @@ export function ArticleSchema({
       "@type": "WebPage",
       "@id": `https://subth.com${basePath}/articles/${slug}`,
     },
-    potentialAction: {
-      "@type": "WatchAction",
-      target: `https://subth.com/videos/${videoCode}`,
-    },
+    // Only add potentialAction if video page exists
+    ...(videoPageUrl
+      ? {
+          potentialAction: {
+            "@type": "WatchAction",
+            target: videoPageUrl,
+          },
+        }
+      : {}),
   };
 
   return (

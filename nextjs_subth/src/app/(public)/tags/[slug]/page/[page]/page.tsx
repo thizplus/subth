@@ -4,6 +4,7 @@ import { tagService } from "@/features/tag";
 import { articleService, ArticleCard } from "@/features/article";
 import { PublicLayout } from "@/components/layout/server";
 import { Pagination } from "@/components/ui/pagination";
+import { PaginationHead } from "@/components/seo";
 import { Tag } from "lucide-react";
 
 const ITEMS_PER_PAGE = 24;
@@ -60,6 +61,12 @@ export default async function TagDetailPagePaginated({ params }: PageProps) {
 
   return (
     <PublicLayout locale="th">
+      {/* SEO: rel="prev/next" for pagination */}
+      <PaginationHead
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath={`/tags/${slug}`}
+      />
       <div className="mx-auto max-w-7xl px-4">
         {/* Tag Header */}
         <div className="flex items-center gap-3 mb-4">

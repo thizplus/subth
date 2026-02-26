@@ -4,6 +4,7 @@ import { castService } from "@/features/cast";
 import { articleService, ArticleCard } from "@/features/article";
 import { PublicLayout } from "@/components/layout/server";
 import { Pagination } from "@/components/ui/pagination";
+import { PaginationHead } from "@/components/seo";
 
 const ITEMS_PER_PAGE = 24;
 
@@ -66,6 +67,12 @@ export default async function CastDetailPagePaginatedEN({ params }: PageProps) {
 
   return (
     <PublicLayout locale="en">
+      {/* SEO: rel="prev/next" for pagination */}
+      <PaginationHead
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath={`/en/casts/${slug}`}
+      />
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex items-center gap-4 mb-6">
           <div

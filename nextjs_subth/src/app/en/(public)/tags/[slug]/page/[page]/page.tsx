@@ -4,6 +4,7 @@ import { tagService } from "@/features/tag";
 import { articleService, ArticleCard } from "@/features/article";
 import { PublicLayout } from "@/components/layout/server";
 import { Pagination } from "@/components/ui/pagination";
+import { PaginationHead } from "@/components/seo";
 
 const ITEMS_PER_PAGE = 24;
 
@@ -57,6 +58,12 @@ export default async function TagDetailPagePaginatedEN({ params }: PageProps) {
 
   return (
     <PublicLayout locale="en">
+      {/* SEO: rel="prev/next" for pagination */}
+      <PaginationHead
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath={`/en/tags/${slug}`}
+      />
       <div className="mx-auto max-w-7xl px-4">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">{tag.name}</h1>

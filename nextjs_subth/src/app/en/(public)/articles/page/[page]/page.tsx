@@ -2,13 +2,27 @@ import { Metadata } from "next";
 import { articleService, ArticleCard } from "@/features/article";
 import { PublicLayout } from "@/components/layout/server";
 import { Pagination } from "@/components/ui/pagination";
+import { PaginationHead } from "@/components/seo";
 
 const ITEMS_PER_PAGE = 24;
+const BASE_URL = "https://subth.com";
 
-export const metadata: Metadata = {
-  title: "All Articles | SubTH",
-  description: "Browse all articles with reviews and detailed analysis on SubTH",
-};
+interface GenerateMetadataProps {
+  params: Promise<{ page: string }>;
+}
+
+export async function generateMetadata({ params }: GenerateMetadataProps): Promise<Metadata> {
+  const { page } = await params;
+  const currentPage = parseInt(page || "1", 10);
+
+  return {
+    title: currentPage === 1 ? "All Articles | SubTH" : `All Articles - Page ${currentPage} | SubTH`,
+    description: "Browse all articles with reviews and detailed analysis on SubTH",
+    alternates: {
+      canonical: currentPage === 1 ? `${BASE_URL}/en/articles` : `${BASE_URL}/en/articles/page/${currentPage}`,
+    },
+  };
+}
 
 interface PageProps {
   params: Promise<{ page: string }>;
@@ -37,6 +51,12 @@ export default async function ArticlesPagePaginatedEN({ params }: PageProps) {
 
   return (
     <PublicLayout locale="en">
+      {/* SEO: rel="prev/next" for pagination */}
+      <PaginationHead
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath="/en/articles"
+      />
       <div className="mx-auto max-w-7xl px-4">
         <h1 className="text-2xl font-bold mb-2">
           All Articles

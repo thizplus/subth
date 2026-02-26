@@ -3,17 +3,27 @@ import { articleService, ArticleCard } from "@/features/article";
 import { PublicLayout } from "@/components/layout/server";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
+import { PaginationHead } from "@/components/seo";
 
 const ITEMS_PER_PAGE = 24;
-
-export const metadata: Metadata = {
-  title: "บทความทั้งหมด | SubTH",
-  description: "รวมบทความรีวิววิดีโอซับไทยทั้งหมด พร้อมเรื่องย่อและวิเคราะห์เชิงลึก",
-};
+const BASE_URL = "https://subth.com";
 
 interface PageProps {
   params: Promise<{ page: string }>;
   searchParams: Promise<{ q?: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { page } = await params;
+  const currentPage = parseInt(page || "1", 10);
+
+  return {
+    title: currentPage === 1 ? "บทความทั้งหมด | SubTH" : `บทความทั้งหมด - หน้า ${currentPage} | SubTH`,
+    description: "รวมบทความรีวิววิดีโอซับไทยทั้งหมด พร้อมเรื่องย่อและวิเคราะห์เชิงลึก",
+    alternates: {
+      canonical: currentPage === 1 ? `${BASE_URL}/articles` : `${BASE_URL}/articles/page/${currentPage}`,
+    },
+  };
 }
 
 export default async function ArticlesPagePaginated({ params, searchParams }: PageProps) {
@@ -42,6 +52,12 @@ export default async function ArticlesPagePaginated({ params, searchParams }: Pa
 
   return (
     <PublicLayout locale="th">
+      {/* SEO: rel="prev/next" for pagination */}
+      <PaginationHead
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath="/articles"
+      />
       <div className="mx-auto max-w-7xl px-4">
         <h1 className="text-2xl font-bold mb-2">
           บทความทั้งหมด

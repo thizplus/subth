@@ -9,13 +9,14 @@ import (
 // === Requests ===
 
 type TagListRequest struct {
-	Page   int    `query:"page" validate:"min=1"`
-	Limit  int    `query:"limit" validate:"min=1,max=100"`
-	Lang   string `query:"lang" validate:"omitempty,oneof=en th ja"`
-	Search string `query:"search"`
-	SortBy string `query:"sort_by" validate:"omitempty,oneof=name video_count created_at"`
-	Order  string `query:"order" validate:"omitempty,oneof=asc desc"`
-	IDs    string `query:"ids"` // Comma-separated IDs for batch fetch
+	Page        int    `query:"page" validate:"min=1"`
+	Limit       int    `query:"limit" validate:"min=1,max=100"`
+	Lang        string `query:"lang" validate:"omitempty,oneof=en th ja"`
+	Search      string `query:"search"`
+	SortBy      string `query:"sort_by" validate:"omitempty,oneof=name video_count created_at"`
+	Order       string `query:"order" validate:"omitempty,oneof=asc desc"`
+	IDs         string `query:"ids"`         // Comma-separated IDs for batch fetch
+	HasArticles bool   `query:"hasArticles"` // Filter only tags with published articles
 }
 
 type CreateTagRequest struct {

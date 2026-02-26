@@ -65,6 +65,17 @@ func (r *tagRepositoryImpl) List(ctx context.Context, params repositories.TagLis
 
 	query := r.db.WithContext(ctx).Model(&models.Tag{})
 
+	// Filter only tags with published articles
+	if params.HasArticles {
+		// Subquery: tags that have at least one published article via video_tags → videos → articles
+		subQuery := r.db.Table("video_tags").
+			Select("DISTINCT video_tags.tag_id").
+			Joins("JOIN videos ON videos.id = video_tags.video_id").
+			Joins("JOIN articles ON articles.video_id = videos.id").
+			Where("articles.status = ?", "published")
+		query = query.Where("id IN (?)", subQuery)
+	}
+
 	// Filter by IDs (batch fetch mode) - takes priority over search
 	if len(params.IDs) > 0 {
 		query = query.Where("id IN ?", params.IDs)

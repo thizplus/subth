@@ -82,16 +82,17 @@ async function fetchAllArticles(): Promise<SitemapArticle[]> {
   return articles;
 }
 
-// Fetch all entities (casts, tags, makers)
+// Fetch all entities (casts, tags, makers) - only those with published articles
 async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
   const entities: SitemapEntity[] = [];
-  let offset = 0;
+  let page = 1;
   const limit = 500;
 
   try {
     while (true) {
+      // hasArticles=true filters only entities with published articles
       const response = await fetch(
-        `${API_URL}${endpoint}?limit=${limit}&offset=${offset}`,
+        `${API_URL}${endpoint}?limit=${limit}&page=${page}&hasArticles=true`,
         { next: { revalidate: 3600 } }
       );
 
@@ -101,7 +102,7 @@ async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
       entities.push(...data.data);
 
       if (data.data.length < limit) break;
-      offset += limit;
+      page++;
     }
   } catch (error) {
     console.error(`Failed to fetch ${endpoint} for sitemap:`, error);

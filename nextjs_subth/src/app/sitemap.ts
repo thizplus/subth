@@ -25,6 +25,10 @@ interface EntityListResponse {
   meta: { total: number };
 }
 
+// Force dynamic generation at runtime (not build time)
+// This is needed because during Docker build, the API is not accessible
+export const dynamic = "force-dynamic";
+
 // Generate sitemap index with multiple sitemaps (0-9)
 // Next.js 16 requires NUMERIC IDs, not strings
 export async function generateSitemaps() {
@@ -101,7 +105,6 @@ async function fetchAllEntities(endpoint: string): Promise<SitemapEntity[]> {
 
 // Generate static pages sitemap
 function generateStaticPages(lang: "th" | "en"): MetadataRoute.Sitemap {
-  console.log("[Sitemap] Generating static pages for lang:", lang);
   const now = new Date();
   const prefix = lang === "en" ? "/en" : "";
   const priorityOffset = lang === "en" ? 0.1 : 0;
@@ -189,8 +192,6 @@ export default async function sitemap({
 }): Promise<MetadataRoute.Sitemap> {
   // Convert to number in case it comes as string from URL
   const sitemapId = Number(id);
-  console.log("[Sitemap] Generating sitemap for id:", id, "-> sitemapId:", sitemapId);
-  console.log("[Sitemap] API_URL:", API_URL);
 
   // Use explicit if-else to avoid type inference issues
   if (sitemapId === 0) return generateStaticPages("th");

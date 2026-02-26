@@ -25,21 +25,21 @@ export function ContextualLinks({ links }: ContextualLinksProps) {
           <Link
             key={index}
             href={`/articles/${link.linkedSlug}`}
-            className="group flex gap-4 rounded-xl border bg-gradient-to-br from-muted/30 to-transparent p-3 transition-all hover:border-primary/30 hover:shadow-md"
+            className="group flex flex-col sm:flex-row gap-3 sm:gap-4 rounded-xl border bg-gradient-to-br from-muted/30 to-transparent p-3 transition-all hover:border-primary/30 hover:shadow-md"
           >
             {link.thumbnailUrl && (
-              <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-lg">
+              <div className="relative aspect-video sm:aspect-auto sm:h-20 sm:w-32 shrink-0 overflow-hidden rounded-lg">
                 <Image
                   src={link.thumbnailUrl}
                   alt={link.linkedTitle}
                   fill
                   className="object-cover transition-transform group-hover:scale-105"
-                  sizes="128px"
+                  sizes="(max-width: 640px) 100vw, 128px"
                 />
               </div>
             )}
-            <div className="flex flex-1 flex-col justify-between py-0.5">
-              <p className="text-sm text-muted-foreground line-clamp-3">
+            <div className="flex flex-1 flex-col justify-between gap-2 sm:py-0.5">
+              <p className="text-sm text-muted-foreground">
                 {link.text}
               </p>
               <div className="flex items-center justify-between gap-2">

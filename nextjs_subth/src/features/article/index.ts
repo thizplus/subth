@@ -40,6 +40,9 @@ export {
 // Service
 export { articleService } from "./service";
 
+// Cached Service (for RSC deduplication)
+export { getArticleByTypeAndSlug } from "./cached-service";
+
 // Utils (can be used on both server and client)
 export { formatTimestamp, parseDuration, formatDuration } from "./utils";
 

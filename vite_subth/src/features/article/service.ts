@@ -33,4 +33,8 @@ export const articleService = {
   async delete(id: string): Promise<void> {
     return apiClient.delete(ARTICLE_ROUTES.BY_ID(id))
   },
+
+  async clearCache(type: string, slug: string): Promise<void> {
+    return apiClient.delete(ARTICLE_ROUTES.CLEAR_CACHE(type, slug))
+  },
 }

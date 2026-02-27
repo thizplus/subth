@@ -36,4 +36,7 @@ type ArticleService interface {
 	ListArticlesByCast(ctx context.Context, castSlug string, params *dto.PublicArticleListParams) ([]dto.PublicArticleSummary, int64, error)
 	ListArticlesByTag(ctx context.Context, tagSlug string, params *dto.PublicArticleListParams) ([]dto.PublicArticleSummary, int64, error)
 	ListArticlesByMaker(ctx context.Context, makerSlug string, params *dto.PublicArticleListParams) ([]dto.PublicArticleSummary, int64, error)
+
+	// Cache management
+	ClearArticleCache(ctx context.Context, articleType string, slug string) error
 }

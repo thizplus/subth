@@ -69,3 +69,10 @@ export function useDeleteArticle() {
     },
   })
 }
+
+export function useClearArticleCache() {
+  return useMutation({
+    mutationFn: ({ type, slug }: { type: string; slug: string }) =>
+      articleService.clearCache(type, slug),
+  })
+}

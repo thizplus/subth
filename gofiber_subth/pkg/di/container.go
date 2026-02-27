@@ -320,8 +320,8 @@ func (c *Container) initServices() error {
 	// Community Chat Service
 	c.CommunityChatService = serviceimpl.NewCommunityChatService(c.ChatRepository, c.VideoRepository)
 
-	// SEO Article Service (with Storage for R2 cleanup on delete)
-	c.ArticleService = serviceimpl.NewArticleService(c.ArticleRepository, c.VideoRepository, c.Storage)
+	// SEO Article Service (with Storage for R2 cleanup on delete, and Redis for caching)
+	c.ArticleService = serviceimpl.NewArticleService(c.ArticleRepository, c.VideoRepository, c.Storage, c.RedisClient)
 
 	// Site Setting Service
 	c.SiteSettingService = serviceimpl.NewSiteSettingService(c.SiteSettingRepository)

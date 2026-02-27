@@ -6,6 +6,7 @@ export {
   useUpdateArticleStatus,
   useBulkScheduleArticles,
   useDeleteArticle,
+  useClearArticleCache,
   articleKeys,
 } from './hooks'
 export { articleService } from './service'

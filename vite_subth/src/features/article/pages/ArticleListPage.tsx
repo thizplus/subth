@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  RefreshCw,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -78,6 +79,7 @@ import {
   useArticleStats,
   useUpdateArticleStatus,
   useDeleteArticle,
+  useClearArticleCache,
   type ArticleListItem,
   type ArticleListParams,
   type ArticleStatus,
@@ -160,6 +162,7 @@ export function ArticleListPage() {
   const { data: viewingArticle } = useArticleById(viewingId || '')
   const updateStatus = useUpdateArticleStatus()
   const deleteArticle = useDeleteArticle()
+  const clearCache = useClearArticleCache()
 
   // Navigate to page
   const goToPage = (p: number) => {
@@ -204,6 +207,15 @@ export function ArticleListPage() {
       setDeletingArticle(null)
     } catch {
       toast.error('เกิดข้อผิดพลาด')
+    }
+  }
+
+  const handleClearCache = async (article: ArticleListItem) => {
+    try {
+      await clearCache.mutateAsync({ type: article.type, slug: article.slug })
+      toast.success('ล้าง cache สำเร็จ')
+    } catch {
+      toast.error('ล้าง cache ล้มเหลว')
     }
   }
 
@@ -482,6 +494,18 @@ export function ArticleListPage() {
                             <FileText className="mr-2 h-4 w-4" />
                             กลับเป็นฉบับร่าง
                           </DropdownMenuItem>
+                        )}
+                        {item.status === 'published' && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleClearCache(item)}
+                              disabled={clearCache.isPending}
+                            >
+                              <RefreshCw className="mr-2 h-4 w-4" />
+                              ล้าง Cache
+                            </DropdownMenuItem>
+                          </>
                         )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem

@@ -103,6 +103,7 @@ export const ARTICLE_ROUTES = {
   STATUS: (id: string) => `/api/v1/articles/${id}/status`,
   BULK_SCHEDULE: '/api/v1/articles/bulk-schedule',
   BY_SLUG: (slug: string) => `/api/v1/articles/slug/${slug}`,
+  CLEAR_CACHE: (type: string, slug: string) => `/api/v1/articles/${type}/${slug}/cache`,
 }
 
 export const SITE_SETTING_ROUTES = {

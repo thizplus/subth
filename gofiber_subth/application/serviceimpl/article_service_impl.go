@@ -15,6 +15,8 @@ import (
 	"gofiber-template/domain/ports"
 	"gofiber-template/domain/repositories"
 	"gofiber-template/domain/services"
+	"gofiber-template/infrastructure/redis"
+	"gofiber-template/pkg/cache"
 	"gofiber-template/pkg/logger"
 )
 
@@ -22,17 +24,20 @@ type ArticleServiceImpl struct {
 	articleRepo repositories.ArticleRepository
 	videoRepo   repositories.VideoRepository
 	storage     ports.Storage
+	cache       *redis.RedisClient
 }
 
 func NewArticleService(
 	articleRepo repositories.ArticleRepository,
 	videoRepo repositories.VideoRepository,
 	storage ports.Storage,
+	cache *redis.RedisClient,
 ) services.ArticleService {
 	return &ArticleServiceImpl{
 		articleRepo: articleRepo,
 		videoRepo:   videoRepo,
 		storage:     storage,
+		cache:       cache,
 	}
 }
 
@@ -76,6 +81,12 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 		if err := s.articleRepo.Update(ctx, existing); err != nil {
 			logger.ErrorContext(ctx, "Failed to update article", "article_id", existing.ID, "error", err)
 			return nil, err
+		}
+
+		// Invalidate cache when article is updated
+		if s.cache != nil {
+			cacheKey := cache.ArticleKey(string(existing.Type), existing.Slug)
+			_ = s.cache.Delete(ctx, cacheKey)
 		}
 
 		logger.InfoContext(ctx, "Article updated", "article_id", existing.ID, "video_id", videoID)
@@ -304,6 +315,18 @@ func (s *ArticleServiceImpl) UpdateStatus(ctx context.Context, id uuid.UUID, req
 		return err
 	}
 
+	// Invalidate cache when article is published or status changes
+	if s.cache != nil {
+		cacheKey := cache.ArticleKey(string(article.Type), article.Slug)
+		if err := s.cache.Delete(ctx, cacheKey); err != nil {
+			logger.WarnContext(ctx, "Failed to invalidate article cache", "article_id", id, "error", err)
+		} else {
+			logger.InfoContext(ctx, "Article cache invalidated", "article_id", id, "cache_key", cacheKey)
+		}
+		// Also invalidate first page of list cache
+		_ = s.cache.Delete(ctx, cache.ArticleListKey(1, 24))
+	}
+
 	logger.InfoContext(ctx, "Article status updated", "article_id", id, "status", status)
 	return nil
 }
@@ -402,6 +425,17 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 		return nil, errors.New("invalid article type")
 	}
 
+	// 1. Try cache first
+	cacheKey := cache.ArticleKey(articleType, slug)
+	if s.cache != nil {
+		var cached dto.PublicArticleResponse
+		if err := s.cache.Get(ctx, cacheKey, &cached); err == nil {
+			logger.InfoContext(ctx, "Article cache hit", "type", articleType, "slug", slug)
+			return &cached, nil
+		}
+	}
+
+	// 2. Fetch from DB
 	article, err := s.articleRepo.GetPublishedByTypeAndSlug(ctx, articleType, slug)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -433,6 +467,13 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 	}
 	if article.PublishedAt != nil {
 		response.PublishedAt = article.PublishedAt.Format(time.RFC3339)
+	}
+
+	// 3. Cache for next time
+	if s.cache != nil {
+		if err := s.cache.Set(ctx, cacheKey, response, cache.ArticleCacheTTL); err != nil {
+			logger.WarnContext(ctx, "Failed to cache article", "type", articleType, "slug", slug, "error", err)
+		}
 	}
 
 	return response, nil
@@ -536,6 +577,22 @@ func (s *ArticleServiceImpl) mapToPublicSummaries(articles []repositories.Publis
 		result[i] = item
 	}
 	return result
+}
+
+// ClearArticleCache clears the cache for a specific article
+func (s *ArticleServiceImpl) ClearArticleCache(ctx context.Context, articleType string, slug string) error {
+	if s.cache == nil {
+		return errors.New("cache not available")
+	}
+
+	cacheKey := cache.ArticleKey(articleType, slug)
+	if err := s.cache.Delete(ctx, cacheKey); err != nil {
+		logger.WarnContext(ctx, "Failed to clear article cache", "type", articleType, "slug", slug, "error", err)
+		return err
+	}
+
+	logger.InfoContext(ctx, "Article cache cleared", "type", articleType, "slug", slug, "cache_key", cacheKey)
+	return nil
 }
 
 // Helper to map article to detail response

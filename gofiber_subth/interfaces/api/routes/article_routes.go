@@ -34,4 +34,7 @@ func SetupArticleRoutes(api fiber.Router, h *handlers.Handlers) {
 	articles.Patch("/:id/status", middleware.Protected(), middleware.AdminOnly(), h.ArticleHandler.UpdateStatus)
 	articles.Post("/bulk-schedule", middleware.Protected(), middleware.AdminOnly(), h.ArticleHandler.BulkSchedule)
 	articles.Delete("/:id", middleware.Protected(), middleware.AdminOnly(), h.ArticleHandler.DeleteArticle)
+
+	// Cache management (Admin)
+	articles.Delete("/:type/:slug/cache", middleware.Protected(), middleware.AdminOnly(), h.ArticleHandler.ClearArticleCache)
 }

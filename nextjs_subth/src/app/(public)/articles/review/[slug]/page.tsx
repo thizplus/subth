@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicLayout } from "@/components/layout/server";
 import {
-  articleService,
+  getArticleByTypeAndSlug,
   AudioPlayer,
   ThumbnailWithCTA,
   KeyMomentsPreview,
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
 
   try {
-    const article = await articleService.getByTypeAndSlug("review", slug);
+    const article = await getArticleByTypeAndSlug("review", slug);
 
     return {
       title: article.metaTitle,
@@ -90,7 +90,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
 
   let article;
   try {
-    article = await articleService.getByTypeAndSlug("review", slug);
+    article = await getArticleByTypeAndSlug("review", slug);
   } catch {
     notFound();
   }

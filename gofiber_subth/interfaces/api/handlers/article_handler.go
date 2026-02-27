@@ -378,3 +378,38 @@ func (h *ArticleHandler) ListArticlesByMaker(c *fiber.Ctx) error {
 	params.SetDefaults()
 	return utils.PaginatedSuccessResponse(c, articles, total, params.Page, params.Limit)
 }
+
+// ========================================
+// Admin Cache Management
+// ========================================
+
+// ClearArticleCache - ล้าง cache ของบทความ (Admin)
+// DELETE /api/v1/articles/:type/:slug/cache
+func (h *ArticleHandler) ClearArticleCache(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	articleType := c.Params("type")
+	slug := c.Params("slug")
+
+	if articleType == "" {
+		return utils.BadRequestResponse(c, "Article type is required")
+	}
+	if slug == "" {
+		return utils.BadRequestResponse(c, "Slug is required")
+	}
+
+	if err := h.articleService.ClearArticleCache(ctx, articleType, slug); err != nil {
+		if err.Error() == "cache not available" {
+			return utils.BadRequestResponse(c, "Cache not available")
+		}
+		logger.ErrorContext(ctx, "Failed to clear article cache", "type", articleType, "slug", slug, "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	logger.InfoContext(ctx, "Article cache cleared", "type", articleType, "slug", slug)
+	return utils.SuccessResponse(c, fiber.Map{
+		"message": "Cache cleared successfully",
+		"type":    articleType,
+		"slug":    slug,
+	})
+}

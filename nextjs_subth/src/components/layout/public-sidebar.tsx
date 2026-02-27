@@ -47,7 +47,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
       casts: "นักแสดง",
       tags: "แท็ก",
       memberTitle: "วิดีโอทั้งหมดของเรา",
-      memberSubtitle: "JAV Onlyfans อื่นๆ",
+      memberSubtitle: "JAV ซับไทย ครบทุกค่าย",
     },
     en: {
       menu: "Menu",
@@ -56,7 +56,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
       casts: "Casts",
       tags: "Tags",
       memberTitle: "All Our Videos",
-      memberSubtitle: "JAV Onlyfans & more",
+      memberSubtitle: "JAV Thai Sub, All Studios",
     },
   };
   const t = labels[locale];

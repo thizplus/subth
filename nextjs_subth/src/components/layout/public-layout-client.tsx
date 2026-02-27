@@ -68,13 +68,13 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
               {/* Login CTA (ชิดซ้าย) หรือ Spacer ถ้า login แล้ว */}
               {!isAuthenticated ? (
                 <LoginDialog locale={locale as "th" | "en"}>
-                  <button className="flex items-center gap-2 text-left hover:opacity-80 transition-opacity">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                      <LogIn className="h-4 w-4" />
+                  <button className="group flex items-center gap-2 text-left">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform duration-300 group-hover:scale-110">
+                      <LogIn className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
                     </div>
-                    <div className="hidden sm:grid text-sm leading-tight">
-                      <span className="font-medium">{t.login}</span>
-                      <span className="text-xs text-muted-foreground">{t.loginToWatch}</span>
+                    <div className="grid leading-tight">
+                      <span className="text-sm font-medium transition-colors duration-300 group-hover:text-primary">{t.login}</span>
+                      <span className="text-[10px] text-muted-foreground">{t.loginToWatch}</span>
                     </div>
                   </button>
                 </LoginDialog>

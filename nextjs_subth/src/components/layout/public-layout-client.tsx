@@ -6,20 +6,8 @@ import { Separator } from "@/components/ui/separator";
 import { PublicSidebar } from "./public-sidebar";
 import { PublicLanguageSwitcher } from "./public-language-switcher";
 import { LoginDialog, useAuthStore } from "@/features/auth";
-import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, Play } from "lucide-react";
+import { LogIn, Play } from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useMyStats } from "@/features/user-stats";
-import { Progress } from "@/components/ui/progress";
 import { ChatProvider, ChatTicker, ChatFab } from "@/features/community-chat";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { useDictionary } from "@/components/dictionary-provider";
@@ -36,17 +24,8 @@ interface PublicLayoutClientProps {
 export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
   const { locale, dictionary } = useDictionary();
   const t = dictionary.common;
-  const { user, isAuthenticated, logout } = useAuthStore();
-  const { data: stats } = useMyStats();
+  const { isAuthenticated } = useAuthStore();
   const scrollDirection = useScrollDirection();
-
-  // Get initials for avatar fallback
-  const getInitials = () => {
-    if (user?.email) {
-      return user.email.slice(0, 2).toUpperCase();
-    }
-    return "U";
-  };
 
   return (
     <ChatProvider locale={locale as "th" | "en"}>
@@ -93,87 +72,6 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
 
               {/* Spacer */}
               <div className="flex-1" />
-
-              {/* User Avatar (ขวา) - แสดงเฉพาะเมื่อ login แล้ว */}
-              {isAuthenticated && user && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-auto px-2 py-1.5">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8 rounded-lg">
-                          <AvatarImage src={user.avatar} alt={user.displayName || user.email || "User avatar"} />
-                          <AvatarFallback className="rounded-lg">
-                            {getInitials()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="hidden sm:grid text-left text-sm leading-tight">
-                          <span className="truncate font-medium">
-                            {user.displayName || "TH#000000000"}
-                          </span>
-                          <span className="truncate text-xs text-muted-foreground">
-                            {stats?.levelBadge} {stats?.title || t.member} • Lv.
-                            {stats?.level || 1}
-                          </span>
-                        </div>
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64">
-                    <DropdownMenuLabel className="p-0 font-normal">
-                      <div className="flex flex-col gap-2 px-2 py-2">
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-10 w-10 rounded-lg">
-                            <AvatarImage src={user.avatar || ""} alt={user.displayName || user.email || "User avatar"} />
-                            <AvatarFallback className="rounded-lg">
-                              {getInitials()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="font-medium truncate">
-                              {user.displayName || user.username}
-                            </span>
-                            <span className="text-xs text-muted-foreground truncate">
-                              {user.email}
-                            </span>
-                          </div>
-                        </div>
-
-                        {stats && (
-                          <div className="rounded-md bg-muted/50 p-2">
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="font-medium">
-                                {stats.levelBadge} Lv.{stats.level}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {stats.xp.toLocaleString()} XP
-                              </span>
-                            </div>
-                            <div className="mt-1 text-xs font-medium text-primary truncate">
-                              {stats.title}
-                            </div>
-                            <Progress
-                              value={stats.xpProgress}
-                              className="mt-2 h-1.5"
-                            />
-                            <div className="mt-1 text-[10px] text-muted-foreground text-right">
-                              {t.needXp} {stats.xpToNextLevel.toLocaleString()}{" "}
-                              XP
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={logout}
-                      className="text-destructive"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      {t.logout}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
 
               {/* Language Switcher */}
               <PublicLanguageSwitcher locale={locale as "th" | "en"} />

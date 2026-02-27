@@ -6,6 +6,7 @@ import { Home, Film, User, FileText, Users, Tags } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -16,6 +17,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { MemberNavUser } from "@/components/member";
 import { ModeToggle, Logo } from "@/components/theme";
 import { useAuthStore } from "@/features/auth";
 import { ContactChannels } from "@/features/contact-channel";
@@ -157,6 +159,13 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      {/* User Profile - Footer */}
+      {isAuthenticated && (
+        <SidebarFooter>
+          <MemberNavUser locale={locale} />
+        </SidebarFooter>
+      )}
 
       <SidebarRail />
     </Sidebar>

@@ -1,37 +1,78 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { PublicLayout } from "@/components/layout/server";
 import {
   getArticleByTypeAndSlug,
+  // Above-fold components (critical path)
+  AudioPlayer,
   ThumbnailWithCTA,
   KeyMomentsPreview,
-  GallerySection,
-  FAQAccordion,
-  QuoteCard,
-  TechnicalSpecs,
   CastCard,
   MakerCard,
   TagsList,
-  ExpertBox,
-  ContextualLinks,
+  TableOfContents,
+  ArticleBreadcrumb,
+  AuthorByline,
+  TrustBadge,
+  StarRating,
+  // Schema components (JSON-LD, no JS impact)
   VideoObjectSchema,
   FAQPageSchema,
   ArticleSchema,
   BreadcrumbSchema,
-  CharacterJourneySection,
-  CinematographySection,
-  EducationalSection,
-  ViewingTipsSection,
-  TableOfContents,
-  AudioPlayer,
-  ArticleBreadcrumb,
-  AuthorByline,
-  TrustBadge,
-  RelatedArticles,
-  ThematicKeywords,
   HowToSchema,
-  StarRating,
 } from "@/features/article";
+
+// Below-fold components - dynamic import with SSR for SEO
+const CharacterJourneySection = dynamic(
+  () => import("@/features/article/components/character-journey-section").then((m) => m.CharacterJourneySection),
+  { ssr: true }
+);
+const ExpertBox = dynamic(
+  () => import("@/features/article/components/expert-box").then((m) => m.ExpertBox),
+  { ssr: true }
+);
+const CinematographySection = dynamic(
+  () => import("@/features/article/components/cinematography-section").then((m) => m.CinematographySection),
+  { ssr: true }
+);
+const GallerySection = dynamic(
+  () => import("@/features/article/components/gallery-section").then((m) => m.GallerySection),
+  { ssr: true }
+);
+const QuoteCard = dynamic(
+  () => import("@/features/article/components/quote-card").then((m) => m.QuoteCard),
+  { ssr: true }
+);
+const EducationalSection = dynamic(
+  () => import("@/features/article/components/educational-section").then((m) => m.EducationalSection),
+  { ssr: true }
+);
+const ContextualLinks = dynamic(
+  () => import("@/features/article/components/contextual-links").then((m) => m.ContextualLinks),
+  { ssr: true }
+);
+const ViewingTipsSection = dynamic(
+  () => import("@/features/article/components/viewing-tips-section").then((m) => m.ViewingTipsSection),
+  { ssr: true }
+);
+const FAQAccordion = dynamic(
+  () => import("@/features/article/components/faq-accordion").then((m) => m.FAQAccordion),
+  { ssr: true }
+);
+const ThematicKeywords = dynamic(
+  () => import("@/features/article/components/thematic-keywords").then((m) => m.ThematicKeywords),
+  { ssr: true }
+);
+const TechnicalSpecs = dynamic(
+  () => import("@/features/article/components/technical-specs").then((m) => m.TechnicalSpecs),
+  { ssr: true }
+);
+const RelatedArticles = dynamic(
+  () => import("@/features/article/components/related-articles").then((m) => m.RelatedArticles),
+  { ssr: true }
+);
 
 interface PageProps {
   params: Promise<{ slug: string }>;

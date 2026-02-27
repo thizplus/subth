@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useMyStats } from "@/features/user-stats";
 import { Progress } from "@/components/ui/progress";
-import { OnlineStats } from "./online-stats";
 import { ChatProvider, ChatTicker, ChatFab } from "@/features/community-chat";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { useDictionary } from "@/components/dictionary-provider";
@@ -66,14 +65,28 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
                 className="mr-2 data-[orientation=vertical]:h-4"
               />
 
-              {/* Online Stats */}
-              <OnlineStats locale={locale as "th" | "en"} />
+              {/* Login CTA (ชิดซ้าย) หรือ Spacer ถ้า login แล้ว */}
+              {!isAuthenticated ? (
+                <LoginDialog locale={locale as "th" | "en"}>
+                  <button className="flex items-center gap-2 text-left hover:opacity-80 transition-opacity">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      <LogIn className="h-4 w-4" />
+                    </div>
+                    <div className="hidden sm:grid text-sm leading-tight">
+                      <span className="font-medium">{t.login}</span>
+                      <span className="text-xs text-muted-foreground">{t.loginToWatch}</span>
+                    </div>
+                  </button>
+                </LoginDialog>
+              ) : (
+                <div className="flex-1" />
+              )}
 
               {/* Spacer */}
               <div className="flex-1" />
 
-              {/* Auth Button */}
-              {isAuthenticated && user ? (
+              {/* User Avatar (ขวา) - แสดงเฉพาะเมื่อ login แล้ว */}
+              {isAuthenticated && user && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-auto px-2 py-1.5">
@@ -151,18 +164,6 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              ) : (
-                <LoginDialog locale={locale as "th" | "en"}>
-                  <Button
-                    variant="default"
-                    size="icon"
-                    className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 sm:gap-2"
-                    aria-label={t.login}
-                  >
-                    <LogIn className="h-4 w-4" />
-                    <span className="hidden sm:inline" aria-hidden="true">{t.login}</span>
-                  </Button>
-                </LoginDialog>
               )}
 
               {/* Language Switcher */}

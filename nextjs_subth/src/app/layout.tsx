@@ -103,11 +103,8 @@ export default async function RootLayout({
   return (
     <html lang="th" suppressHydrationWarning>
       <head>
-        {/* Preconnect to external origins for faster loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://files.subth.com" />
-        {/* DNS prefetch for analytics */}
+        {/* DNS prefetch for CDN and analytics */}
+        <link rel="dns-prefetch" href="https://files.subth.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
         <script

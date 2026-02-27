@@ -8,6 +8,11 @@ const withBundleAnalyzer = bundleAnalyzer({
 const nextConfig: NextConfig = {
   // Enable standalone output for Docker
   output: "standalone",
+  // Experimental optimizations
+  experimental: {
+    // Inline critical CSS to reduce render-blocking
+    optimizeCss: true,
+  },
   images: {
     // รองรับ CDN domain
     remotePatterns: [

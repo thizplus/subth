@@ -7,6 +7,7 @@ import { StarRating } from "./star-rating";
 interface ArticleCardProps {
   article: ArticleSummary;
   locale?: "th" | "en";
+  priority?: boolean; // สำหรับ LCP image (above-the-fold)
 }
 
 // Build full thumbnail URL
@@ -16,7 +17,7 @@ function getThumbnailUrl(url?: string): string {
   return `${CDN_URL}${url}`;
 }
 
-export function ArticleCard({ article, locale = "th" }: ArticleCardProps) {
+export function ArticleCard({ article, locale = "th", priority = false }: ArticleCardProps) {
   const basePath = locale === "en" ? "/en" : "";
   const thumbnailUrl = getThumbnailUrl(article.thumbnailUrl);
 
@@ -31,6 +32,7 @@ export function ArticleCard({ article, locale = "th" }: ArticleCardProps) {
           src={thumbnailUrl}
           alt={article.title}
           fill
+          priority={priority}
           className="object-cover transition-transform group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />

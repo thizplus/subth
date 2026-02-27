@@ -46,7 +46,8 @@ type BulkScheduleRequest struct {
 // IngestArticleRequest - Worker ส่ง JSON มาเก็บ
 type IngestArticleRequest struct {
 	VideoID         string `json:"videoId" validate:"required,uuid"`
-	Type            string `json:"type"` // review, ranking, best-of, guide, news (default: review)
+	Language        string `json:"language"` // "th" or "en" (default: th)
+	Type            string `json:"type"`     // review, ranking, best-of, guide, news (default: review)
 	Title           string `json:"title" validate:"required"`
 	MetaTitle       string `json:"metaTitle" validate:"required"`
 	MetaDescription string `json:"metaDescription" validate:"required"`
@@ -65,6 +66,7 @@ type ArticleListItemResponse struct {
 	VideoID        string  `json:"videoId"`
 	VideoCode      string  `json:"videoCode"`
 	VideoThumbnail string  `json:"videoThumbnail,omitempty"`
+	Language       string  `json:"language"`
 	Type           string  `json:"type"`
 	Slug           string  `json:"slug"`
 	Title          string  `json:"title"`
@@ -81,6 +83,7 @@ type ArticleDetailResponse struct {
 	ID              string                 `json:"id"`
 	VideoID         string                 `json:"videoId"`
 	VideoCode       string                 `json:"videoCode"`
+	Language        string                 `json:"language"`
 	Type            string                 `json:"type"`
 	Slug            string                 `json:"slug"`
 	Title           string                 `json:"title"`
@@ -114,6 +117,7 @@ type ArticleStatsResponse struct {
 
 type PublicArticleResponse struct {
 	Slug            string                 `json:"slug"`
+	Language        string                 `json:"language"`
 	Type            string                 `json:"type"`
 	Title           string                 `json:"title"`
 	MetaTitle       string                 `json:"metaTitle"`
@@ -143,6 +147,7 @@ func (p *PublicArticleListParams) SetDefaults() {
 
 type PublicArticleSummary struct {
 	Slug            string   `json:"slug"`
+	Language        string   `json:"language"`
 	Type            string   `json:"type"`
 	Title           string   `json:"title"`
 	MetaDescription string   `json:"metaDescription"`

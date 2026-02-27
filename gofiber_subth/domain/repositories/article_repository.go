@@ -13,6 +13,7 @@ type ArticleRepository interface {
 	GetByID(ctx context.Context, id uuid.UUID) (*models.Article, error)
 	GetBySlug(ctx context.Context, slug string) (*models.Article, error)
 	GetByVideoID(ctx context.Context, videoID uuid.UUID) (*models.Article, error)
+	GetByVideoIDAndLanguage(ctx context.Context, videoID uuid.UUID, language string) (*models.Article, error)
 	Update(ctx context.Context, article *models.Article) error
 	Delete(ctx context.Context, id uuid.UUID) error
 
@@ -35,7 +36,9 @@ type ArticleRepository interface {
 
 	// Public
 	GetPublishedBySlug(ctx context.Context, slug string) (*models.Article, error)
+	GetPublishedBySlugAndLanguage(ctx context.Context, slug string, language string) (*models.Article, error)
 	GetPublishedByTypeAndSlug(ctx context.Context, articleType string, slug string) (*models.Article, error)
+	GetPublishedByTypeSlugAndLanguage(ctx context.Context, articleType string, slug string, language string) (*models.Article, error)
 
 	// Public Listing (for SEO pages)
 	ListPublished(ctx context.Context, params PublicArticleListParams) ([]PublishedArticleWithVideo, int64, error)
@@ -50,6 +53,7 @@ type PublicArticleListParams struct {
 	Offset      int
 	Search      string
 	ArticleType string // filter by type (review, ranking, best-of, guide, news)
+	Language    string // "th" or "en" (default: th)
 }
 
 // PublishedArticleWithVideo เก็บ article พร้อม video data
@@ -74,6 +78,7 @@ type ArticleListParams struct {
 	Search         string
 	SortBy         string
 	Order          string
+	Language       string // "th" or "en" (filter by language)
 }
 
 type ArticleStats struct {

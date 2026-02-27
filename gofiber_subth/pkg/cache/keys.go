@@ -11,10 +11,19 @@ const (
 	ArticleListCacheTTL = 30 * time.Minute // 30 min for list pages
 )
 
-// ArticleKey returns cache key for single article
+// ArticleKey returns cache key for single article (default language: th)
 // Format: article:{type}:{slug}
 func ArticleKey(articleType, slug string) string {
 	return fmt.Sprintf("article:%s:%s", articleType, slug)
+}
+
+// ArticleKeyWithLang returns cache key for single article with language
+// Format: article:{type}:{slug}:{lang}
+func ArticleKeyWithLang(articleType, slug, lang string) string {
+	if lang == "" {
+		lang = "th"
+	}
+	return fmt.Sprintf("article:%s:%s:%s", articleType, slug, lang)
 }
 
 // ArticleListKey returns cache key for article list

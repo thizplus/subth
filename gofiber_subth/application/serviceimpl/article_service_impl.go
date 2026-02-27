@@ -65,8 +65,14 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 		articleType = models.ArticleType(req.Type)
 	}
 
-	// ตรวจสอบว่ามี article สำหรับ video นี้แล้วหรือไม่
-	existing, _ := s.articleRepo.GetByVideoID(ctx, videoID)
+	// Default language to "th" if not specified
+	language := "th"
+	if req.Language != "" {
+		language = req.Language
+	}
+
+	// ตรวจสอบว่ามี article สำหรับ video + language นี้แล้วหรือไม่
+	existing, _ := s.articleRepo.GetByVideoIDAndLanguage(ctx, videoID, language)
 	if existing != nil {
 		// Update existing article
 		existing.Type = articleType
@@ -85,17 +91,18 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 
 		// Invalidate cache when article is updated
 		if s.cache != nil {
-			cacheKey := cache.ArticleKey(string(existing.Type), existing.Slug)
+			cacheKey := cache.ArticleKeyWithLang(string(existing.Type), existing.Slug, existing.Language)
 			_ = s.cache.Delete(ctx, cacheKey)
 		}
 
-		logger.InfoContext(ctx, "Article updated", "article_id", existing.ID, "video_id", videoID)
+		logger.InfoContext(ctx, "Article updated", "article_id", existing.ID, "video_id", videoID, "language", language)
 		return s.mapToDetailResponse(existing, video), nil
 	}
 
 	// Create new article
 	article := &models.Article{
 		VideoID:         videoID,
+		Language:        language,
 		Type:            articleType,
 		Title:           req.Title,
 		MetaTitle:       req.MetaTitle,
@@ -109,11 +116,11 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 	}
 
 	if err := s.articleRepo.Create(ctx, article); err != nil {
-		logger.ErrorContext(ctx, "Failed to create article", "video_id", videoID, "error", err)
+		logger.ErrorContext(ctx, "Failed to create article", "video_id", videoID, "language", language, "error", err)
 		return nil, err
 	}
 
-	logger.InfoContext(ctx, "Article created", "article_id", article.ID, "video_id", videoID)
+	logger.InfoContext(ctx, "Article created", "article_id", article.ID, "video_id", videoID, "language", language)
 	return s.mapToDetailResponse(article, video), nil
 }
 
@@ -234,6 +241,7 @@ func (s *ArticleServiceImpl) ListArticles(ctx context.Context, params *dto.Artic
 		item := dto.ArticleListItemResponse{
 			ID:             a.ID.String(),
 			VideoID:        a.VideoID.String(),
+			Language:       a.Language,
 			Type:           string(a.Type),
 			Slug:           a.Slug,
 			Title:          a.Title,
@@ -317,7 +325,7 @@ func (s *ArticleServiceImpl) UpdateStatus(ctx context.Context, id uuid.UUID, req
 
 	// Invalidate cache when article is published or status changes
 	if s.cache != nil {
-		cacheKey := cache.ArticleKey(string(article.Type), article.Slug)
+		cacheKey := cache.ArticleKeyWithLang(string(article.Type), article.Slug, article.Language)
 		if err := s.cache.Delete(ctx, cacheKey); err != nil {
 			logger.WarnContext(ctx, "Failed to invalidate article cache", "article_id", id, "error", err)
 		} else {
@@ -491,6 +499,7 @@ func (s *ArticleServiceImpl) ListPublishedArticles(ctx context.Context, params *
 		Offset:      (params.Page - 1) * params.Limit,
 		Search:      params.Search,
 		ArticleType: params.Type,
+		Language:    params.Lang,
 	}
 
 	articles, total, err := s.articleRepo.ListPublished(ctx, repoParams)
@@ -506,8 +515,9 @@ func (s *ArticleServiceImpl) ListArticlesByCast(ctx context.Context, castSlug st
 	params.SetDefaults()
 
 	repoParams := repositories.PublicArticleListParams{
-		Limit:  params.Limit,
-		Offset: (params.Page - 1) * params.Limit,
+		Limit:    params.Limit,
+		Offset:   (params.Page - 1) * params.Limit,
+		Language: params.Lang,
 	}
 
 	articles, total, err := s.articleRepo.ListPublishedByCast(ctx, castSlug, repoParams)
@@ -523,8 +533,9 @@ func (s *ArticleServiceImpl) ListArticlesByTag(ctx context.Context, tagSlug stri
 	params.SetDefaults()
 
 	repoParams := repositories.PublicArticleListParams{
-		Limit:  params.Limit,
-		Offset: (params.Page - 1) * params.Limit,
+		Limit:    params.Limit,
+		Offset:   (params.Page - 1) * params.Limit,
+		Language: params.Lang,
 	}
 
 	articles, total, err := s.articleRepo.ListPublishedByTag(ctx, tagSlug, repoParams)
@@ -540,8 +551,9 @@ func (s *ArticleServiceImpl) ListArticlesByMaker(ctx context.Context, makerSlug 
 	params.SetDefaults()
 
 	repoParams := repositories.PublicArticleListParams{
-		Limit:  params.Limit,
-		Offset: (params.Page - 1) * params.Limit,
+		Limit:    params.Limit,
+		Offset:   (params.Page - 1) * params.Limit,
+		Language: params.Lang,
 	}
 
 	articles, total, err := s.articleRepo.ListPublishedByMaker(ctx, makerSlug, repoParams)
@@ -559,6 +571,7 @@ func (s *ArticleServiceImpl) mapToPublicSummaries(articles []repositories.Publis
 	for i, a := range articles {
 		item := dto.PublicArticleSummary{
 			Slug:            a.Slug,
+			Language:        a.Language,
 			Type:            string(a.Type),
 			Title:           a.Title,
 			MetaDescription: a.MetaDescription,
@@ -605,6 +618,7 @@ func (s *ArticleServiceImpl) mapToDetailResponse(article *models.Article, video 
 	resp := &dto.ArticleDetailResponse{
 		ID:              article.ID.String(),
 		VideoID:         article.VideoID.String(),
+		Language:        article.Language,
 		Type:            string(article.Type),
 		Slug:            article.Slug,
 		Title:           article.Title,

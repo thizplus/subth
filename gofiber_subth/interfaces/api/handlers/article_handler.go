@@ -54,7 +54,7 @@ func (h *ArticleHandler) IngestArticle(c *fiber.Ctx) error {
 		return utils.InternalServerErrorResponse(c)
 	}
 
-	logger.InfoContext(ctx, "Article ingested", "article_id", article.ID, "video_id", req.VideoID)
+	logger.InfoContext(ctx, "Article ingested", "article_id", article.ID, "video_id", req.VideoID, "language", req.Language)
 	return utils.CreatedResponse(c, article)
 }
 

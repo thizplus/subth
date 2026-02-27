@@ -55,13 +55,16 @@ const (
 // Article - บทความ
 type Article struct {
 	ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	VideoID uuid.UUID `gorm:"type:uuid;not null;uniqueIndex"` // 1 video = 1 article
+	VideoID uuid.UUID `gorm:"type:uuid;not null;index"` // 1 video = N articles (multi-lang)
+
+	// Language - "th" or "en" (supports multi-language articles per video)
+	Language string `gorm:"size:5;default:'th';not null;index;uniqueIndex:idx_video_language;uniqueIndex:idx_slug_language"`
 
 	// Article Type
 	Type ArticleType `gorm:"size:20;default:'review';index"`
 
 	// Core SEO (indexed for search)
-	Slug            string `gorm:"size:100;uniqueIndex;not null"`
+	Slug            string `gorm:"size:100;not null;index;uniqueIndex:idx_slug_language"`
 	Title           string `gorm:"size:200;not null"`
 	MetaTitle       string `gorm:"size:100;not null"`
 	MetaDescription string `gorm:"size:250;not null"`

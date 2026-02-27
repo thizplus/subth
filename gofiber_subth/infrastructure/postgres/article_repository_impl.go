@@ -52,6 +52,15 @@ func (r *articleRepositoryImpl) GetByVideoID(ctx context.Context, videoID uuid.U
 	return &article, nil
 }
 
+func (r *articleRepositoryImpl) GetByVideoIDAndLanguage(ctx context.Context, videoID uuid.UUID, language string) (*models.Article, error) {
+	var article models.Article
+	err := r.db.WithContext(ctx).First(&article, "video_id = ? AND language = ?", videoID, language).Error
+	if err != nil {
+		return nil, err
+	}
+	return &article, nil
+}
+
 func (r *articleRepositoryImpl) Update(ctx context.Context, article *models.Article) error {
 	return r.db.WithContext(ctx).Save(article).Error
 }
@@ -75,6 +84,9 @@ func (r *articleRepositoryImpl) List(ctx context.Context, params repositories.Ar
 	}
 	if params.IndexingStatus != "" {
 		query = query.Where("indexing_status = ?", params.IndexingStatus)
+	}
+	if params.Language != "" {
+		query = query.Where("language = ?", params.Language)
 	}
 	if params.Search != "" {
 		query = query.Where("title ILIKE ? OR slug ILIKE ?", "%"+params.Search+"%", "%"+params.Search+"%")
@@ -193,6 +205,22 @@ func (r *articleRepositoryImpl) GetPublishedBySlug(ctx context.Context, slug str
 	return &article, nil
 }
 
+func (r *articleRepositoryImpl) GetPublishedBySlugAndLanguage(ctx context.Context, slug string, language string) (*models.Article, error) {
+	var article models.Article
+	query := r.db.WithContext(ctx).
+		Where("slug = ? AND status = ?", slug, models.ArticleStatusPublished)
+
+	if language != "" {
+		query = query.Where("language = ?", language)
+	}
+
+	err := query.First(&article).Error
+	if err != nil {
+		return nil, err
+	}
+	return &article, nil
+}
+
 func (r *articleRepositoryImpl) GetPublishedByTypeAndSlug(ctx context.Context, articleType string, slug string) (*models.Article, error) {
 	var article models.Article
 
@@ -202,6 +230,29 @@ func (r *articleRepositoryImpl) GetPublishedByTypeAndSlug(ctx context.Context, a
 	// Filter by article type
 	if articleType != "" {
 		query = query.Where("type = ?", articleType)
+	}
+
+	err := query.First(&article).Error
+	if err != nil {
+		return nil, err
+	}
+	return &article, nil
+}
+
+func (r *articleRepositoryImpl) GetPublishedByTypeSlugAndLanguage(ctx context.Context, articleType string, slug string, language string) (*models.Article, error) {
+	var article models.Article
+
+	query := r.db.WithContext(ctx).
+		Where("slug = ? AND status = ?", slug, models.ArticleStatusPublished)
+
+	// Filter by article type
+	if articleType != "" {
+		query = query.Where("type = ?", articleType)
+	}
+
+	// Filter by language
+	if language != "" {
+		query = query.Where("language = ?", language)
 	}
 
 	err := query.First(&article).Error
@@ -227,6 +278,11 @@ func (r *articleRepositoryImpl) ListPublished(ctx context.Context, params reposi
 		countQuery = countQuery.Where("type = ?", params.ArticleType)
 	}
 
+	// Filter by language
+	if params.Language != "" {
+		countQuery = countQuery.Where("language = ?", params.Language)
+	}
+
 	if params.Search != "" {
 		countQuery = countQuery.Where("title ILIKE ? OR slug ILIKE ?", "%"+params.Search+"%", "%"+params.Search+"%")
 	}
@@ -240,6 +296,11 @@ func (r *articleRepositoryImpl) ListPublished(ctx context.Context, params reposi
 	// Filter by article type
 	if params.ArticleType != "" {
 		query = query.Where("type = ?", params.ArticleType)
+	}
+
+	// Filter by language
+	if params.Language != "" {
+		query = query.Where("language = ?", params.Language)
 	}
 
 	if params.Search != "" {
@@ -266,15 +327,21 @@ func (r *articleRepositoryImpl) ListPublishedByCast(ctx context.Context, castSlu
 		Where("casts.slug = ?", castSlug)
 
 	// Count total
-	r.db.WithContext(ctx).Model(&models.Article{}).
-		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
-		Count(&total)
+	countQuery := r.db.WithContext(ctx).Model(&models.Article{}).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery)
+	if params.Language != "" {
+		countQuery = countQuery.Where("language = ?", params.Language)
+	}
+	countQuery.Count(&total)
 
 	// Get articles
 	var articles []models.Article
-	err := r.db.WithContext(ctx).
-		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
-		Order("published_at DESC").
+	query := r.db.WithContext(ctx).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery)
+	if params.Language != "" {
+		query = query.Where("language = ?", params.Language)
+	}
+	err := query.Order("published_at DESC").
 		Offset(params.Offset).
 		Limit(params.Limit).
 		Find(&articles).Error
@@ -295,15 +362,21 @@ func (r *articleRepositoryImpl) ListPublishedByTag(ctx context.Context, tagSlug 
 		Where("tags.slug = ?", tagSlug)
 
 	// Count total
-	r.db.WithContext(ctx).Model(&models.Article{}).
-		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
-		Count(&total)
+	countQuery := r.db.WithContext(ctx).Model(&models.Article{}).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery)
+	if params.Language != "" {
+		countQuery = countQuery.Where("language = ?", params.Language)
+	}
+	countQuery.Count(&total)
 
 	// Get articles
 	var articles []models.Article
-	err := r.db.WithContext(ctx).
-		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
-		Order("published_at DESC").
+	query := r.db.WithContext(ctx).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery)
+	if params.Language != "" {
+		query = query.Where("language = ?", params.Language)
+	}
+	err := query.Order("published_at DESC").
 		Offset(params.Offset).
 		Limit(params.Limit).
 		Find(&articles).Error
@@ -324,15 +397,21 @@ func (r *articleRepositoryImpl) ListPublishedByMaker(ctx context.Context, makerS
 		Where("makers.slug = ?", makerSlug)
 
 	// Count total
-	r.db.WithContext(ctx).Model(&models.Article{}).
-		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
-		Count(&total)
+	countQuery := r.db.WithContext(ctx).Model(&models.Article{}).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery)
+	if params.Language != "" {
+		countQuery = countQuery.Where("language = ?", params.Language)
+	}
+	countQuery.Count(&total)
 
 	// Get articles
 	var articles []models.Article
-	err := r.db.WithContext(ctx).
-		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery).
-		Order("published_at DESC").
+	query := r.db.WithContext(ctx).
+		Where("status = ? AND video_id IN (?)", models.ArticleStatusPublished, videoIDsSubquery)
+	if params.Language != "" {
+		query = query.Where("language = ?", params.Language)
+	}
+	err := query.Order("published_at DESC").
 		Offset(params.Offset).
 		Limit(params.Limit).
 		Find(&articles).Error

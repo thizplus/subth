@@ -46,7 +46,7 @@ type BulkScheduleRequest struct {
 // IngestArticleRequest - Worker ส่ง JSON มาเก็บ
 type IngestArticleRequest struct {
 	VideoID         string `json:"videoId" validate:"required,uuid"`
-	Type            string `json:"type"` // seo, news, review (default: seo)
+	Type            string `json:"type"` // review, ranking, best-of, guide, news (default: review)
 	Title           string `json:"title" validate:"required"`
 	MetaTitle       string `json:"metaTitle" validate:"required"`
 	MetaDescription string `json:"metaDescription" validate:"required"`
@@ -114,6 +114,7 @@ type ArticleStatsResponse struct {
 
 type PublicArticleResponse struct {
 	Slug            string                 `json:"slug"`
+	Type            string                 `json:"type"`
 	Title           string                 `json:"title"`
 	MetaTitle       string                 `json:"metaTitle"`
 	MetaDescription string                 `json:"metaDescription"`
@@ -126,6 +127,7 @@ type PublicArticleResponse struct {
 type PublicArticleListParams struct {
 	Page   int    `query:"page"`
 	Limit  int    `query:"limit"`
+	Type   string `query:"type"` // filter by article type (review, ranking, etc.)
 	Lang   string `query:"lang"`
 	Search string `query:"search"`
 }
@@ -141,6 +143,7 @@ func (p *PublicArticleListParams) SetDefaults() {
 
 type PublicArticleSummary struct {
 	Slug            string   `json:"slug"`
+	Type            string   `json:"type"`
 	Title           string   `json:"title"`
 	MetaDescription string   `json:"metaDescription"`
 	ThumbnailUrl    string   `json:"thumbnailUrl"`

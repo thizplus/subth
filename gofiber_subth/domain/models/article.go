@@ -11,10 +11,26 @@ import (
 type ArticleType string
 
 const (
-	ArticleTypeSEO    ArticleType = "seo"    // AI-generated SEO article
-	ArticleTypeNews   ArticleType = "news"   // News article
-	ArticleTypeReview ArticleType = "review" // Review article
+	ArticleTypeReview  ArticleType = "review"  // Review article (AI-generated)
+	ArticleTypeRanking ArticleType = "ranking" // Top 10 / Ranking lists
+	ArticleTypeBestOf  ArticleType = "best-of" // Best of [Cast/Maker]
+	ArticleTypeGuide   ArticleType = "guide"   // Ultimate Guide to [Tag]
+	ArticleTypeNews    ArticleType = "news"    // News article
 )
+
+// ValidArticleTypes - ประเภทที่ใช้ใน URL path
+var ValidArticleTypes = map[string]bool{
+	"review":  true,
+	"ranking": true,
+	"best-of": true,
+	"guide":   true,
+	"news":    true,
+}
+
+// IsValidArticleType - ตรวจสอบว่าเป็น type ที่ถูกต้องหรือไม่
+func IsValidArticleType(t string) bool {
+	return ValidArticleTypes[t]
+}
 
 // ArticleStatus - สถานะบทความ
 type ArticleStatus string
@@ -42,7 +58,7 @@ type Article struct {
 	VideoID uuid.UUID `gorm:"type:uuid;not null;uniqueIndex"` // 1 video = 1 article
 
 	// Article Type
-	Type ArticleType `gorm:"size:20;default:'seo';index"`
+	Type ArticleType `gorm:"size:20;default:'review';index"`
 
 	// Core SEO (indexed for search)
 	Slug            string `gorm:"size:100;uniqueIndex;not null"`

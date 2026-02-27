@@ -14,10 +14,18 @@ func SetupArticleRoutes(api fiber.Router, h *handlers.Handlers) {
 
 	// Public API (must be before :id to avoid conflict)
 	articles.Get("/public", h.ArticleHandler.ListPublishedArticles)        // List published articles
-	articles.Get("/slug/:slug", h.ArticleHandler.GetPublishedArticle)      // Get single article by slug
+	articles.Get("/slug/:slug", h.ArticleHandler.GetPublishedArticle)      // Get single article by slug (deprecated)
 	articles.Get("/cast/:slug", h.ArticleHandler.ListArticlesByCast)       // List articles by cast
 	articles.Get("/tag/:slug", h.ArticleHandler.ListArticlesByTag)         // List articles by tag
 	articles.Get("/maker/:slug", h.ArticleHandler.ListArticlesByMaker)     // List articles by maker
+
+	// Type-based article routes (new URL structure)
+	// GET /api/v1/articles/:type/:slug (e.g., /articles/review/dass-541)
+	articles.Get("/review/:slug", h.ArticleHandler.GetPublishedArticleByType)   // Review articles
+	articles.Get("/ranking/:slug", h.ArticleHandler.GetPublishedArticleByType)  // Ranking articles
+	articles.Get("/best-of/:slug", h.ArticleHandler.GetPublishedArticleByType)  // Best-of articles
+	articles.Get("/guide/:slug", h.ArticleHandler.GetPublishedArticleByType)    // Guide articles
+	articles.Get("/news/:slug", h.ArticleHandler.GetPublishedArticleByType)     // News articles
 
 	// Admin routes
 	articles.Get("/", middleware.Protected(), middleware.AdminOnly(), h.ArticleHandler.ListArticles)

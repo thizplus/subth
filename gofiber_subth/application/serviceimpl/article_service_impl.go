@@ -54,8 +54,8 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 		return nil, err
 	}
 
-	// Default type to "seo" if not specified
-	articleType := models.ArticleTypeSEO
+	// Default type to "review" if not specified
+	articleType := models.ArticleTypeReview
 	if req.Type != "" {
 		articleType = models.ArticleType(req.Type)
 	}
@@ -379,6 +379,49 @@ func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug strin
 
 	response := &dto.PublicArticleResponse{
 		Slug:            article.Slug,
+		Type:            string(article.Type),
+		Title:           article.Title,
+		MetaTitle:       article.MetaTitle,
+		MetaDescription: article.MetaDescription,
+		Content:         content,
+	}
+
+	if video != nil {
+		response.VideoCode = video.Code
+	}
+	if article.PublishedAt != nil {
+		response.PublishedAt = article.PublishedAt.Format(time.RFC3339)
+	}
+
+	return response, nil
+}
+
+func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, articleType string, slug string) (*dto.PublicArticleResponse, error) {
+	// Validate article type
+	if !models.IsValidArticleType(articleType) {
+		return nil, errors.New("invalid article type")
+	}
+
+	article, err := s.articleRepo.GetPublishedByTypeAndSlug(ctx, articleType, slug)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("article not found")
+		}
+		logger.ErrorContext(ctx, "Failed to get published article by type", "type", articleType, "slug", slug, "error", err)
+		return nil, err
+	}
+
+	video, _ := s.videoRepo.GetByID(ctx, article.VideoID)
+
+	var content map[string]interface{}
+	if err := json.Unmarshal(article.Content, &content); err != nil {
+		logger.ErrorContext(ctx, "Failed to unmarshal article content", "article_id", article.ID, "error", err)
+		return nil, err
+	}
+
+	response := &dto.PublicArticleResponse{
+		Slug:            article.Slug,
+		Type:            string(article.Type),
 		Title:           article.Title,
 		MetaTitle:       article.MetaTitle,
 		MetaDescription: article.MetaDescription,
@@ -403,9 +446,10 @@ func (s *ArticleServiceImpl) ListPublishedArticles(ctx context.Context, params *
 	params.SetDefaults()
 
 	repoParams := repositories.PublicArticleListParams{
-		Limit:  params.Limit,
-		Offset: (params.Page - 1) * params.Limit,
-		Search: params.Search,
+		Limit:       params.Limit,
+		Offset:      (params.Page - 1) * params.Limit,
+		Search:      params.Search,
+		ArticleType: params.Type,
 	}
 
 	articles, total, err := s.articleRepo.ListPublished(ctx, repoParams)
@@ -474,6 +518,7 @@ func (s *ArticleServiceImpl) mapToPublicSummaries(articles []repositories.Publis
 	for i, a := range articles {
 		item := dto.PublicArticleSummary{
 			Slug:            a.Slug,
+			Type:            string(a.Type),
 			Title:           a.Title,
 			MetaDescription: a.MetaDescription,
 			ThumbnailUrl:    a.VideoThumbnail,

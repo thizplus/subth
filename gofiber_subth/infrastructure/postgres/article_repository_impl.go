@@ -193,6 +193,24 @@ func (r *articleRepositoryImpl) GetPublishedBySlug(ctx context.Context, slug str
 	return &article, nil
 }
 
+func (r *articleRepositoryImpl) GetPublishedByTypeAndSlug(ctx context.Context, articleType string, slug string) (*models.Article, error) {
+	var article models.Article
+
+	query := r.db.WithContext(ctx).
+		Where("slug = ? AND status = ?", slug, models.ArticleStatusPublished)
+
+	// Filter by article type
+	if articleType != "" {
+		query = query.Where("type = ?", articleType)
+	}
+
+	err := query.First(&article).Error
+	if err != nil {
+		return nil, err
+	}
+	return &article, nil
+}
+
 // ========================================
 // Public Listing Methods (for SEO pages)
 // ========================================
@@ -203,6 +221,12 @@ func (r *articleRepositoryImpl) ListPublished(ctx context.Context, params reposi
 	// Count total
 	countQuery := r.db.WithContext(ctx).Model(&models.Article{}).
 		Where("status = ?", models.ArticleStatusPublished)
+
+	// Filter by article type
+	if params.ArticleType != "" {
+		countQuery = countQuery.Where("type = ?", params.ArticleType)
+	}
+
 	if params.Search != "" {
 		countQuery = countQuery.Where("title ILIKE ? OR slug ILIKE ?", "%"+params.Search+"%", "%"+params.Search+"%")
 	}
@@ -212,6 +236,12 @@ func (r *articleRepositoryImpl) ListPublished(ctx context.Context, params reposi
 	var articles []models.Article
 	query := r.db.WithContext(ctx).
 		Where("status = ?", models.ArticleStatusPublished)
+
+	// Filter by article type
+	if params.ArticleType != "" {
+		query = query.Where("type = ?", params.ArticleType)
+	}
+
 	if params.Search != "" {
 		query = query.Where("title ILIKE ? OR slug ILIKE ?", "%"+params.Search+"%", "%"+params.Search+"%")
 	}

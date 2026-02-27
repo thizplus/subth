@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 
@@ -210,6 +212,7 @@ func (h *ArticleHandler) DeleteArticle(c *fiber.Ctx) error {
 
 // GetPublishedArticle - ดึงบทความที่เผยแพร่แล้ว (Public)
 // GET /api/v1/articles/slug/:slug
+// Deprecated: Use GetPublishedArticleByType instead
 func (h *ArticleHandler) GetPublishedArticle(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
@@ -228,6 +231,53 @@ func (h *ArticleHandler) GetPublishedArticle(c *fiber.Ctx) error {
 	}
 
 	return utils.SuccessResponse(c, article)
+}
+
+// GetPublishedArticleByType - ดึงบทความตาม type และ slug (Public)
+// GET /api/v1/articles/:type/:slug
+// Types: review, ranking, best-of, guide, news
+func (h *ArticleHandler) GetPublishedArticleByType(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+
+	// Extract article type from the path (e.g., /articles/review/slug -> review)
+	path := c.Path()
+	articleType := extractArticleTypeFromPath(path)
+
+	slug := c.Params("slug")
+
+	if articleType == "" {
+		return utils.BadRequestResponse(c, "Article type is required")
+	}
+	if slug == "" {
+		return utils.BadRequestResponse(c, "Slug is required")
+	}
+
+	article, err := h.articleService.GetPublishedArticleByType(ctx, articleType, slug)
+	if err != nil {
+		switch err.Error() {
+		case "invalid article type":
+			return utils.BadRequestResponse(c, "Invalid article type")
+		case "article not found":
+			return utils.NotFoundResponse(c, "Article not found")
+		}
+		logger.ErrorContext(ctx, "Failed to get published article by type", "type", articleType, "slug", slug, "error", err)
+		return utils.InternalServerErrorResponse(c)
+	}
+
+	return utils.SuccessResponse(c, article)
+}
+
+// extractArticleTypeFromPath extracts the article type from URL path
+// e.g., /api/v1/articles/review/slug -> review
+func extractArticleTypeFromPath(path string) string {
+	// Path format: /api/v1/articles/{type}/{slug}
+	types := []string{"review", "ranking", "best-of", "guide", "news"}
+	for _, t := range types {
+		if strings.Contains(path, "/"+t+"/") {
+			return t
+		}
+	}
+	return ""
 }
 
 // ListPublishedArticles - รายการบทความที่เผยแพร่แล้ว (Public)

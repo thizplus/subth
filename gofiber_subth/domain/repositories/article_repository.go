@@ -35,6 +35,7 @@ type ArticleRepository interface {
 
 	// Public
 	GetPublishedBySlug(ctx context.Context, slug string) (*models.Article, error)
+	GetPublishedByTypeAndSlug(ctx context.Context, articleType string, slug string) (*models.Article, error)
 
 	// Public Listing (for SEO pages)
 	ListPublished(ctx context.Context, params PublicArticleListParams) ([]PublishedArticleWithVideo, int64, error)
@@ -45,9 +46,10 @@ type ArticleRepository interface {
 
 // PublicArticleListParams สำหรับ public API
 type PublicArticleListParams struct {
-	Limit  int
-	Offset int
-	Search string
+	Limit       int
+	Offset      int
+	Search      string
+	ArticleType string // filter by type (review, ranking, best-of, guide, news)
 }
 
 // PublishedArticleWithVideo เก็บ article พร้อม video data

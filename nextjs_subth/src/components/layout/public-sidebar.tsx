@@ -46,7 +46,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
       allReviews: "รีวิวทั้งหมด",
       casts: "นักแสดง",
       tags: "แท็ก",
-      memberTitle: "วิดีโอทั้งหมดของเรา",
+      memberTitle: "ดูวิดีโอทั้งหมด",
       memberSubtitle: "JAV ซับไทย ครบทุกค่าย",
     },
     en: {

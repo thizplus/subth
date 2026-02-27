@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Film, User, FileText, Users } from "lucide-react";
+import { Home, Film, User, FileText, Users, Tags } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -44,6 +44,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
       feed: "ฟีด",
       articles: "บทความ",
       casts: "นักแสดง",
+      tags: "แท็ก",
       member: "เข้าสู่หน้าสมาชิก",
     },
     en: {
@@ -51,6 +52,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
       feed: "Feed",
       articles: "Articles",
       casts: "Casts",
+      tags: "Tags",
       member: "Go to Member",
     },
   };
@@ -76,6 +78,11 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
       title: t.casts,
       href: `${basePath}/casts`,
       icon: Users,
+    },
+    {
+      title: t.tags,
+      href: `${basePath}/tags`,
+      icon: Tags,
     },
   ];
 

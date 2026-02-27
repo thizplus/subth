@@ -22,8 +22,8 @@ import { Progress } from "@/components/ui/progress";
 import { OnlineStats } from "./online-stats";
 import { ChatProvider, ChatTicker, ChatFab } from "@/features/community-chat";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
-import { BottomNav } from "./bottom-nav";
 import { useDictionary } from "@/components/dictionary-provider";
+import { useScrollDirection } from "@/hooks/use-scroll-direction";
 
 interface PublicLayoutClientProps {
   children: ReactNode;
@@ -38,6 +38,7 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
   const t = dictionary.common;
   const { user, isAuthenticated, logout } = useAuthStore();
   const { data: stats } = useMyStats();
+  const scrollDirection = useScrollDirection();
 
   // Get initials for avatar fallback
   const getInitials = () => {
@@ -52,8 +53,12 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
       <SidebarProvider>
         <PublicSidebar locale={locale as "th" | "en"} />
         <SidebarInset className="w-0 min-w-0">
-          {/* Header */}
-          <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b bg-background transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          {/* Smart Header - ซ่อนเมื่อ scroll ลง, แสดงเมื่อ scroll ขึ้น */}
+          <header
+            className={`sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b bg-background transition-all duration-300 ease-in-out group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 ${
+              scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"
+            }`}
+          >
             <div className="flex w-full items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator
@@ -168,8 +173,8 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
           {/* Chat Ticker */}
           <ChatTicker locale={locale as "th" | "en"} />
 
-          {/* Main Content - pb-24 for bottom nav + breathing room */}
-          <main className="flex-1 px-0 py-4 pb-24 sm:px-4 md:pb-4">
+          {/* Main Content */}
+          <main className="flex-1 px-0 py-4 sm:px-4">
             {children}
           </main>
 
@@ -178,9 +183,6 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
 
           {/* Chat FAB */}
           <ChatFab />
-
-          {/* Mobile Bottom Navigation */}
-          <BottomNav />
         </SidebarInset>
       </SidebarProvider>
     </ChatProvider>

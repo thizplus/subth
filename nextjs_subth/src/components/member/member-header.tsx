@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { LanguageSwitcher, OnlineStats } from "@/components/layout";
+import { useScrollDirection } from "@/hooks/use-scroll-direction";
 
 interface MemberHeaderProps {
   locale: "th" | "en";
@@ -17,6 +18,7 @@ export function MemberHeader({ locale }: MemberHeaderProps) {
   const [searchValue, setSearchValue] = useState("");
   const basePath = locale === "th" ? "/member" : "/en/member";
   const searchPlaceholder = locale === "th" ? "ค้นหา..." : "Search...";
+  const scrollDirection = useScrollDirection();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +28,11 @@ export function MemberHeader({ locale }: MemberHeaderProps) {
   };
 
   return (
-    <header className="flex h-14 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+    <header
+      className={`sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b bg-background transition-all duration-300 ease-in-out group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 ${
+        scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       <div className="flex w-full items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
         <Separator

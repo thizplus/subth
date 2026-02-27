@@ -11,6 +11,7 @@ import {
   type LucideIcon,
   Grid3X3,
   LogOut,
+  Search,
 } from "lucide-react";
 import { ModeToggle, Logo } from "@/components/theme";
 import {
@@ -66,6 +67,7 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
     th: {
       menu: "เมนู",
       home: "หน้าแรก",
+      search: "ค้นหา",
       categories: "หมวดหมู่",
       casts: "นักแสดง",
       tags: "แท็ก",
@@ -75,6 +77,7 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
     en: {
       menu: "Menu",
       home: "Home",
+      search: "Search",
       categories: "Categories",
       casts: "Casts",
       tags: "Tags",
@@ -91,6 +94,11 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
       title: t.home,
       url: basePath,
       icon: Home,
+    },
+    {
+      title: t.search,
+      url: `${basePath}/search`,
+      icon: Search,
     },
     {
       title: t.categories,

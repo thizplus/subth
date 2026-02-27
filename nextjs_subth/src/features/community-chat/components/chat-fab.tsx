@@ -9,7 +9,7 @@ export function ChatFab() {
   return (
     <button
       onClick={() => setSheetOpen(true)}
-      className="fixed z-50 bottom-20 right-4 md:bottom-6 md:right-6 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95"
+      className="fixed z-50 bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95"
       aria-label="Community Chat"
     >
       <MessageCircle className="h-5 w-5" />

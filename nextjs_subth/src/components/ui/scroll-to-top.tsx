@@ -28,8 +28,8 @@ export function ScrollToTop() {
         "bg-primary text-primary-foreground shadow-lg",
         "transition-all duration-300 hover:scale-110 hover:shadow-xl",
         "active:scale-95",
-        // Position: above FAB chat on mobile (clear bottom nav h-14)
-        "bottom-32 right-4 md:bottom-20 md:right-6",
+        // Position: above FAB chat (h-10 + gap)
+        "bottom-16 right-4",
         // Animation
         isVisible
           ? "translate-y-0 opacity-100"

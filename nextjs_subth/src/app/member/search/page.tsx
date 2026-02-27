@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { VideoGrid } from "@/features/video/components";
 import { videoService } from "@/features/video/service";
 import type { VideoListItem } from "@/features/video/types";
@@ -44,7 +46,16 @@ export default async function SearchPage({ searchParams }: PageProps) {
         <PageActivityLogger pageType="search" metadata={{ query: searchQuery }} />
       )}
 
-      <h1 className="text-2xl font-bold mb-4">{dict.common.search}</h1>
+      <div className="flex items-center gap-3 mb-4">
+        <Link
+          href="/member"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-muted hover:bg-muted/80 transition-colors"
+          aria-label={dict.common.back}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
+        <h1 className="text-2xl font-bold">{dict.common.search}</h1>
+      </div>
 
       <div className="mb-6">
         <SearchInput

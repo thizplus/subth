@@ -69,7 +69,7 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
               {!isAuthenticated ? (
                 <LoginDialog locale={locale as "th" | "en"}>
                   <button className="flex items-center gap-2 text-left">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground animate-bounce">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/50 animate-[pulse_2s_ease-in-out_infinite]">
                       <LogIn className="h-4 w-4" />
                     </div>
                     <div className="grid leading-tight">

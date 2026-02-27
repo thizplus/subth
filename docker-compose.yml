@@ -221,6 +221,7 @@ services:
       context: ./nextjs_subth
       dockerfile: Dockerfile
       args:
+        - NEXT_PUBLIC_SITE_URL=${CLIENT_URL:-https://subth.com}
         - NEXT_PUBLIC_API_URL=${API_URL:-https://api.subth.com}
         - NEXT_PUBLIC_CDN_URL=${CDN_URL:-https://files.subth.com}
     container_name: subth-frontend

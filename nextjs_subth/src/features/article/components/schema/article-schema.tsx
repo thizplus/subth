@@ -71,7 +71,7 @@ export function ArticleSchema({
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://subth.com${basePath}/articles/review/${slug}`,
+      "@id": `https://subth.com${basePath}/articles/${slug}`,
     },
     // Only add potentialAction if video page exists
     ...(videoPageUrl

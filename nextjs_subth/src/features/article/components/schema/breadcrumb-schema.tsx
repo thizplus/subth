@@ -30,7 +30,7 @@ export function BreadcrumbSchema({ title, slug }: BreadcrumbSchemaProps) {
         "@type": "ListItem",
         position: 4,
         name: title,
-        item: `https://subth.com/articles/review/${slug}`,
+        item: `https://subth.com/articles/${slug}`,
       },
     ],
   };

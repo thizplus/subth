@@ -24,7 +24,7 @@ export function RelatedArticles({
         {articles.slice(0, 6).map((article) => (
           <Link
             key={article.id}
-            href={`${basePath}/articles/${article.url}`}
+            href={`${basePath}/articles/review/${article.url}`}
             className="group flex gap-3 rounded-lg border bg-card p-3 transition-colors hover:bg-muted/50"
           >
             <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-md">

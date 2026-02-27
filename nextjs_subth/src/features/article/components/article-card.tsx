@@ -21,7 +21,7 @@ export function ArticleCard({ article, locale = "th" }: ArticleCardProps) {
 
   return (
     <Link
-      href={`${basePath}/articles/${article.slug}`}
+      href={`${basePath}/articles/review/${article.slug}`}
       className="group block overflow-hidden rounded-lg border bg-card transition-colors hover:bg-accent"
     >
       {/* Thumbnail */}

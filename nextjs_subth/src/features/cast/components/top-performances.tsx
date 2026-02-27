@@ -39,7 +39,7 @@ export function TopPerformances({
         {topArticles.map((article, index) => (
           <Link
             key={article.slug}
-            href={`${basePath}/articles/${article.slug}`}
+            href={`${basePath}/articles/review/${article.slug}`}
             className="group relative flex gap-3 rounded-xl border bg-gradient-to-br from-card to-muted/30 p-4 transition-all hover:shadow-md hover:border-primary/30"
           >
             {/* Rank Badge */}

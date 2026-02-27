@@ -44,7 +44,7 @@ export function HowToSchema({
     // Link to the article
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${baseUrl}${pathPrefix}/articles/${videoCode.toLowerCase()}`,
+      "@id": `${baseUrl}${pathPrefix}/articles/review/${videoCode.toLowerCase()}`,
     },
   };
 

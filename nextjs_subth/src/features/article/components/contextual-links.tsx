@@ -24,7 +24,7 @@ export function ContextualLinks({ links }: ContextualLinksProps) {
         {links.map((link, index) => (
           <Link
             key={index}
-            href={`/articles/${link.linkedSlug}`}
+            href={`/articles/review/${link.linkedSlug}`}
             className="group flex flex-col sm:flex-row gap-3 sm:gap-4 rounded-xl border bg-gradient-to-br from-muted/30 to-transparent p-3 transition-all hover:border-primary/30 hover:shadow-md"
           >
             {link.thumbnailUrl && (

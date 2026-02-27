@@ -33,7 +33,7 @@ export function ItemListSchema({
       item: {
         "@type": "Article",
         name: article.title,
-        url: `${baseUrl}${pathPrefix}/articles/${article.slug}`,
+        url: `${baseUrl}${pathPrefix}/articles/review/${article.slug}`,
         image: article.thumbnailUrl?.startsWith("http")
           ? article.thumbnailUrl
           : `${CDN_URL}/${article.thumbnailUrl}`,

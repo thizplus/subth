@@ -49,13 +49,13 @@ export async function GET() {
 
   const urls = articles.flatMap((article) => [
     {
-      loc: `${BASE_URL}/articles/${article.slug}`,
+      loc: `${BASE_URL}/articles/review/${article.slug}`,
       lastmod: new Date(article.publishedAt).toISOString(),
       priority: "0.8",
       changefreq: "weekly",
     },
     {
-      loc: `${BASE_URL}/en/articles/${article.slug}`,
+      loc: `${BASE_URL}/en/articles/review/${article.slug}`,
       lastmod: new Date(article.publishedAt).toISOString(),
       priority: "0.7",
       changefreq: "weekly",

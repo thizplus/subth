@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Film, User, FileText, Users, Tags } from "lucide-react";
+import { Home, Play, FileText, Users, Tags } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -42,38 +42,35 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
   const labels = {
     th: {
       menu: "เมนู",
-      feed: "ฟีด",
-      articles: "บทความ",
+      latestReviews: "รีวิวล่าสุด",
+      allReviews: "รีวิวทั้งหมด",
       casts: "นักแสดง",
       tags: "แท็ก",
-      member: "เข้าสู่หน้าสมาชิก",
+      memberTitle: "วิดีโอทั้งหมดของเรา",
+      memberSubtitle: "JAV Onlyfans อื่นๆ",
     },
     en: {
       menu: "Menu",
-      feed: "Feed",
-      articles: "Articles",
+      latestReviews: "Latest Reviews",
+      allReviews: "All Reviews",
       casts: "Casts",
       tags: "Tags",
-      member: "Go to Member",
+      memberTitle: "All Our Videos",
+      memberSubtitle: "JAV Onlyfans & more",
     },
   };
   const t = labels[locale];
 
   const menuItems = [
     {
-      title: t.feed,
+      title: t.latestReviews,
       href: `${basePath}/`,
       icon: Home,
     },
     {
-      title: t.articles,
+      title: t.allReviews,
       href: `${basePath}/articles`,
       icon: FileText,
-    },
-    {
-      title: "Reels",
-      href: `${basePath}/reels`,
-      icon: Film,
     },
     {
       title: t.casts,
@@ -116,12 +113,15 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    tooltip={t.member}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+                    tooltip={t.memberTitle}
+                    className="h-auto py-2 bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                   >
                     <Link href={`${basePath}/member`} onClick={handleMenuClick}>
-                      <User />
-                      <span>{t.member}</span>
+                      <Play />
+                      <div className="grid leading-tight">
+                        <span className="font-medium">{t.memberTitle}</span>
+                        <span className="text-xs opacity-80">{t.memberSubtitle}</span>
+                      </div>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

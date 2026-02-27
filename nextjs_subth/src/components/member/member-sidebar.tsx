@@ -6,7 +6,6 @@ import {
   Home,
   Users,
   Tags,
-  Sparkles,
   ChevronRight,
   type LucideIcon,
   Grid3X3,
@@ -72,7 +71,7 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
       casts: "นักแสดง",
       tags: "แท็ก",
       aiSearch: "AI Search",
-      exitToMain: "ออกไปหน้าหลัก",
+      exitToMain: "กลับไปหน้ารีวิว",
     },
     en: {
       menu: "Menu",
@@ -82,7 +81,7 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
       casts: "Casts",
       tags: "Tags",
       aiSearch: "AI Search",
-      exitToMain: "Exit to Main",
+      exitToMain: "Back to Reviews",
     },
   };
 
@@ -119,11 +118,12 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
       url: `${basePath}/tags`,
       icon: Tags,
     },
-    {
-      title: t.aiSearch,
-      url: `${basePath}/ai-search`,
-      icon: Sparkles,
-    },
+    // AI Search - ปิดไว้ก่อน
+    // {
+    //   title: t.aiSearch,
+    //   url: `${basePath}/ai-search`,
+    //   icon: Sparkles,
+    // },
   ];
 
   const isActive = (url: string) => {

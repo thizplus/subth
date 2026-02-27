@@ -1,5 +1,6 @@
 // Page types ที่รองรับ
 export type PageType =
+  | "home"
   | "video"
   | "cast"
   | "tag"
@@ -9,6 +10,7 @@ export type PageType =
   | "ai-search"
   | "reel"
   | "feed"
+  | "article"
   | "profile";
 
 // Request สำหรับ log activity

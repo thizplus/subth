@@ -65,8 +65,8 @@ export function MemberHeader({ locale }: MemberHeaderProps) {
           </button>
         </form>
 
-        {/* Language Switcher */}
-        <div className="shrink-0">
+        {/* Language Switcher - ขวาสุด */}
+        <div className="shrink-0 ml-auto">
           <LanguageSwitcher />
         </div>
       </div>

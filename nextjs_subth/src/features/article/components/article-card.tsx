@@ -41,25 +41,35 @@ export function ArticleCard({ article, locale = "th" }: ArticleCardProps) {
 
       {/* Content */}
       <div className="p-3">
-        <h3 className="line-clamp-2 text-sm font-medium leading-tight group-hover:text-primary">
+        <h3 className="line-clamp-2 text-base font-medium leading-snug group-hover:text-primary">
           {article.title}
         </h3>
 
         {/* Cast names */}
         {article.castNames && article.castNames.length > 0 && (
-          <p className="mt-1 text-xs text-muted-foreground truncate">
-            {article.castNames.slice(0, 2).join(", ")}
-            {article.castNames.length > 2 && ` +${article.castNames.length - 2}`}
-          </p>
+          <div className="mt-2">
+            <span className="text-xs text-muted-foreground/70">
+              {locale === "th" ? "นักแสดง" : "Cast"}
+            </span>
+            <p className="text-sm truncate">
+              {article.castNames.slice(0, 2).join(", ")}
+              {article.castNames.length > 2 && ` +${article.castNames.length - 2}`}
+            </p>
+          </div>
         )}
 
         {/* Meta */}
-        <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="mt-2 flex items-end justify-between">
           {article.makerName && (
-            <span className="truncate">{article.makerName}</span>
+            <div className="min-w-0 flex-1">
+              <span className="text-xs text-muted-foreground/70">
+                {locale === "th" ? "ค่าย" : "Studio"}
+              </span>
+              <p className="text-sm truncate">{article.makerName}</p>
+            </div>
           )}
           {article.publishedAt && (
-            <span>
+            <span className="shrink-0 text-xs text-muted-foreground">
               {new Date(article.publishedAt).toLocaleDateString(
                 locale === "th" ? "th-TH" : "en-US",
                 { year: "numeric", month: "short", day: "numeric" }

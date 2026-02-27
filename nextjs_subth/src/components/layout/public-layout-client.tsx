@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { PublicSidebar } from "./public-sidebar";
 import { PublicLanguageSwitcher } from "./public-language-switcher";
 import { LoginDialog, useAuthStore } from "@/features/auth";
-import { LogIn, Play } from "lucide-react";
+import { LogIn, Play, Film } from "lucide-react";
 import Link from "next/link";
 import { ChatProvider, ChatTicker, ChatFab } from "@/features/community-chat";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
@@ -72,6 +72,15 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
 
               {/* Spacer */}
               <div className="flex-1" />
+
+              {/* Reels Icon */}
+              <Link
+                href={`${locale === "en" ? "/en" : ""}/reels`}
+                className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors"
+                title="Reels"
+              >
+                <Film className="h-5 w-5" />
+              </Link>
 
               {/* Language Switcher */}
               <PublicLanguageSwitcher locale={locale as "th" | "en"} />

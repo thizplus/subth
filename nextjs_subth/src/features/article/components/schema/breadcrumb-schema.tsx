@@ -23,8 +23,14 @@ export function BreadcrumbSchema({ title, slug }: BreadcrumbSchemaProps) {
       {
         "@type": "ListItem",
         position: 3,
+        name: "รีวิว",
+        item: "https://subth.com/articles?type=review",
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
         name: title,
-        item: `https://subth.com/articles/${slug}`,
+        item: `https://subth.com/articles/review/${slug}`,
       },
     ],
   };

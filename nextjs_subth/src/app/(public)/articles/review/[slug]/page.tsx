@@ -19,17 +19,13 @@ import {
   FAQPageSchema,
   ArticleSchema,
   BreadcrumbSchema,
-  // Chunk 4: Deep Analysis Sections
   CharacterJourneySection,
   CinematographySection,
   EducationalSection,
   ViewingTipsSection,
-  // Navigation
   TableOfContents,
   ArticleBreadcrumb,
-  // Author
   AuthorByline,
-  // Trust & E-E-A-T
   TrustBadge,
   RelatedArticles,
   ThematicKeywords,
@@ -41,12 +37,11 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
   try {
-    const article = await articleService.getBySlug(slug);
+    const article = await articleService.getByTypeAndSlug("review", slug);
 
     return {
       title: article.metaTitle,
@@ -76,10 +71,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         images: [article.content.thumbnailUrl],
       },
       alternates: {
-        canonical: `https://subth.com/articles/${slug}`,
+        canonical: `https://subth.com/articles/review/${slug}`,
         languages: {
-          "th": `https://subth.com/articles/${slug}`,
-          "en": `https://subth.com/en/articles/${slug}`,
+          th: `https://subth.com/articles/review/${slug}`,
+          en: `https://subth.com/en/articles/review/${slug}`,
         },
       },
     };
@@ -90,12 +85,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function ArticlePage({ params }: PageProps) {
+export default async function ReviewArticlePage({ params }: PageProps) {
   const { slug } = await params;
 
   let article;
   try {
-    article = await articleService.getBySlug(slug);
+    article = await articleService.getByTypeAndSlug("review", slug);
   } catch {
     notFound();
   }
@@ -104,7 +99,6 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <PublicLayout locale="th">
-      {/* Schema.org JSON-LD */}
       <VideoObjectSchema content={content} videoCode={article.videoCode} />
       <FAQPageSchema
         faqItems={content.faqItems}
@@ -116,12 +110,11 @@ export default async function ArticlePage({ params }: PageProps) {
         thumbnailUrl={content.thumbnailUrl}
         publishedAt={article.publishedAt}
         updatedAt={content.updatedAt}
-        slug={article.slug}
+        slug={`review/${article.slug}`}
         videoId={content.videoId}
         locale="th"
       />
-      <BreadcrumbSchema title={article.title} slug={article.slug} />
-      {/* HowTo Schema for Viewing Tips */}
+      <BreadcrumbSchema title={article.title} slug={`review/${article.slug}`} />
       {content.viewingTips && (
         <HowToSchema
           title={`วิธีดู ${article.title} ให้สนุก`}
@@ -133,16 +126,15 @@ export default async function ArticlePage({ params }: PageProps) {
       )}
 
       <article className="mx-auto max-w-4xl px-4 py-6 md:py-8">
-        {/* 0. Breadcrumb Navigation */}
         <ArticleBreadcrumb
           items={[
             { label: "บทความ", href: "/articles" },
+            { label: "รีวิว", href: "/articles?type=review" },
             { label: article.title },
           ]}
           locale="th"
         />
 
-        {/* 1. Thumbnail with CTA (above the fold) */}
         <ThumbnailWithCTA
           thumbnailUrl={content.thumbnailUrl}
           thumbnailAlt={content.thumbnailAlt}
@@ -150,23 +142,19 @@ export default async function ArticlePage({ params }: PageProps) {
           title={article.title}
         />
 
-        {/* 2. Summary Short */}
         {content.summaryShort && (
           <p className="mt-4 text-lg text-muted-foreground">
             {content.summaryShort}
           </p>
         )}
 
-        {/* 2.5 Audio Summary Player */}
         <AudioPlayer
           audioUrl={content.audioSummaryUrl}
           audioDuration={content.audioDuration}
         />
 
-        {/* 2.6 Table of Contents (Mobile-first, Dynamic) */}
         <TableOfContents content={content} />
 
-        {/* 3. Key Moments Preview */}
         <div className="mt-6">
           <KeyMomentsPreview
             keyMoments={content.keyMoments}
@@ -175,17 +163,14 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 4. Title (H1) */}
         <h1 className="mt-8 text-2xl font-bold md:text-3xl">{article.title}</h1>
 
-        {/* 4.1 Quality Score */}
         {content.qualityScore && (
           <div className="mt-2">
             <StarRating score={content.qualityScore} size="md" />
           </div>
         )}
 
-        {/* 4.5 Author Byline */}
         <div className="mt-3">
           <AuthorByline
             publishedAt={article.publishedAt}
@@ -194,12 +179,10 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 4.6 Trust Badge */}
         <div className="mt-3">
           <TrustBadge updatedAt={content.updatedAt} locale="th" />
         </div>
 
-        {/* 5. Cast/Maker/Tags */}
         <div className="mt-6 space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">
           <div className="flex flex-wrap gap-6">
             <CastCard casts={content.castProfiles} />
@@ -208,7 +191,6 @@ export default async function ArticlePage({ params }: PageProps) {
           <TagsList tags={content.tagDescriptions} />
         </div>
 
-        {/* 6. Summary */}
         <section id="summary" className="mt-8 scroll-mt-20">
           <h2 className="mb-4 text-xl font-semibold">เรื่องย่อ</h2>
           <div className="space-y-4 leading-relaxed text-muted-foreground">
@@ -218,7 +200,6 @@ export default async function ArticlePage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* 7. Character Journey (Chunk 4) */}
         <div id="character-journey" className="scroll-mt-20">
           <CharacterJourneySection
             characterJourney={content.characterJourney}
@@ -226,7 +207,6 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 8. Expert Box */}
         <div className="mt-8">
           <ExpertBox
             expertAnalysis={content.expertAnalysis}
@@ -235,7 +215,6 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 9. Cinematography (Chunk 4) */}
         <div id="cinematography" className="scroll-mt-20">
           <CinematographySection
             cinematographyAnalysis={content.cinematographyAnalysis}
@@ -244,7 +223,6 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 10. Gallery Section */}
         <div id="gallery" className="mt-8 scroll-mt-20">
           <GallerySection
             images={content.galleryImages || []}
@@ -254,7 +232,6 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 11. Top Quotes */}
         <div className="mt-8">
           <QuoteCard
             quotes={content.topQuotes || []}
@@ -262,7 +239,6 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 12. Detailed Review */}
         {content.detailedReview && (
           <section id="review" className="mt-8 scroll-mt-20">
             <h2 className="mb-4 text-xl font-semibold">รีวิวละเอียด</h2>
@@ -274,7 +250,6 @@ export default async function ArticlePage({ params }: PageProps) {
           </section>
         )}
 
-        {/* 13. Educational & Comparative (Chunk 4) */}
         <div id="educational" className="scroll-mt-20">
           <EducationalSection
             thematicExplanation={content.thematicExplanation}
@@ -286,12 +261,10 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 14. Contextual Links (SEO Internal Linking) */}
         <div className="mt-8">
           <ContextualLinks links={content.contextualLinks} />
         </div>
 
-        {/* 15. Viewing Tips (Chunk 4) */}
         <div id="viewing-tips" className="scroll-mt-20">
           <ViewingTipsSection
             viewingTips={content.viewingTips}
@@ -301,7 +274,6 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 16. FAQ Accordion */}
         <div id="faq" className="mt-8 scroll-mt-20">
           <FAQAccordion
             faqItems={content.faqItems}
@@ -310,13 +282,11 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 16.5 Thematic Keywords */}
         <ThematicKeywords
           keywords={content.thematicKeywords || []}
           locale="th"
         />
 
-        {/* 17. Technical Specs */}
         <div className="mt-8">
           <TechnicalSpecs
             videoQuality={content.videoQuality}
@@ -329,7 +299,6 @@ export default async function ArticlePage({ params }: PageProps) {
           />
         </div>
 
-        {/* 18. Recommendation */}
         {content.recommendation && (
           <section className="mt-8 rounded-lg border bg-muted/30 p-4">
             <h3 className="mb-2 font-medium">เหมาะสำหรับ</h3>
@@ -351,7 +320,6 @@ export default async function ArticlePage({ params }: PageProps) {
           </section>
         )}
 
-        {/* 19. Related Articles */}
         <RelatedArticles
           articles={content.relatedVideos || []}
           locale="th"

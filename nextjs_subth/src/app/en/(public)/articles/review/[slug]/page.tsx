@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
 
   try {
-    const article = await articleService.getBySlug(slug, "en");
+    const article = await articleService.getByTypeAndSlug("review", slug, "en");
 
     return {
       title: article.metaTitle,
@@ -71,10 +71,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         images: [article.content.thumbnailUrl],
       },
       alternates: {
-        canonical: `https://subth.com/en/articles/${slug}`,
+        canonical: `https://subth.com/en/articles/review/${slug}`,
         languages: {
-          "th": `https://subth.com/articles/${slug}`,
-          "en": `https://subth.com/en/articles/${slug}`,
+          th: `https://subth.com/articles/review/${slug}`,
+          en: `https://subth.com/en/articles/review/${slug}`,
         },
       },
     };
@@ -85,12 +85,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function ArticlePageEN({ params }: PageProps) {
+export default async function ReviewArticlePageEN({ params }: PageProps) {
   const { slug } = await params;
 
   let article;
   try {
-    article = await articleService.getBySlug(slug, "en");
+    article = await articleService.getByTypeAndSlug("review", slug, "en");
   } catch {
     notFound();
   }
@@ -110,12 +110,11 @@ export default async function ArticlePageEN({ params }: PageProps) {
         thumbnailUrl={content.thumbnailUrl}
         publishedAt={article.publishedAt}
         updatedAt={content.updatedAt}
-        slug={article.slug}
+        slug={`review/${article.slug}`}
         videoId={content.videoId}
         locale="en"
       />
-      <BreadcrumbSchema title={article.title} slug={article.slug} />
-      {/* HowTo Schema for Viewing Tips */}
+      <BreadcrumbSchema title={article.title} slug={`review/${article.slug}`} />
       {content.viewingTips && (
         <HowToSchema
           title={`How to Watch ${article.title}`}
@@ -130,6 +129,7 @@ export default async function ArticlePageEN({ params }: PageProps) {
         <ArticleBreadcrumb
           items={[
             { label: "Articles", href: "/en/articles" },
+            { label: "Reviews", href: "/en/articles?type=review" },
             { label: article.title },
           ]}
           locale="en"
@@ -166,14 +166,12 @@ export default async function ArticlePageEN({ params }: PageProps) {
 
         <h1 className="mt-8 text-2xl font-bold md:text-3xl">{article.title}</h1>
 
-        {/* Quality Score */}
         {content.qualityScore && (
           <div className="mt-2">
             <StarRating score={content.qualityScore} size="md" />
           </div>
         )}
 
-        {/* Author Byline */}
         <div className="mt-3">
           <AuthorByline
             publishedAt={article.publishedAt}
@@ -182,7 +180,6 @@ export default async function ArticlePageEN({ params }: PageProps) {
           />
         </div>
 
-        {/* Trust Badge */}
         <div className="mt-3">
           <TrustBadge updatedAt={content.updatedAt} locale="en" />
         </div>
@@ -286,7 +283,6 @@ export default async function ArticlePageEN({ params }: PageProps) {
           />
         </div>
 
-        {/* Thematic Keywords */}
         <ThematicKeywords
           keywords={content.thematicKeywords || []}
           locale="en"
@@ -325,7 +321,6 @@ export default async function ArticlePageEN({ params }: PageProps) {
           </section>
         )}
 
-        {/* Related Articles */}
         <RelatedArticles
           articles={content.relatedVideos || []}
           locale="en"

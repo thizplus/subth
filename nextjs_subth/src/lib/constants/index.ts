@@ -128,7 +128,8 @@ export const API_ROUTES = {
   // Articles (Public SEO pages)
   ARTICLES: {
     LIST: "/api/v1/articles/public",
-    BY_SLUG: (slug: string) => `/api/v1/articles/slug/${slug}`,
+    BY_SLUG: (slug: string) => `/api/v1/articles/slug/${slug}`, // deprecated
+    BY_TYPE_SLUG: (type: string, slug: string) => `/api/v1/articles/${type}/${slug}`,
     BY_CAST: (slug: string) => `/api/v1/articles/cast/${slug}`,
     BY_TAG: (slug: string) => `/api/v1/articles/tag/${slug}`,
     BY_MAKER: (slug: string) => `/api/v1/articles/maker/${slug}`,

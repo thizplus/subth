@@ -67,6 +67,7 @@ export const articleService = {
   /**
    * Get published article by slug (public, no auth required)
    * Used by RSC for SEO pages
+   * @deprecated Use getByTypeAndSlug instead
    */
   async getBySlug(slug: string, lang?: string): Promise<Article> {
     const searchParams = new URLSearchParams();
@@ -80,6 +81,28 @@ export const articleService = {
     return apiClient.serverGet<Article>(url, {
       revalidate: 60,
       tags: [`article-${slug}`],
+    });
+  },
+
+  /**
+   * Get published article by type and slug (public, no auth required)
+   * Used by RSC for SEO pages with new URL structure
+   * @param type - Article type (review, ranking, best-of, guide, news)
+   * @param slug - Article slug
+   * @param lang - Language (th, en)
+   */
+  async getByTypeAndSlug(type: string, slug: string, lang?: string): Promise<Article> {
+    const searchParams = new URLSearchParams();
+    if (lang) searchParams.set("lang", lang);
+
+    const queryString = searchParams.toString();
+    const url = queryString
+      ? `${API_ROUTES.ARTICLES.BY_TYPE_SLUG(type, slug)}?${queryString}`
+      : API_ROUTES.ARTICLES.BY_TYPE_SLUG(type, slug);
+
+    return apiClient.serverGet<Article>(url, {
+      revalidate: 60,
+      tags: [`article-${type}-${slug}`],
     });
   },
 };

@@ -7,7 +7,8 @@ import { PublicSidebar } from "./public-sidebar";
 import { PublicLanguageSwitcher } from "./public-language-switcher";
 import { LoginDialog, useAuthStore } from "@/features/auth";
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut } from "lucide-react";
+import { LogIn, LogOut, Play } from "lucide-react";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -65,7 +66,7 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
                 className="mr-2 data-[orientation=vertical]:h-4"
               />
 
-              {/* Login CTA (ชิดซ้าย) หรือ Spacer ถ้า login แล้ว */}
+              {/* Login CTA หรือ Watch Videos CTA (ชิดซ้าย) */}
               {!isAuthenticated ? (
                 <LoginDialog locale={locale as "th" | "en"}>
                   <button className="flex items-center gap-2 text-left">
@@ -79,7 +80,15 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
                   </button>
                 </LoginDialog>
               ) : (
-                <div className="flex-1" />
+                <Link href={`${locale === "en" ? "/en" : ""}/member`} className="flex items-center gap-2 text-left">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/50 animate-[pulse_2s_ease-in-out_infinite]">
+                    <Play className="h-4 w-4" />
+                  </div>
+                  <div className="grid leading-tight">
+                    <span className="text-sm font-medium">{t.allVideos}</span>
+                    <span className="text-[10px] text-muted-foreground">{t.videoTypes}</span>
+                  </div>
+                </Link>
               )}
 
               {/* Spacer */}

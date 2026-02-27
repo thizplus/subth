@@ -50,7 +50,7 @@ export function ArticleCard({ article, locale = "th" }: ArticleCardProps) {
         <div className="mt-2 flex gap-4">
           {article.castNames && article.castNames.length > 0 && (
             <div className="min-w-0 flex-1">
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 {locale === "th" ? "นักแสดง" : "Cast"}
               </p>
               <p className="text-sm truncate">
@@ -61,7 +61,7 @@ export function ArticleCard({ article, locale = "th" }: ArticleCardProps) {
           )}
           {article.makerName && (
             <div className="shrink-0">
-              <p className="text-xs text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground">
                 {locale === "th" ? "ค่าย" : "Studio"}
               </p>
               <p className="text-sm">{article.makerName}</p>

@@ -1,6 +1,6 @@
 // Article types ตาม backend response
 
-export type ArticleType = 'seo' | 'news' | 'review'
+export type ArticleType = 'review' | 'ranking' | 'best-of' | 'guide' | 'news'
 export type ArticleStatus = 'draft' | 'scheduled' | 'published' | 'archived'
 export type IndexingStatus = 'pending' | 'indexed' | 'failed'
 
@@ -61,6 +61,23 @@ export interface ArticleContent {
   galleryImages?: GalleryImage[]
   qualityScore?: number
   readingTime?: number
+
+  // === Chunk 4: Deep Analysis (SEO Text boost) ===
+  cinematographyAnalysis?: string
+  visualStyle?: string
+  atmosphereNotes?: string[]
+  characterJourney?: string
+  emotionalArc?: EmotionalArcPoint[]
+  thematicExplanation?: string
+  culturalContext?: string
+  genreInsights?: string[]
+  studioComparison?: string
+  actorEvolution?: string
+  genreRanking?: string
+  viewingTips?: string
+  bestMoments?: string[]
+  audienceMatch?: string
+  replayValue?: string
 }
 
 export interface CastProfile {
@@ -94,6 +111,12 @@ export interface GalleryImage {
   alt?: string
   width?: number
   height?: number
+}
+
+export interface EmotionalArcPoint {
+  phase: string
+  emotion: string
+  description: string
 }
 
 // Request types

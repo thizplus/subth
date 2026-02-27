@@ -110,11 +110,12 @@ export default async function ReviewArticlePage({ params }: PageProps) {
         thumbnailUrl={content.thumbnailUrl}
         publishedAt={article.publishedAt}
         updatedAt={content.updatedAt}
-        slug={`review/${article.slug}`}
+        slug={article.slug}
+        type="review"
         videoId={content.videoId}
         locale="th"
       />
-      <BreadcrumbSchema title={article.title} slug={`review/${article.slug}`} />
+      <BreadcrumbSchema title={article.title} slug={article.slug} type="review" locale="th" />
       {content.viewingTips && (
         <HowToSchema
           title={`วิธีดู ${article.title} ให้สนุก`}

@@ -1,3 +1,7 @@
+// Site URL (for canonical, schema.org, etc.)
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://subth.com";
+
 // API Base URL
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";

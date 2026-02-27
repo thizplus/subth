@@ -1,3 +1,5 @@
+import { SITE_URL } from "@/lib/constants";
+
 interface ArticleSchemaProps {
   title: string;
   description: string;
@@ -5,6 +7,7 @@ interface ArticleSchemaProps {
   publishedAt: string;
   updatedAt: string;
   slug: string;
+  type: "review" | "ranking" | "best-of" | "guide" | "news";
   videoId?: string; // UUID for member video page
   locale?: "th" | "en";
 }
@@ -32,6 +35,7 @@ export function ArticleSchema({
   publishedAt,
   updatedAt,
   slug,
+  type,
   videoId,
   locale = "th",
 }: ArticleSchemaProps) {
@@ -39,7 +43,7 @@ export function ArticleSchema({
   const authorPath = locale === "en" ? "/en/author/subth-editorial" : "/author/subth-editorial";
 
   // Only include potentialAction if we have a valid video page
-  const videoPageUrl = videoId ? `https://subth.com/member/videos/${videoId}` : null;
+  const videoPageUrl = videoId ? `${SITE_URL}/member/videos/${videoId}` : null;
 
   const schema = {
     "@context": "https://schema.org",
@@ -52,26 +56,26 @@ export function ArticleSchema({
     author: {
       "@type": "Person",
       name: "SubTH Editorial",
-      url: `https://subth.com${authorPath}`,
+      url: `${SITE_URL}${authorPath}`,
       jobTitle: locale === "en" ? "Editorial Team" : "ทีมบรรณาธิการ",
       worksFor: {
         "@type": "Organization",
         name: "SubTH",
-        url: "https://subth.com",
+        url: SITE_URL,
       },
     },
     publisher: {
       "@type": "Organization",
       name: "SubTH",
-      url: "https://subth.com",
+      url: SITE_URL,
       logo: {
         "@type": "ImageObject",
-        url: "https://subth.com/logo.png",
+        url: `${SITE_URL}/logo.png`,
       },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://subth.com${basePath}/articles/${slug}`,
+      "@id": `${SITE_URL}${basePath}/articles/${type}/${slug}`,
     },
     // Only add potentialAction if video page exists
     ...(videoPageUrl

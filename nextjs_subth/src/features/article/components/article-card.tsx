@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CDN_URL } from "@/lib/constants";
 import type { ArticleSummary } from "../types";
+import { StarRating } from "./star-rating";
 
 interface ArticleCardProps {
   article: ArticleSummary;
@@ -45,31 +46,38 @@ export function ArticleCard({ article, locale = "th" }: ArticleCardProps) {
           {article.title}
         </h3>
 
-        {/* Cast names */}
-        {article.castNames && article.castNames.length > 0 && (
-          <div className="mt-2">
-            <span className="text-xs text-muted-foreground/70">
-              {locale === "th" ? "นักแสดง" : "Cast"}
-            </span>
-            <p className="text-sm truncate">
-              {article.castNames.slice(0, 2).join(", ")}
-              {article.castNames.length > 2 && ` +${article.castNames.length - 2}`}
-            </p>
-          </div>
-        )}
-
-        {/* Meta */}
-        <div className="mt-2 flex items-end justify-between">
-          {article.makerName && (
+        {/* Cast & Studio - same row, labels on top */}
+        <div className="mt-2 flex gap-4">
+          {article.castNames && article.castNames.length > 0 && (
             <div className="min-w-0 flex-1">
-              <span className="text-xs text-muted-foreground/70">
-                {locale === "th" ? "ค่าย" : "Studio"}
-              </span>
-              <p className="text-sm truncate">{article.makerName}</p>
+              <p className="text-xs text-muted-foreground/70">
+                {locale === "th" ? "นักแสดง" : "Cast"}
+              </p>
+              <p className="text-sm truncate">
+                {article.castNames.slice(0, 2).join(", ")}
+                {article.castNames.length > 2 && ` +${article.castNames.length - 2}`}
+              </p>
             </div>
           )}
+          {article.makerName && (
+            <div className="shrink-0">
+              <p className="text-xs text-muted-foreground/70">
+                {locale === "th" ? "ค่าย" : "Studio"}
+              </p>
+              <p className="text-sm">{article.makerName}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Rating & Date */}
+        <div className="mt-1.5 flex items-center justify-between">
+          {article.qualityScore ? (
+            <StarRating score={article.qualityScore} size="sm" showScore={false} />
+          ) : (
+            <div />
+          )}
           {article.publishedAt && (
-            <span className="shrink-0 text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               {new Date(article.publishedAt).toLocaleDateString(
                 locale === "th" ? "th-TH" : "en-US",
                 { year: "numeric", month: "short", day: "numeric" }

@@ -237,6 +237,7 @@ export interface ArticleSummary {
   castNames?: string[];
   makerName?: string;
   tags?: string[];
+  qualityScore?: number; // คะแนน 1-10, หาร 2 ได้ดาว
 }
 
 export interface ArticleListParams {

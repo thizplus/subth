@@ -36,7 +36,7 @@ export default async function EnglishMemberLayout({
             <SidebarInset className="overflow-x-hidden">
               <MemberHeader locale="en" />
               <ChatTicker locale="en" />
-              <main className="flex-1 overflow-auto p-4">
+              <main className="flex-1 p-4">
                 {children}
               </main>
               <SemanticSearchProvider />

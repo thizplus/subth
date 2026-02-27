@@ -40,20 +40,33 @@ export function MemberHeader({ locale }: MemberHeaderProps) {
           className="mr-2 data-[orientation=vertical]:h-4"
         />
 
-        {/* Search - hidden on mobile, visible on md+ */}
-        <form onSubmit={handleSearch} className="relative hidden md:flex flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        {/* Search - แสดงทุกขนาดหน้าจอ */}
+        <form onSubmit={handleSearch} className="relative flex flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
           <Input
             type="search"
             placeholder={searchPlaceholder}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="pl-9 h-9 w-full"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSearch(e);
+              }
+            }}
+            className="pl-9 pr-10 h-9 w-full"
           />
+          <button
+            type="submit"
+            className="absolute right-1 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            aria-label={searchPlaceholder}
+          >
+            <Search className="h-3.5 w-3.5" />
+          </button>
         </form>
 
         {/* Language Switcher */}
-        <div className="ml-auto">
+        <div className="shrink-0">
           <LanguageSwitcher />
         </div>
       </div>

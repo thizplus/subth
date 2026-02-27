@@ -390,13 +390,13 @@ func (s *ArticleServiceImpl) PublishScheduledArticles(ctx context.Context) (int,
 	return count, nil
 }
 
-func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug string) (*dto.PublicArticleResponse, error) {
-	article, err := s.articleRepo.GetPublishedBySlug(ctx, slug)
+func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug string, language string) (*dto.PublicArticleResponse, error) {
+	article, err := s.articleRepo.GetPublishedBySlugAndLanguage(ctx, slug, language)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("article not found")
 		}
-		logger.ErrorContext(ctx, "Failed to get published article", "slug", slug, "error", err)
+		logger.ErrorContext(ctx, "Failed to get published article", "slug", slug, "language", language, "error", err)
 		return nil, err
 	}
 
@@ -410,6 +410,7 @@ func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug strin
 
 	response := &dto.PublicArticleResponse{
 		Slug:            article.Slug,
+		Language:        article.Language,
 		Type:            string(article.Type),
 		Title:           article.Title,
 		MetaTitle:       article.MetaTitle,
@@ -427,29 +428,29 @@ func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug strin
 	return response, nil
 }
 
-func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, articleType string, slug string) (*dto.PublicArticleResponse, error) {
+func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, articleType string, slug string, language string) (*dto.PublicArticleResponse, error) {
 	// Validate article type
 	if !models.IsValidArticleType(articleType) {
 		return nil, errors.New("invalid article type")
 	}
 
-	// 1. Try cache first
-	cacheKey := cache.ArticleKey(articleType, slug)
+	// 1. Try cache first (include language in cache key)
+	cacheKey := cache.ArticleKeyWithLang(articleType, slug, language)
 	if s.cache != nil {
 		var cached dto.PublicArticleResponse
 		if err := s.cache.Get(ctx, cacheKey, &cached); err == nil {
-			logger.InfoContext(ctx, "Article cache hit", "type", articleType, "slug", slug)
+			logger.InfoContext(ctx, "Article cache hit", "type", articleType, "slug", slug, "language", language)
 			return &cached, nil
 		}
 	}
 
 	// 2. Fetch from DB
-	article, err := s.articleRepo.GetPublishedByTypeAndSlug(ctx, articleType, slug)
+	article, err := s.articleRepo.GetPublishedByTypeSlugAndLanguage(ctx, articleType, slug, language)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("article not found")
 		}
-		logger.ErrorContext(ctx, "Failed to get published article by type", "type", articleType, "slug", slug, "error", err)
+		logger.ErrorContext(ctx, "Failed to get published article by type", "type", articleType, "slug", slug, "language", language, "error", err)
 		return nil, err
 	}
 
@@ -463,6 +464,7 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 
 	response := &dto.PublicArticleResponse{
 		Slug:            article.Slug,
+		Language:        article.Language,
 		Type:            string(article.Type),
 		Title:           article.Title,
 		MetaTitle:       article.MetaTitle,

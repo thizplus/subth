@@ -211,7 +211,7 @@ func (h *ArticleHandler) DeleteArticle(c *fiber.Ctx) error {
 // ========================================
 
 // GetPublishedArticle - ดึงบทความที่เผยแพร่แล้ว (Public)
-// GET /api/v1/articles/slug/:slug
+// GET /api/v1/articles/slug/:slug?lang=th|en
 // Deprecated: Use GetPublishedArticleByType instead
 func (h *ArticleHandler) GetPublishedArticle(c *fiber.Ctx) error {
 	ctx := c.UserContext()
@@ -221,12 +221,14 @@ func (h *ArticleHandler) GetPublishedArticle(c *fiber.Ctx) error {
 		return utils.BadRequestResponse(c, "Slug is required")
 	}
 
-	article, err := h.articleService.GetPublishedArticle(ctx, slug)
+	language := c.Query("lang", "") // default empty = query without language filter
+
+	article, err := h.articleService.GetPublishedArticle(ctx, slug, language)
 	if err != nil {
 		if err.Error() == "article not found" {
 			return utils.NotFoundResponse(c, "Article not found")
 		}
-		logger.ErrorContext(ctx, "Failed to get published article", "slug", slug, "error", err)
+		logger.ErrorContext(ctx, "Failed to get published article", "slug", slug, "language", language, "error", err)
 		return utils.InternalServerErrorResponse(c)
 	}
 
@@ -234,7 +236,7 @@ func (h *ArticleHandler) GetPublishedArticle(c *fiber.Ctx) error {
 }
 
 // GetPublishedArticleByType - ดึงบทความตาม type และ slug (Public)
-// GET /api/v1/articles/:type/:slug
+// GET /api/v1/articles/:type/:slug?lang=th|en
 // Types: review, ranking, best-of, guide, news
 func (h *ArticleHandler) GetPublishedArticleByType(c *fiber.Ctx) error {
 	ctx := c.UserContext()
@@ -244,6 +246,7 @@ func (h *ArticleHandler) GetPublishedArticleByType(c *fiber.Ctx) error {
 	articleType := extractArticleTypeFromPath(path)
 
 	slug := c.Params("slug")
+	language := c.Query("lang", "") // default empty = query without language filter
 
 	if articleType == "" {
 		return utils.BadRequestResponse(c, "Article type is required")
@@ -252,7 +255,7 @@ func (h *ArticleHandler) GetPublishedArticleByType(c *fiber.Ctx) error {
 		return utils.BadRequestResponse(c, "Slug is required")
 	}
 
-	article, err := h.articleService.GetPublishedArticleByType(ctx, articleType, slug)
+	article, err := h.articleService.GetPublishedArticleByType(ctx, articleType, slug, language)
 	if err != nil {
 		switch err.Error() {
 		case "invalid article type":
@@ -260,7 +263,7 @@ func (h *ArticleHandler) GetPublishedArticleByType(c *fiber.Ctx) error {
 		case "article not found":
 			return utils.NotFoundResponse(c, "Article not found")
 		}
-		logger.ErrorContext(ctx, "Failed to get published article by type", "type", articleType, "slug", slug, "error", err)
+		logger.ErrorContext(ctx, "Failed to get published article by type", "type", articleType, "slug", slug, "language", language, "error", err)
 		return utils.InternalServerErrorResponse(c)
 	}
 

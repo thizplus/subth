@@ -33,12 +33,12 @@ export default async function EnglishMemberLayout({
         <ChatProvider locale="en">
           <SidebarProvider defaultOpen={defaultOpen}>
             <MemberSidebar locale="en" categories={categories} />
-            <SidebarInset className="overflow-x-hidden">
+            <SidebarInset className="w-0 min-w-0">
               <MemberHeader locale="en" />
               <ChatTicker locale="en" />
-              <main className="flex-1 p-4">
+              <div className="flex-1 p-4">
                 {children}
-              </main>
+              </div>
               <SemanticSearchProvider />
               <ChatFab />
             </SidebarInset>

@@ -4,6 +4,7 @@ export { StarRating } from "./star-rating";
 export { ThumbnailWithCTA } from "./thumbnail-with-cta";
 export { KeyMomentsPreview } from "./key-moments-preview";
 export { GallerySection } from "./gallery-section";
+export { InlineGallery } from "./inline-gallery";
 export { FAQAccordion } from "./faq-accordion";
 export { QuoteCard } from "./quote-card";
 export { TechnicalSpecs } from "./technical-specs";

@@ -41,6 +41,10 @@ const GallerySection = dynamic(
   () => import("@/features/article/components/gallery-section").then((m) => m.GallerySection),
   { ssr: true }
 );
+const InlineGallery = dynamic(
+  () => import("@/features/article/components/inline-gallery").then((m) => m.InlineGallery),
+  { ssr: true }
+);
 const QuoteCard = dynamic(
   () => import("@/features/article/components/quote-card").then((m) => m.QuoteCard),
   { ssr: true }
@@ -241,6 +245,15 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
               <p key={i}>{paragraph}</p>
             ))}
           </div>
+          {/* Story images - images 1-2 */}
+          {content.galleryImages && content.galleryImages.length > 0 && (
+            <InlineGallery
+              images={content.galleryImages.slice(0, 2)}
+              videoCode={article.videoCode}
+              columns={2}
+              caption="Scenes from the story"
+            />
+          )}
         </section>
 
         <div id="character-journey" className="scroll-mt-20">
@@ -248,6 +261,15 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
             characterJourney={content.characterJourney}
             emotionalArc={content.emotionalArc}
           />
+          {/* Character images - images 3-4 */}
+          {content.galleryImages && content.galleryImages.length > 2 && (
+            <InlineGallery
+              images={content.galleryImages.slice(2, 4)}
+              videoCode={article.videoCode}
+              columns={2}
+              caption="Character scenes"
+            />
+          )}
         </div>
 
         <div className="mt-8">
@@ -264,16 +286,28 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
             visualStyle={content.visualStyle}
             atmosphereNotes={content.atmosphereNotes}
           />
+          {/* Featured scenes - images 5-6 */}
+          {content.galleryImages && content.galleryImages.length > 4 && (
+            <InlineGallery
+              images={content.galleryImages.slice(4, 6)}
+              videoCode={article.videoCode}
+              columns={2}
+              caption="Featured scenes"
+            />
+          )}
         </div>
 
-        <div id="gallery" className="mt-8 scroll-mt-20">
-          <GallerySection
-            images={content.galleryImages || []}
-            memberCount={content.memberGalleryCount}
-            videoId={content.videoId}
-            videoCode={article.videoCode}
-          />
-        </div>
+        {/* Gallery - show remaining images (7+) */}
+        {content.galleryImages && content.galleryImages.length > 6 && (
+          <div id="gallery" className="mt-8 scroll-mt-20">
+            <GallerySection
+              images={content.galleryImages.slice(6)}
+              memberCount={content.memberGalleryCount}
+              videoId={content.videoId}
+              videoCode={article.videoCode}
+            />
+          </div>
+        )}
 
         <div className="mt-8">
           <QuoteCard

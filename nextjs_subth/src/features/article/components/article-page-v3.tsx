@@ -12,7 +12,6 @@
  */
 
 import { PublicLayout } from "@/components/layout/server";
-import { ArticleTranslationsProvider } from "@/components/article-translations-provider";
 import { ArticleBreadcrumb } from "./article-breadcrumb";
 import { ThumbnailWithCTA } from "./thumbnail-with-cta";
 import { ThumbnailImage } from "./thumbnail-image";
@@ -44,11 +43,11 @@ export function ArticlePage({ article, locale = "th" }: ArticlePageProps) {
         ];
 
   return (
-    <ArticleTranslationsProvider
-      translations={article.translations}
+    <PublicLayout
+      locale={locale}
+      articleTranslations={article.translations}
       articleType={article.type || "review"}
     >
-      <PublicLayout locale={locale}>
         {/* JSON-LD Schemas - SSR */}
         <JsonLdScripts
           content={content}
@@ -94,7 +93,6 @@ export function ArticlePage({ article, locale = "th" }: ArticlePageProps) {
           </div>
         </article>
       </PublicLayout>
-    </ArticleTranslationsProvider>
   );
 }
 

@@ -15,13 +15,19 @@ import { useScrollDirection } from "@/hooks/use-scroll-direction";
 
 interface PublicLayoutClientProps {
   children: ReactNode;
+  articleTranslations?: Record<string, string>; // {"en": "slug", "th": "slug"}
+  articleType?: string;
 }
 
 /**
  * PublicLayoutClient - Client Component
  * ใช้ useDictionary() แทน locale prop
  */
-export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
+export function PublicLayoutClient({
+  children,
+  articleTranslations,
+  articleType,
+}: PublicLayoutClientProps) {
   const { locale, dictionary } = useDictionary();
   const t = dictionary.common;
   const { isAuthenticated } = useAuthStore();
@@ -74,7 +80,11 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
               <div className="flex-1" />
 
               {/* Language Switcher */}
-              <PublicLanguageSwitcher locale={locale as "th" | "en"} />
+              <PublicLanguageSwitcher
+                locale={locale as "th" | "en"}
+                articleTranslations={articleTranslations}
+                articleType={articleType}
+              />
             </div>
           </header>
 

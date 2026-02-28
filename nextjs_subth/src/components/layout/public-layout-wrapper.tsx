@@ -6,6 +6,8 @@ import { categoryService, type Category } from "@/features/category";
 interface PublicLayoutWrapperProps {
   children: React.ReactNode;
   locale: Locale;
+  articleTranslations?: Record<string, string>; // {"en": "slug", "th": "slug"}
+  articleType?: string;
 }
 
 /**
@@ -15,6 +17,8 @@ interface PublicLayoutWrapperProps {
 export async function PublicLayoutWrapper({
   children,
   locale,
+  articleTranslations,
+  articleType,
 }: PublicLayoutWrapperProps) {
   const dictionary = await getDictionary(locale);
 
@@ -32,7 +36,12 @@ export async function PublicLayoutWrapper({
       categories={categories}
       basePath="" // public ไม่มี basePath
     >
-      <PublicLayoutClient>{children}</PublicLayoutClient>
+      <PublicLayoutClient
+        articleTranslations={articleTranslations}
+        articleType={articleType}
+      >
+        {children}
+      </PublicLayoutClient>
     </DictionaryProvider>
   );
 }

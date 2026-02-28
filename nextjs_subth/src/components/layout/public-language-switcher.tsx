@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Globe, Check } from "lucide-react";
-import { useArticleTranslations } from "@/components/article-translations-provider";
 
 const LANGUAGES = [
   { code: "th", label: "TH", prefix: "" },
@@ -18,26 +17,31 @@ const LANGUAGES = [
 
 interface PublicLanguageSwitcherProps {
   locale: "th" | "en";
+  articleTranslations?: Record<string, string>; // {"en": "slug", "th": "slug"}
+  articleType?: string;
 }
 
 /**
  * Language switcher for public pages
- * - ถ้ามี ArticleTranslationsProvider จะใช้ translations สำหรับ smooth navigation
+ * - ถ้ามี articleTranslations จะใช้ translations สำหรับ smooth navigation
  * - ถ้าไม่มี จะใช้ path-based switching ปกติ
  */
-export function PublicLanguageSwitcher({ locale }: PublicLanguageSwitcherProps) {
+export function PublicLanguageSwitcher({
+  locale,
+  articleTranslations,
+  articleType,
+}: PublicLanguageSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { translations, articleType } = useArticleTranslations();
 
   const currentLang = LANGUAGES.find((l) => l.code === locale) || LANGUAGES[0];
 
   const switchLocale = (targetLang: (typeof LANGUAGES)[number]) => {
     if (targetLang.code === locale) return;
 
-    // ถ้ามี translations จาก article → ใช้ slug ตรงๆ (smooth navigation)
-    if (translations && translations[targetLang.code] && articleType) {
-      const targetSlug = translations[targetLang.code];
+    // ถ้ามี articleTranslations → ใช้ slug ตรงๆ (smooth navigation)
+    if (articleTranslations && articleTranslations[targetLang.code] && articleType) {
+      const targetSlug = articleTranslations[targetLang.code];
       const basePath = targetLang.prefix + `/articles/${articleType}/${targetSlug}`;
       router.push(basePath);
       return;

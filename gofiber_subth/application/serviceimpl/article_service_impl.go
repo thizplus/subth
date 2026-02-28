@@ -753,6 +753,22 @@ func (s *ArticleServiceImpl) invalidateRelatedCaches(ctx context.Context, articl
 		logger.InfoContext(ctx, "Article cache invalidated", "cache_key", cacheKey)
 	}
 
+	// 1.5. Invalidate sibling articles (same videoID, different language) to refresh translations
+	languages := []string{"th", "en"}
+	for _, lang := range languages {
+		if lang == article.Language {
+			continue // skip current article
+		}
+		// Find sibling article
+		siblingArticle, err := s.articleRepo.GetPublishedByVideoIDAndLanguage(ctx, article.VideoID, lang)
+		if err == nil && siblingArticle != nil {
+			siblingCacheKey := cache.ArticleKeyWithLang(string(siblingArticle.Type), siblingArticle.Slug, siblingArticle.Language)
+			if err := s.cache.Delete(ctx, siblingCacheKey); err == nil {
+				logger.InfoContext(ctx, "Sibling article cache invalidated for translations", "cache_key", siblingCacheKey)
+			}
+		}
+	}
+
 	// 2. Invalidate article list caches (all pages)
 	if deleted, err := s.cache.DeleteByPattern(ctx, cache.ArticleListPattern()); err == nil && deleted > 0 {
 		logger.InfoContext(ctx, "Article list cache invalidated", "deleted_keys", deleted)

@@ -4,6 +4,7 @@ export {
   AudioPlayer,
   ThumbnailWithCTA,
   ThumbnailImage,
+  EntityContext,
   KeyMomentsPreview,
   GallerySection,
   FAQAccordion,

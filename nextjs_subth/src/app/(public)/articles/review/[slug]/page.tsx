@@ -8,6 +8,7 @@ import {
   AudioPlayer,
   ThumbnailWithCTA,
   ThumbnailImage,
+  EntityContext,
   KeyMomentsPreview,
   CastCard,
   MakerCard,
@@ -227,6 +228,13 @@ export default async function ReviewArticlePage({ params }: PageProps) {
             <MakerCard maker={content.makerInfo} />
           </div>
           <TagsList tags={content.tagDescriptions} />
+          {/* Entity Reinforcement Block - Knowledge Graph mapping */}
+          <EntityContext
+            code={article.videoCode}
+            studio={content.makerInfo?.name}
+            leadCast={content.castProfiles?.[0]?.name}
+            genre={content.tagDescriptions?.[0]?.name}
+          />
         </div>
 
         <section id="summary" className="mt-8 scroll-mt-20">

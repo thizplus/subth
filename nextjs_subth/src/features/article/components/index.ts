@@ -3,6 +3,7 @@ export { AudioPlayer } from "./audio-player";
 export { StarRating } from "./star-rating";
 export { ThumbnailWithCTA } from "./thumbnail-with-cta";
 export { ThumbnailImage } from "./thumbnail-image";
+export { EntityContext } from "./entity-context";
 export { KeyMomentsPreview } from "./key-moments-preview";
 export { GallerySection } from "./gallery-section";
 export { InlineGallery } from "./inline-gallery";

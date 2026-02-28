@@ -81,7 +81,14 @@
     "home": "หน้าแรก",
     "articles": "บทความ",
     "editorialTeam": "ทีมบรรณาธิการ",
-    "step": "ขั้นตอนที่"
+    "step": "ขั้นตอนที่",
+    "featuredScene": "ฉากเด่นประจำเรื่อง",
+    "strengths": "จุดเด่น",
+    "weaknesses": "จุดที่ควรปรับปรุง",
+    "whoShouldWatch": "เหมาะกับใคร",
+    "storyRecap": "สรุปเรื่อง",
+    "reviewSection": "รีวิว",
+    "searchIntents": "หัวข้อที่เกี่ยวข้อง"
   },
   "home": {
     "title": "SubTH",

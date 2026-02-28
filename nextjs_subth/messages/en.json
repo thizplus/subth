@@ -81,7 +81,14 @@
     "home": "Home",
     "articles": "Articles",
     "editorialTeam": "Editorial Team",
-    "step": "Step"
+    "step": "Step",
+    "featuredScene": "Featured Scene",
+    "strengths": "Strengths",
+    "weaknesses": "Areas for Improvement",
+    "whoShouldWatch": "Who Should Watch",
+    "storyRecap": "Story Recap",
+    "reviewSection": "Review",
+    "searchIntents": "Related Topics"
   },
   "home": {
     "title": "SubTH",

@@ -1,6 +1,17 @@
 export { ArticleCard } from "./article-card";
 export { AudioPlayer } from "./audio-player";
 export { StarRating } from "./star-rating";
+
+// V3 Components
+export { QuickAnswerBox } from "./quick-answer-box";
+export { FeaturedSceneBox } from "./featured-scene-box";
+export { ProsCons } from "./pros-cons";
+export { RelatedSearches } from "./related-searches";
+export { FactsTable } from "./facts-table";
+export { MidCTA } from "./mid-cta";
+export { HardCTA } from "./hard-cta";
+export { ArticleContentV3Component } from "./article-content-v3";
+export { ArticlePageV3 } from "./article-page-v3";
 export { ThumbnailWithCTA } from "./thumbnail-with-cta";
 export { ThumbnailImage } from "./thumbnail-image";
 export { EntityContext } from "./entity-context";
@@ -41,4 +52,8 @@ export {
   ArticleSchema,
   BreadcrumbSchema,
   ItemListSchema,
+  // V3 Schemas
+  ReviewSchema,
+  VideoObjectSchemaV3,
+  JsonLdScriptsV3,
 } from "./schema";

@@ -207,6 +207,69 @@ export interface FAQItem {
   answer: string;
 }
 
+// ========================================
+// V3 Article Content Types (Intent-Driven)
+// ========================================
+
+export interface ArticleContentV3 {
+  // === Chunk 1: Quick Answer ===
+  quickAnswer: string; // 2-3 ประโยค declarative
+  mainHook: string; // 1 ประโยค hook
+  verdict: string; // 1 ประโยค soft recommendation
+
+  // === Chunk 2: Facts ===
+  facts: {
+    code: string;
+    studio: string;
+    cast: string[];
+    duration: string;
+    durationMinutes: number;
+    genre: string[];
+    releaseYear: string;
+    subtitleAvailable: boolean;
+  };
+
+  // === Chunk 3: Story ===
+  synopsis: string; // 150-250 คำ (แบ่ง [PARA])
+  storyFlow: string; // 80-100 คำ timeline
+  keyScenes: string[]; // 3-5 ฉาก
+  featuredScene: string; // 120-150 คำ (ฉากเด่น)
+  tone: string; // 2-3 คำ
+  relationshipDynamic: string; // 50-80 คำ
+
+  // === Chunk 4: Review ===
+  reviewSummary: string; // 200-300 คำ (แบ่ง [PARA])
+  strengths: string[]; // 3-5 จุดเด่น
+  weaknesses: string[]; // 2-3 จุดอ่อน
+  whoShouldWatch: string; // 50-80 คำ
+  verdictReason: string; // 30-50 คำ
+
+  // === Chunk 5: FAQ ===
+  faqItems: FAQItem[]; // 5 items
+
+  // === Chunk 6: SEO ===
+  titleAggressive: string; // Meta title
+  titleBalanced: string; // H1
+  metaDescription: string;
+  slug: string;
+  keywords: string[];
+  searchIntents: string[]; // 4-5 phrases for internal linking
+  rating: number; // 1-5 scale
+
+  // === Metadata (from API) ===
+  castProfiles?: CastProfile[];
+  makerInfo?: MakerInfo;
+  tagDescriptions?: TagDescription[];
+  galleryImages?: GalleryImage[];
+  memberGalleryImages?: GalleryImage[];
+  memberGalleryCount?: number;
+  thumbnailUrl: string;
+
+  // === Timestamps ===
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface GalleryImage {
   url: string;
   alt: string;
@@ -221,6 +284,46 @@ export interface GalleryImage {
 export interface ArticleResponse {
   success: boolean;
   data: Article;
+}
+
+// V3 Article - matches API response structure
+// API returns V3 content in `content` field as flat object
+export interface ArticleV3 {
+  slug: string;
+  language: string;
+  type: string;
+  title: string;
+  metaTitle: string;
+  metaDescription: string;
+  videoCode: string;
+  videoId: string;
+  publishedAt: string;
+  content: ArticleContentV3;
+}
+
+export interface ArticleV3Response {
+  success: boolean;
+  data: ArticleV3;
+}
+
+// ========================================
+// Type Guards
+// ========================================
+
+/**
+ * Check if article content is V3 format (Intent-Driven)
+ * V3 content has: quickAnswer, facts, synopsis, reviewSummary, etc.
+ * V2 content has: summary, detailedReview, keyMoments, etc.
+ */
+export function isV3Content(content: ArticleContent | ArticleContentV3): content is ArticleContentV3 {
+  const v3 = content as ArticleContentV3;
+  return (
+    typeof v3.quickAnswer === "string" &&
+    typeof v3.facts === "object" &&
+    v3.facts !== null &&
+    typeof v3.synopsis === "string" &&
+    typeof v3.reviewSummary === "string"
+  );
 }
 
 // ========================================

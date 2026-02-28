@@ -422,6 +422,7 @@ func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug strin
 		MetaTitle:       article.MetaTitle,
 		MetaDescription: article.MetaDescription,
 		Content:         content,
+		VideoID:         article.VideoID.String(),
 	}
 
 	if video != nil {
@@ -476,6 +477,7 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 		MetaTitle:       article.MetaTitle,
 		MetaDescription: article.MetaDescription,
 		Content:         content,
+		VideoID:         article.VideoID.String(), // V3: for CTA links
 	}
 
 	if video != nil {

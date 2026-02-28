@@ -36,6 +36,20 @@ export {
   ThematicKeywords,
   // Rating
   StarRating,
+  // V3 Components
+  QuickAnswerBox,
+  FeaturedSceneBox,
+  ProsCons,
+  RelatedSearches,
+  FactsTable,
+  MidCTA,
+  HardCTA,
+  ArticleContentV3Component,
+  ArticlePageV3,
+  // V3 Schemas
+  ReviewSchema,
+  VideoObjectSchemaV3,
+  JsonLdScriptsV3,
 } from "./components";
 
 // Service
@@ -67,4 +81,8 @@ export type {
   ArticleSummary,
   ArticleListParams,
   ArticleListResponse,
+  // V3 types
+  ArticleContentV3,
+  ArticleV3,
+  ArticleV3Response,
 } from "./types";

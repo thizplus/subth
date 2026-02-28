@@ -137,6 +137,10 @@ export const API_ROUTES = {
     BY_CAST: (slug: string) => `/api/v1/articles/cast/${slug}`,
     BY_TAG: (slug: string) => `/api/v1/articles/tag/${slug}`,
     BY_MAKER: (slug: string) => `/api/v1/articles/maker/${slug}`,
+    LIKE: (id: string) => `/api/v1/articles/${id}/like`,
+    COMMENTS: (id: string) => `/api/v1/articles/${id}/comments`,
+    COMMENT_BY_ID: (id: string, commentId: string) =>
+      `/api/v1/articles/${id}/comments/${commentId}`,
   },
 
   // Community Chat

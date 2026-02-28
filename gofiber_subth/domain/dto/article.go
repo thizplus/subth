@@ -116,6 +116,7 @@ type ArticleStatsResponse struct {
 // ========================================
 
 type PublicArticleResponse struct {
+	ID              string                 `json:"id"`
 	Slug            string                 `json:"slug"`
 	Language        string                 `json:"language"`
 	Type            string                 `json:"type"`
@@ -128,6 +129,10 @@ type PublicArticleResponse struct {
 	PublishedAt     string                 `json:"publishedAt"`
 	Translations    map[string]string      `json:"translations,omitempty"`   // slug ของแต่ละภาษา {"en": "...", "th": "..."}
 	RedirectSlug    string                 `json:"redirectSlug,omitempty"`   // redirect ไป slug ที่ถูกต้อง (fallback)
+	// Engagement counts
+	LikesCount    int `json:"likesCount"`
+	CommentsCount int `json:"commentsCount"`
+	ViewCount     int `json:"viewCount"`
 }
 
 // Public Article List (for SEO pages)

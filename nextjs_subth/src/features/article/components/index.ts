@@ -44,6 +44,9 @@ export { TrustBadge } from "./trust-badge";
 export { RelatedArticles } from "./related-articles";
 export { ThematicKeywords } from "./thematic-keywords";
 
+// Engagement (Like/Comment)
+export { ArticleEngagement } from "./article-engagement";
+
 // Schema components
 export {
   FAQPageSchema,

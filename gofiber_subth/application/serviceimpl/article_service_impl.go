@@ -424,6 +424,7 @@ func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug strin
 	}
 
 	response := &dto.PublicArticleResponse{
+		ID:              article.ID.String(),
 		Slug:            article.Slug,
 		Language:        article.Language,
 		Type:            string(article.Type),
@@ -432,6 +433,9 @@ func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug strin
 		MetaDescription: article.MetaDescription,
 		Content:         content,
 		VideoID:         article.VideoID.String(),
+		LikesCount:      article.LikesCount,
+		CommentsCount:   article.CommentsCount,
+		ViewCount:       article.ViewCount,
 	}
 
 	if video != nil {
@@ -494,6 +498,7 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 	}
 
 	response := &dto.PublicArticleResponse{
+		ID:              article.ID.String(),
 		Slug:            article.Slug,
 		Language:        article.Language,
 		Type:            string(article.Type),
@@ -502,6 +507,9 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 		MetaDescription: article.MetaDescription,
 		Content:         content,
 		VideoID:         article.VideoID.String(), // V3: for CTA links
+		LikesCount:      article.LikesCount,
+		CommentsCount:   article.CommentsCount,
+		ViewCount:       article.ViewCount,
 	}
 
 	if video != nil {

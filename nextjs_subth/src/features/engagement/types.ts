@@ -1,4 +1,4 @@
-// Like types
+// Like types (generic for both reels and articles)
 export interface LikeStatus {
   isLiked: boolean;
   likesCount: number;
@@ -8,6 +8,9 @@ export interface LikeResponse {
   success: boolean;
   data: LikeStatus;
 }
+
+// Entity type for engagement (reel or article)
+export type EngagementEntityType = "reel" | "article";
 
 // Comment types
 export interface CommentUser {
@@ -22,7 +25,8 @@ export interface CommentUser {
 export interface Comment {
   id: string;
   userId: string;
-  reelId: string;
+  reelId?: string;
+  articleId?: string;
   parentId?: string;
   content: string;
   createdAt: string;

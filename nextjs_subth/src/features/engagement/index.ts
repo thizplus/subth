@@ -2,5 +2,6 @@ export * from "./types";
 export * from "./hooks";
 export { engagementService } from "./service";
 export { CommentsSheet } from "./components/comments-sheet";
+export { ArticleCommentsSheet } from "./components/article-comments-sheet";
 export { RecentComments } from "./components/recent-comments";
 export { XPNotificationProvider, showXPNotification } from "./components/xp-notification";

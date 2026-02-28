@@ -47,6 +47,8 @@ export {
   // Schemas
   VideoObjectSchema,
   JsonLdScripts,
+  // Engagement
+  ArticleEngagement,
 } from "./components";
 
 // Service

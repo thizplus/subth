@@ -52,6 +52,8 @@ type Container struct {
 	ContactChannelRepository   repositories.ContactChannelRepository
 	ChatRepository             repositories.ChatRepository
 	ArticleRepository          repositories.ArticleRepository
+	ArticleLikeRepository      repositories.ArticleLikeRepository
+	ArticleCommentRepository   repositories.ArticleCommentRepository
 	SiteSettingRepository      repositories.SiteSettingRepository
 
 	// Activity Queue
@@ -84,6 +86,8 @@ type Container struct {
 	ContactChannelService  services.ContactChannelService
 	CommunityChatService   services.CommunityChatService
 	ArticleService         services.ArticleService
+	ArticleLikeService     services.ArticleLikeService
+	ArticleCommentService  services.ArticleCommentService
 	SiteSettingService     services.SiteSettingService
 
 	// Handlers that need special initialization
@@ -254,6 +258,8 @@ func (c *Container) initRepositories() error {
 	c.ContactChannelRepository = postgres.NewContactChannelRepository(c.DB)
 	c.ChatRepository = postgres.NewChatRepository(c.DB)
 	c.ArticleRepository = postgres.NewArticleRepository(c.DB)
+	c.ArticleLikeRepository = postgres.NewArticleLikeRepository(c.DB)
+	c.ArticleCommentRepository = postgres.NewArticleCommentRepository(c.DB)
 	c.SiteSettingRepository = postgres.NewSiteSettingRepository(c.DB)
 
 	// Activity Queue (Redis)
@@ -294,8 +300,8 @@ func (c *Container) initServices() error {
 	c.ChatService = serviceimpl.NewChatService(c.Config)
 	c.FeedService = serviceimpl.NewFeedService(c.ReelRepository, c.ReelLikeRepository, c.ReelCommentRepository)
 	c.ReelService = serviceimpl.NewReelService(c.ReelRepository, c.Storage, c.SourceStorage)
-	c.ReelLikeService = serviceimpl.NewReelLikeService(c.ReelLikeRepository, c.ReelRepository)
-	c.ReelCommentService = serviceimpl.NewReelCommentService(c.ReelCommentRepository, c.ReelRepository)
+	c.ReelLikeService = serviceimpl.NewReelLikeService(c.ReelLikeRepository, c.ReelRepository, c.UserStatsRepository)
+	c.ReelCommentService = serviceimpl.NewReelCommentService(c.ReelCommentRepository, c.ReelRepository, c.UserStatsRepository)
 
 	// AI Title Generation
 	c.TitleGenerationService = serviceimpl.NewTitleGenerationService(c.Config.Gemini, c.UserStatsRepository)
@@ -322,6 +328,10 @@ func (c *Container) initServices() error {
 
 	// SEO Article Service (with Storage for R2 cleanup on delete, and Redis for caching)
 	c.ArticleService = serviceimpl.NewArticleService(c.ArticleRepository, c.VideoRepository, c.Storage, c.RedisClient)
+
+	// Article Like/Comment Services
+	c.ArticleLikeService = serviceimpl.NewArticleLikeService(c.ArticleLikeRepository, c.ArticleRepository, c.UserStatsRepository)
+	c.ArticleCommentService = serviceimpl.NewArticleCommentService(c.ArticleCommentRepository, c.ArticleRepository, c.UserStatsRepository)
 
 	// Site Setting Service
 	c.SiteSettingService = serviceimpl.NewSiteSettingService(c.SiteSettingRepository)
@@ -454,6 +464,8 @@ func (c *Container) GetHandlerServices() *handlers.Services {
 		ContactChannelService: c.ContactChannelService,
 		CommunityChatService:  c.CommunityChatService,
 		ArticleService:        c.ArticleService,
+		ArticleLikeService:    c.ArticleLikeService,
+		ArticleCommentService: c.ArticleCommentService,
 		SiteSettingService:    c.SiteSettingService,
 	}
 }

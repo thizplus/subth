@@ -191,7 +191,19 @@ func (s *UserStatsServiceImpl) RecordLogin(ctx context.Context, userID uuid.UUID
 
 	stats.LastLoginAt = &now
 
-	// เพิ่ม XP
+	// Save LoginStreak และ LastLoginAt ก่อน (เพราะ AddXP จะดึง stats ใหม่จาก DB)
+	if err := s.userStatsRepo.Update(ctx, stats); err != nil {
+		logger.ErrorContext(ctx, "Failed to update login streak", "error", err, "user_id", userID)
+		return nil, err
+	}
+
+	logger.InfoContext(ctx, "Login streak updated",
+		"user_id", userID,
+		"login_streak", stats.LoginStreak,
+		"last_login_at", stats.LastLoginAt,
+	)
+
+	// เพิ่ม XP (จะดึง stats ใหม่จาก DB ซึ่งตอนนี้มี LoginStreak ที่ถูกต้องแล้ว)
 	updatedStats, _, err := s.AddXP(ctx, userID, xpToAdd, "login")
 	return updatedStats, err
 }

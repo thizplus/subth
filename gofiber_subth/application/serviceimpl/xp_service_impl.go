@@ -100,6 +100,9 @@ func (s *xpServiceImpl) AwardViewXP(ctx context.Context, userID, reelID uuid.UUI
 		}, nil
 	}
 
+	// Increment TotalViews และ update PeakHour
+	s.incrementViewStats(ctx, userID)
+
 	refType := models.XPRefTypeReel
 	return s.awardXP(ctx, userID, models.XPAmountView, models.XPSourceView, &reelID, &refType)
 }
@@ -283,4 +286,23 @@ func (s *xpServiceImpl) awardXP(
 		LeveledUp: leveledUp,
 		NewLevel:  stats.Level,
 	}, nil
+}
+
+// incrementViewStats เพิ่ม TotalViews และ update PeakHour
+func (s *xpServiceImpl) incrementViewStats(ctx context.Context, userID uuid.UUID) {
+	stats, err := s.statsRepo.GetByUserID(ctx, userID)
+	if err != nil || stats == nil {
+		return
+	}
+
+	// Increment TotalViews
+	stats.TotalViews++
+
+	// Update PeakHour - เก็บชั่วโมงที่ดูบ่อยที่สุด
+	currentHour := time.Now().Hour()
+	stats.PeakHour = currentHour // Simple: ใช้ชั่วโมงล่าสุดที่ดู
+
+	if err := s.statsRepo.Update(ctx, stats); err != nil {
+		logger.WarnContext(ctx, "Failed to increment view stats", "error", err, "user_id", userID)
+	}
 }

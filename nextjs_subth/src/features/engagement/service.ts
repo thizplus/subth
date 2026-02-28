@@ -1,7 +1,7 @@
 "use client";
 
 import { apiClient } from "@/lib/api-client";
-import { API_ROUTES } from "@/lib/constants";
+import { API_ROUTES, API_URL } from "@/lib/constants";
 import type {
   LikeResponse,
   CommentListResponse,
@@ -12,7 +12,7 @@ import type {
 } from "./types";
 
 export const engagementService = {
-  // ========== LIKES ==========
+  // ========== REEL LIKES ==========
 
   // Toggle like on a reel (requires auth)
   toggleLike(reelId: string): Promise<LikeResponse> {
@@ -22,6 +22,18 @@ export const engagementService = {
   // Get like status for a reel
   getLikeStatus(reelId: string): Promise<LikeResponse> {
     return apiClient.getRaw<LikeResponse>(API_ROUTES.REELS.LIKE(reelId));
+  },
+
+  // ========== ARTICLE LIKES ==========
+
+  // Toggle like on an article (requires auth)
+  toggleArticleLike(articleId: string): Promise<LikeResponse> {
+    return apiClient.postRaw<LikeResponse>(API_ROUTES.ARTICLES.LIKE(articleId));
+  },
+
+  // Get like status for an article
+  getArticleLikeStatus(articleId: string): Promise<LikeResponse> {
+    return apiClient.getRaw<LikeResponse>(API_ROUTES.ARTICLES.LIKE(articleId));
   },
 
   // ========== COMMENTS ==========
@@ -57,5 +69,69 @@ export const engagementService = {
   async getRecentComments(limit = 10): Promise<RecentCommentsResponse> {
     const params = new URLSearchParams({ limit: String(limit) });
     return apiClient.getRaw<RecentCommentsResponse>(`${API_ROUTES.COMMENTS.RECENT}?${params}`);
+  },
+
+  // ========== ARTICLE COMMENTS ==========
+
+  // Get comments for an article (public)
+  async getArticleComments(
+    articleId: string,
+    page = 1,
+    limit = 20
+  ): Promise<CommentListResponse> {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    return apiClient.getRaw<CommentListResponse>(
+      `${API_ROUTES.ARTICLES.COMMENTS(articleId)}?${params}`
+    );
+  },
+
+  // Create a comment on an article (requires auth)
+  createArticleComment(
+    articleId: string,
+    data: CreateCommentRequest
+  ): Promise<{ success: boolean; data: Comment }> {
+    return apiClient.postRaw<{ success: boolean; data: Comment }>(
+      API_ROUTES.ARTICLES.COMMENTS(articleId),
+      data
+    );
+  },
+
+  // Update an article comment (requires auth, owner only)
+  async updateArticleComment(
+    articleId: string,
+    commentId: string,
+    data: UpdateCommentRequest
+  ): Promise<{ success: boolean; data: Comment }> {
+    // Get token from localStorage
+    const authStorage =
+      typeof window !== "undefined"
+        ? localStorage.getItem("auth-storage")
+        : null;
+    const token = authStorage
+      ? JSON.parse(authStorage)?.state?.token
+      : null;
+
+    const response = await fetch(
+      `${API_URL}${API_ROUTES.ARTICLES.COMMENT_BY_ID(articleId, commentId)}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    return response.json();
+  },
+
+  // Delete an article comment (requires auth, owner only)
+  deleteArticleComment(articleId: string, commentId: string): Promise<void> {
+    return apiClient.delete(
+      API_ROUTES.ARTICLES.COMMENT_BY_ID(articleId, commentId)
+    );
   },
 };

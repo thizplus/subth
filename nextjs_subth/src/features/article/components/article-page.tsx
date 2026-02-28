@@ -18,6 +18,7 @@ import { ThumbnailImage } from "./thumbnail-image";
 import { AuthorByline } from "./author-byline";
 import { TrustBadge } from "./trust-badge";
 import { ArticleMainContent } from "./article-content";
+import { ArticleEngagement } from "./article-engagement";
 import { JsonLdScripts } from "./schema/json-ld-scripts";
 import type { Article } from "../types";
 
@@ -84,6 +85,14 @@ export function ArticlePage({ article, locale = "th" }: ArticlePageProps) {
             />
             <TrustBadge updatedAt={content.updatedAt} />
           </div>
+
+          {/* Engagement (Like/Comment/Share) */}
+          <ArticleEngagement
+            articleId={article.id}
+            locale={locale}
+            initialLikeCount={article.likesCount ?? 0}
+            initialCommentCount={article.commentsCount ?? 0}
+          />
 
           {/* Main Content */}
           <div className="mt-8">

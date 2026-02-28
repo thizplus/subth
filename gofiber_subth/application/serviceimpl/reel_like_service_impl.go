@@ -14,17 +14,20 @@ import (
 )
 
 type reelLikeServiceImpl struct {
-	likeRepo repositories.ReelLikeRepository
-	reelRepo repositories.ReelRepository
+	likeRepo      repositories.ReelLikeRepository
+	reelRepo      repositories.ReelRepository
+	userStatsRepo repositories.UserStatsRepository
 }
 
 func NewReelLikeService(
 	likeRepo repositories.ReelLikeRepository,
 	reelRepo repositories.ReelRepository,
+	userStatsRepo repositories.UserStatsRepository,
 ) services.ReelLikeService {
 	return &reelLikeServiceImpl{
-		likeRepo: likeRepo,
-		reelRepo: reelRepo,
+		likeRepo:      likeRepo,
+		reelRepo:      reelRepo,
+		userStatsRepo: userStatsRepo,
 	}
 }
 
@@ -60,6 +63,9 @@ func (s *reelLikeServiceImpl) Like(ctx context.Context, userID, reelID uuid.UUID
 	if err := s.updateReelLikesCount(ctx, reelID); err != nil {
 		logger.WarnContext(ctx, "Failed to update reel likes count", "error", err)
 	}
+
+	// Increment user's TotalLikes
+	s.incrementUserLikes(ctx, userID, 1)
 
 	count, _ := s.likeRepo.CountByReel(ctx, reelID)
 	logger.InfoContext(ctx, "User liked reel", "user_id", userID, "reel_id", reelID)
@@ -97,6 +103,9 @@ func (s *reelLikeServiceImpl) Unlike(ctx context.Context, userID, reelID uuid.UU
 	if err := s.updateReelLikesCount(ctx, reelID); err != nil {
 		logger.WarnContext(ctx, "Failed to update reel likes count", "error", err)
 	}
+
+	// Decrement user's TotalLikes
+	s.incrementUserLikes(ctx, userID, -1)
 
 	count, _ := s.likeRepo.CountByReel(ctx, reelID)
 	logger.InfoContext(ctx, "User unliked reel", "user_id", userID, "reel_id", reelID)
@@ -150,4 +159,21 @@ func (s *reelLikeServiceImpl) updateReelLikesCount(ctx context.Context, reelID u
 
 	reel.LikesCount = int(count)
 	return s.reelRepo.Update(ctx, reel)
+}
+
+// incrementUserLikes updates user's TotalLikes (delta can be 1 or -1)
+func (s *reelLikeServiceImpl) incrementUserLikes(ctx context.Context, userID uuid.UUID, delta int) {
+	stats, err := s.userStatsRepo.GetByUserID(ctx, userID)
+	if err != nil || stats == nil {
+		return
+	}
+
+	stats.TotalLikes += delta
+	if stats.TotalLikes < 0 {
+		stats.TotalLikes = 0
+	}
+
+	if err := s.userStatsRepo.Update(ctx, stats); err != nil {
+		logger.WarnContext(ctx, "Failed to update user likes count", "error", err, "user_id", userID)
+	}
 }

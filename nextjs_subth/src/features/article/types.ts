@@ -5,6 +5,7 @@
 // ========================================
 
 export interface Article {
+  id: string;
   slug: string;
   language: string;
   type: string;
@@ -17,6 +18,10 @@ export interface Article {
   content: ArticleContent;
   translations?: Record<string, string>; // {"en": "slug-en", "th": "slug-th"}
   redirectSlug?: string; // สำหรับ redirect เมื่อ slug ไม่ตรงกับภาษา (fallback)
+  // Engagement counts (from API)
+  likesCount?: number;
+  commentsCount?: number;
+  viewCount?: number;
 }
 
 export interface ArticleContent {

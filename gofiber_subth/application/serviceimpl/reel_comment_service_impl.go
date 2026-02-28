@@ -14,17 +14,20 @@ import (
 )
 
 type reelCommentServiceImpl struct {
-	commentRepo repositories.ReelCommentRepository
-	reelRepo    repositories.ReelRepository
+	commentRepo   repositories.ReelCommentRepository
+	reelRepo      repositories.ReelRepository
+	userStatsRepo repositories.UserStatsRepository
 }
 
 func NewReelCommentService(
 	commentRepo repositories.ReelCommentRepository,
 	reelRepo repositories.ReelRepository,
+	userStatsRepo repositories.UserStatsRepository,
 ) services.ReelCommentService {
 	return &reelCommentServiceImpl{
-		commentRepo: commentRepo,
-		reelRepo:    reelRepo,
+		commentRepo:   commentRepo,
+		reelRepo:      reelRepo,
+		userStatsRepo: userStatsRepo,
 	}
 }
 
@@ -45,6 +48,9 @@ func (s *reelCommentServiceImpl) Create(ctx context.Context, userID uuid.UUID, r
 	if err := s.updateReelCommentsCount(ctx, req.ReelID); err != nil {
 		logger.WarnContext(ctx, "Failed to update reel comments count", "error", err)
 	}
+
+	// Increment user's TotalComments
+	s.incrementUserComments(ctx, userID, 1)
 
 	// Get the created comment with user info
 	created, err := s.commentRepo.GetByID(ctx, comment.ID)
@@ -117,6 +123,9 @@ func (s *reelCommentServiceImpl) Delete(ctx context.Context, userID, commentID u
 		logger.WarnContext(ctx, "Failed to update reel comments count", "error", err)
 	}
 
+	// Decrement user's TotalComments
+	s.incrementUserComments(ctx, userID, -1)
+
 	logger.InfoContext(ctx, "User deleted comment", "user_id", userID, "comment_id", commentID)
 	return nil
 }
@@ -184,4 +193,21 @@ func (s *reelCommentServiceImpl) updateReelCommentsCount(ctx context.Context, re
 
 	reel.CommentsCount = int(count)
 	return s.reelRepo.Update(ctx, reel)
+}
+
+// incrementUserComments updates user's TotalComments (delta can be 1 or -1)
+func (s *reelCommentServiceImpl) incrementUserComments(ctx context.Context, userID uuid.UUID, delta int) {
+	stats, err := s.userStatsRepo.GetByUserID(ctx, userID)
+	if err != nil || stats == nil {
+		return
+	}
+
+	stats.TotalComments += delta
+	if stats.TotalComments < 0 {
+		stats.TotalComments = 0
+	}
+
+	if err := s.userStatsRepo.Update(ctx, stats); err != nil {
+		logger.WarnContext(ctx, "Failed to update user comments count", "error", err, "user_id", userID)
+	}
 }

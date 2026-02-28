@@ -95,6 +95,9 @@ func Migrate(db *gorm.DB) error {
 		&models.ChatBan{},
 		// Articles
 		&models.Article{},
+		// Article engagement (likes, comments)
+		&models.ArticleLike{},
+		&models.ArticleComment{},
 		// Site settings
 		&models.SiteSetting{},
 	); err != nil {

@@ -29,6 +29,8 @@ type Services struct {
 	ContactChannelService  services.ContactChannelService
 	CommunityChatService   services.CommunityChatService
 	ArticleService         services.ArticleService
+	ArticleLikeService     services.ArticleLikeService
+	ArticleCommentService  services.ArticleCommentService
 	SiteSettingService     services.SiteSettingService
 }
 
@@ -62,6 +64,8 @@ type Handlers struct {
 	ContactChannelHandler  *ContactChannelHandler
 	CommunityChatHandler   *CommunityChatHandler
 	ArticleHandler         *ArticleHandler
+	ArticleLikeHandler     *ArticleLikeHandler
+	ArticleCommentHandler  *ArticleCommentHandler
 	SiteSettingHandler     *SiteSettingHandler
 }
 
@@ -90,6 +94,8 @@ func NewHandlers(services *Services, repos *Repositories, googleConfig config.Go
 		ActivityLogHandler:    NewActivityLogHandler(services.ActivityLogService),
 		ContactChannelHandler: NewContactChannelHandler(services.ContactChannelService),
 		ArticleHandler:        NewArticleHandler(services.ArticleService),
+		ArticleLikeHandler:    NewArticleLikeHandler(services.ArticleLikeService, services.XPService),
+		ArticleCommentHandler: NewArticleCommentHandler(services.ArticleCommentService, services.XPService),
 		SiteSettingHandler:    NewSiteSettingHandler(services.SiteSettingService),
 	}
 }

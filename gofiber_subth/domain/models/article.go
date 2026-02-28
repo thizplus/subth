@@ -85,6 +85,11 @@ type Article struct {
 	QualityScore int `gorm:"default:0"` // 1-10 จาก AI
 	ReadingTime  int `gorm:"default:0"` // minutes
 
+	// Engagement counts (cached)
+	LikesCount    int `gorm:"default:0"`
+	CommentsCount int `gorm:"default:0"`
+	ViewCount     int `gorm:"default:0"`
+
 	// Relations
 	Video *Video `gorm:"foreignKey:VideoID"`
 

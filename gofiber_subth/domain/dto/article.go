@@ -134,6 +134,8 @@ type PublicArticleListParams struct {
 	Type   string `query:"type"` // filter by article type (review, ranking, etc.)
 	Lang   string `query:"lang"`
 	Search string `query:"search"`
+	Sort   string `query:"sort"`  // published_at, updated_at (default: published_at)
+	Order  string `query:"order"` // asc, desc (default: desc)
 }
 
 func (p *PublicArticleListParams) SetDefaults() {
@@ -142,6 +144,12 @@ func (p *PublicArticleListParams) SetDefaults() {
 	}
 	if p.Limit < 1 || p.Limit > 100 {
 		p.Limit = 24
+	}
+	if p.Sort == "" {
+		p.Sort = "published_at"
+	}
+	if p.Order == "" {
+		p.Order = "desc"
 	}
 }
 

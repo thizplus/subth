@@ -6,11 +6,32 @@ import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 
 const ITEMS_PER_PAGE = 48;
+import { SITE_URL } from "@/lib/constants";
 
-export const metadata: Metadata = {
-  title: "All Studios | SubTH",
-  description: "Browse all studios and production companies on SubTH",
-};
+interface PageProps {
+  params: Promise<{ page: string }>;
+  searchParams: Promise<{ q?: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { page } = await params;
+  const currentPage = parseInt(page || "1", 10);
+
+  // page > 5 → noindex, follow (ลด crawl budget leak)
+  const shouldIndex = currentPage <= 5;
+
+  return {
+    title: currentPage === 1 ? "All Studios | SubTH" : `All Studios - Page ${currentPage} | SubTH`,
+    description: "Browse all studios and production companies on SubTH",
+    robots: {
+      index: shouldIndex,
+      follow: true,
+    },
+    alternates: {
+      canonical: currentPage === 1 ? `${SITE_URL}/en/makers` : `${SITE_URL}/en/makers/page/${currentPage}`,
+    },
+  };
+}
 
 function stringToColor(str: string): string {
   let hash = 0;
@@ -19,11 +40,6 @@ function stringToColor(str: string): string {
   }
   const hue = hash % 360;
   return `hsl(${hue}, 70%, 40%)`;
-}
-
-interface PageProps {
-  params: Promise<{ page: string }>;
-  searchParams: Promise<{ q?: string }>;
 }
 
 export default async function MakersPagePaginatedEN({ params, searchParams }: PageProps) {

@@ -89,8 +89,12 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 			return nil, err
 		}
 
-		// Invalidate cache when article is updated
-		if s.cache != nil {
+		// Invalidate all related caches when published article is updated
+		// This ensures cast/tag/maker pages show updated content
+		if existing.Status == models.ArticleStatusPublished {
+			s.invalidateRelatedCaches(ctx, existing)
+		} else if s.cache != nil {
+			// For non-published articles, just invalidate article detail cache
 			cacheKey := cache.ArticleKeyWithLang(string(existing.Type), existing.Slug, existing.Language)
 			_ = s.cache.Delete(ctx, cacheKey)
 		}
@@ -323,16 +327,14 @@ func (s *ArticleServiceImpl) UpdateStatus(ctx context.Context, id uuid.UUID, req
 		return err
 	}
 
-	// Invalidate cache when article is published or status changes
-	if s.cache != nil {
+	// Invalidate all related caches when article is published
+	// This includes: article detail, article list, cast pages, tag pages, maker pages
+	if status == models.ArticleStatusPublished {
+		s.invalidateRelatedCaches(ctx, article)
+	} else if s.cache != nil {
+		// For other status changes, just invalidate article detail cache
 		cacheKey := cache.ArticleKeyWithLang(string(article.Type), article.Slug, article.Language)
-		if err := s.cache.Delete(ctx, cacheKey); err != nil {
-			logger.WarnContext(ctx, "Failed to invalidate article cache", "article_id", id, "error", err)
-		} else {
-			logger.InfoContext(ctx, "Article cache invalidated", "article_id", id, "cache_key", cacheKey)
-		}
-		// Also invalidate first page of list cache
-		_ = s.cache.Delete(ctx, cache.ArticleListKey(1, 24))
+		_ = s.cache.Delete(ctx, cacheKey)
 	}
 
 	logger.InfoContext(ctx, "Article status updated", "article_id", id, "status", status)
@@ -383,6 +385,10 @@ func (s *ArticleServiceImpl) PublishScheduledArticles(ctx context.Context) (int,
 			logger.ErrorContext(ctx, "Failed to publish scheduled article", "article_id", article.ID, "error", err)
 			continue
 		}
+
+		// Invalidate all related caches for the newly published article
+		s.invalidateRelatedCaches(ctx, &article)
+
 		count++
 		logger.InfoContext(ctx, "Scheduled article published", "article_id", article.ID)
 	}
@@ -502,6 +508,8 @@ func (s *ArticleServiceImpl) ListPublishedArticles(ctx context.Context, params *
 		Search:      params.Search,
 		ArticleType: params.Type,
 		Language:    params.Lang,
+		Sort:        params.Sort,
+		Order:       params.Order,
 	}
 
 	articles, total, err := s.articleRepo.ListPublished(ctx, repoParams)
@@ -520,6 +528,8 @@ func (s *ArticleServiceImpl) ListArticlesByCast(ctx context.Context, castSlug st
 		Limit:    params.Limit,
 		Offset:   (params.Page - 1) * params.Limit,
 		Language: params.Lang,
+		Sort:     params.Sort,
+		Order:    params.Order,
 	}
 
 	articles, total, err := s.articleRepo.ListPublishedByCast(ctx, castSlug, repoParams)
@@ -538,6 +548,8 @@ func (s *ArticleServiceImpl) ListArticlesByTag(ctx context.Context, tagSlug stri
 		Limit:    params.Limit,
 		Offset:   (params.Page - 1) * params.Limit,
 		Language: params.Lang,
+		Sort:     params.Sort,
+		Order:    params.Order,
 	}
 
 	articles, total, err := s.articleRepo.ListPublishedByTag(ctx, tagSlug, repoParams)
@@ -556,6 +568,8 @@ func (s *ArticleServiceImpl) ListArticlesByMaker(ctx context.Context, makerSlug 
 		Limit:    params.Limit,
 		Offset:   (params.Page - 1) * params.Limit,
 		Language: params.Lang,
+		Sort:     params.Sort,
+		Order:    params.Order,
 	}
 
 	articles, total, err := s.articleRepo.ListPublishedByMaker(ctx, makerSlug, repoParams)
@@ -653,6 +667,56 @@ func (s *ArticleServiceImpl) mapToDetailResponse(article *models.Article, video 
 	}
 
 	return resp
+}
+
+// invalidateRelatedCaches invalidates all caches related to article publication
+// This ensures homepage, cast pages, tag pages, and maker pages show the new article immediately
+func (s *ArticleServiceImpl) invalidateRelatedCaches(ctx context.Context, article *models.Article) {
+	if s.cache == nil {
+		return
+	}
+
+	// 1. Invalidate article detail cache
+	cacheKey := cache.ArticleKeyWithLang(string(article.Type), article.Slug, article.Language)
+	if err := s.cache.Delete(ctx, cacheKey); err == nil {
+		logger.InfoContext(ctx, "Article cache invalidated", "cache_key", cacheKey)
+	}
+
+	// 2. Invalidate article list caches (all pages)
+	if deleted, err := s.cache.DeleteByPattern(ctx, cache.ArticleListPattern()); err == nil && deleted > 0 {
+		logger.InfoContext(ctx, "Article list cache invalidated", "deleted_keys", deleted)
+	}
+
+	// 3. Get video with relations to invalidate cast/tag/maker caches
+	video, err := s.videoRepo.GetWithRelations(ctx, article.VideoID)
+	if err != nil {
+		logger.WarnContext(ctx, "Failed to get video relations for cache invalidation", "video_id", article.VideoID, "error", err)
+		return
+	}
+
+	// 4. Invalidate cast pages cache
+	for _, cast := range video.Casts {
+		pattern := cache.ArticleByCastPattern(cast.Slug)
+		if deleted, err := s.cache.DeleteByPattern(ctx, pattern); err == nil && deleted > 0 {
+			logger.InfoContext(ctx, "Cast articles cache invalidated", "cast_slug", cast.Slug, "deleted_keys", deleted)
+		}
+	}
+
+	// 5. Invalidate tag pages cache
+	for _, tag := range video.Tags {
+		pattern := cache.ArticleByTagPattern(tag.Slug)
+		if deleted, err := s.cache.DeleteByPattern(ctx, pattern); err == nil && deleted > 0 {
+			logger.InfoContext(ctx, "Tag articles cache invalidated", "tag_slug", tag.Slug, "deleted_keys", deleted)
+		}
+	}
+
+	// 6. Invalidate maker page cache
+	if video.Maker != nil {
+		pattern := cache.ArticleByMakerPattern(video.Maker.Slug)
+		if deleted, err := s.cache.DeleteByPattern(ctx, pattern); err == nil && deleted > 0 {
+			logger.InfoContext(ctx, "Maker articles cache invalidated", "maker_slug", video.Maker.Slug, "deleted_keys", deleted)
+		}
+	}
 }
 
 // extractThumbnailFromContent ดึง thumbnailUrl จาก article content JSON

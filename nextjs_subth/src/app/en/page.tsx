@@ -37,16 +37,31 @@ export const metadata: Metadata = {
  */
 export default async function EnglishHomePage() {
   let articles: import("@/features/article").ArticleSummary[] = [];
+  let updatedArticles: import("@/features/article").ArticleSummary[] = [];
   let total = 0;
 
   try {
-    const response = await articleService.getList({
-      page: 1,
-      limit: 12,
-      lang: "en",
-    });
-    articles = response.data || [];
-    total = response.meta?.total || 0;
+    // Fetch latest articles (sort by published_at)
+    const [latestResponse, updatedResponse] = await Promise.all([
+      articleService.getList({
+        page: 1,
+        limit: 12,
+        lang: "en",
+        sort: "published_at",
+        order: "desc",
+      }),
+      // Fetch recently updated articles (sort by updated_at)
+      articleService.getList({
+        page: 1,
+        limit: 8,
+        lang: "en",
+        sort: "updated_at",
+        order: "desc",
+      }),
+    ]);
+    articles = latestResponse.data || [];
+    updatedArticles = updatedResponse.data || [];
+    total = latestResponse.meta?.total || 0;
   } catch (error) {
     console.error("Failed to fetch articles:", error);
   }
@@ -175,6 +190,28 @@ export default async function EnglishHomePage() {
             </div>
           )}
         </section>
+
+        {/* Recently Updated Section */}
+        {updatedArticles.length > 0 && (
+          <section className="mb-10">
+            <h2 className="mb-4 text-xl font-semibold flex items-center gap-2">
+              <span className="inline-block w-1 h-6 bg-green-500 rounded-full"></span>
+              Recently Updated
+            </h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Articles with recently updated content and latest information
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {updatedArticles.map((article) => (
+                <ArticleCard
+                  key={`updated-${article.slug}`}
+                  article={article}
+                  priority={false}
+                />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Why SubTH Section */}
         <section className="mb-10 py-8 px-6 bg-muted/50 rounded-2xl border border-border">

@@ -12,6 +12,8 @@ export const articleService = {
     searchParams.set("limit", String(params?.limit || 20));
     if (params?.lang) searchParams.set("lang", params.lang);
     if (params?.search) searchParams.set("search", params.search);
+    if (params?.sort) searchParams.set("sort", params.sort);
+    if (params?.order) searchParams.set("order", params.order);
 
     return apiClient.serverGetRaw<ArticleListResponse>(
       `${API_ROUTES.ARTICLES.LIST}?${searchParams.toString()}`,

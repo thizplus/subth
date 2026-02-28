@@ -6,11 +6,32 @@ import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 
 const ITEMS_PER_PAGE = 48;
+import { SITE_URL } from "@/lib/constants";
 
-export const metadata: Metadata = {
-  title: "ค่ายผู้ผลิตทั้งหมด | SubTH",
-  description: "รายชื่อค่ายผู้ผลิตทั้งหมดใน SubTH พร้อมบทความรีวิวและวิเคราะห์ผลงาน",
-};
+interface PageProps {
+  params: Promise<{ page: string }>;
+  searchParams: Promise<{ q?: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { page } = await params;
+  const currentPage = parseInt(page || "1", 10);
+
+  // page > 5 → noindex, follow (ลด crawl budget leak)
+  const shouldIndex = currentPage <= 5;
+
+  return {
+    title: currentPage === 1 ? "ค่ายผู้ผลิตทั้งหมด | SubTH" : `ค่ายผู้ผลิตทั้งหมด - หน้า ${currentPage} | SubTH`,
+    description: "รายชื่อค่ายผู้ผลิตทั้งหมดใน SubTH พร้อมบทความรีวิวและวิเคราะห์ผลงาน",
+    robots: {
+      index: shouldIndex,
+      follow: true,
+    },
+    alternates: {
+      canonical: currentPage === 1 ? `${SITE_URL}/makers` : `${SITE_URL}/makers/page/${currentPage}`,
+    },
+  };
+}
 
 // สร้างสีจาก string
 function stringToColor(str: string): string {
@@ -20,11 +41,6 @@ function stringToColor(str: string): string {
   }
   const hue = hash % 360;
   return `hsl(${hue}, 70%, 40%)`;
-}
-
-interface PageProps {
-  params: Promise<{ page: string }>;
-  searchParams: Promise<{ q?: string }>;
 }
 
 export default async function MakersPagePaginated({ params, searchParams }: PageProps) {

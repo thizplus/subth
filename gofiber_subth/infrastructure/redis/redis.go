@@ -80,3 +80,32 @@ func (r *RedisClient) Ping(ctx context.Context) error {
 func (r *RedisClient) Close() error {
 	return r.client.Close()
 }
+
+// DeleteByPattern deletes all keys matching a pattern using SCAN (non-blocking)
+// Pattern example: "article:cast:yua-mikami:*" or "article:list:*"
+func (r *RedisClient) DeleteByPattern(ctx context.Context, pattern string) (int64, error) {
+	var cursor uint64
+	var deleted int64
+
+	for {
+		keys, nextCursor, err := r.client.Scan(ctx, cursor, pattern, 100).Result()
+		if err != nil {
+			return deleted, err
+		}
+
+		if len(keys) > 0 {
+			result, err := r.client.Del(ctx, keys...).Result()
+			if err != nil {
+				return deleted, err
+			}
+			deleted += result
+		}
+
+		cursor = nextCursor
+		if cursor == 0 {
+			break
+		}
+	}
+
+	return deleted, nil
+}

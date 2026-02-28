@@ -49,3 +49,31 @@ func ArticleByTagKey(tagSlug string, page int) string {
 func ArticleByMakerKey(makerSlug string, page int) string {
 	return fmt.Sprintf("article:maker:%s:%d", makerSlug, page)
 }
+
+// ========================================
+// Pattern Keys (for cache invalidation)
+// ========================================
+
+// ArticleListPattern returns pattern to match all article list pages
+// Pattern: article:list:*
+func ArticleListPattern() string {
+	return "article:list:*"
+}
+
+// ArticleByCastPattern returns pattern to match all pages for a cast
+// Pattern: article:cast:{slug}:*
+func ArticleByCastPattern(castSlug string) string {
+	return fmt.Sprintf("article:cast:%s:*", castSlug)
+}
+
+// ArticleByTagPattern returns pattern to match all pages for a tag
+// Pattern: article:tag:{slug}:*
+func ArticleByTagPattern(tagSlug string) string {
+	return fmt.Sprintf("article:tag:%s:*", tagSlug)
+}
+
+// ArticleByMakerPattern returns pattern to match all pages for a maker
+// Pattern: article:maker:{slug}:*
+func ArticleByMakerPattern(makerSlug string) string {
+	return fmt.Sprintf("article:maker:%s:*", makerSlug)
+}

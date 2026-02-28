@@ -6,11 +6,32 @@ import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 
 const ITEMS_PER_PAGE = 48;
+import { SITE_URL } from "@/lib/constants";
 
-export const metadata: Metadata = {
-  title: "นักแสดงทั้งหมด | SubTH",
-  description: "รายชื่อนักแสดงทั้งหมดใน SubTH พร้อมบทความรีวิวและประวัติ",
-};
+interface PageProps {
+  params: Promise<{ page: string }>;
+  searchParams: Promise<{ q?: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { page } = await params;
+  const currentPage = parseInt(page || "1", 10);
+
+  // page > 5 → noindex, follow (ลด crawl budget leak)
+  const shouldIndex = currentPage <= 5;
+
+  return {
+    title: currentPage === 1 ? "นักแสดงทั้งหมด | SubTH" : `นักแสดงทั้งหมด - หน้า ${currentPage} | SubTH`,
+    description: "รายชื่อนักแสดงทั้งหมดใน SubTH พร้อมบทความรีวิวและประวัติ",
+    robots: {
+      index: shouldIndex,
+      follow: true,
+    },
+    alternates: {
+      canonical: currentPage === 1 ? `${SITE_URL}/casts` : `${SITE_URL}/casts/page/${currentPage}`,
+    },
+  };
+}
 
 // สร้างสีจาก string
 function stringToColor(str: string): string {
@@ -28,11 +49,6 @@ function slugToName(slug: string): string {
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
-}
-
-interface PageProps {
-  params: Promise<{ page: string }>;
-  searchParams: Promise<{ q?: string }>;
 }
 
 export default async function CastsPagePaginated({ params, searchParams }: PageProps) {

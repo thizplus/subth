@@ -54,6 +54,8 @@ type PublicArticleListParams struct {
 	Search      string
 	ArticleType string // filter by type (review, ranking, best-of, guide, news)
 	Language    string // "th" or "en" (default: th)
+	Sort        string // published_at, updated_at (default: published_at)
+	Order       string // asc, desc (default: desc)
 }
 
 // PublishedArticleWithVideo เก็บ article พร้อม video data

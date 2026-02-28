@@ -6,7 +6,7 @@ import { SearchInput } from "@/components/ui/search-input";
 import { PaginationHead } from "@/components/seo";
 
 const ITEMS_PER_PAGE = 24;
-const BASE_URL = "https://subth.com";
+import { SITE_URL } from "@/lib/constants";
 
 interface PageProps {
   params: Promise<{ page: string }>;
@@ -17,11 +17,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { page } = await params;
   const currentPage = parseInt(page || "1", 10);
 
+  // page > 5 → noindex, follow (ลด crawl budget leak)
+  const shouldIndex = currentPage <= 5;
+
   return {
     title: currentPage === 1 ? "บทความทั้งหมด | SubTH" : `บทความทั้งหมด - หน้า ${currentPage} | SubTH`,
     description: "รวมบทความรีวิววิดีโอซับไทยทั้งหมด พร้อมเรื่องย่อและวิเคราะห์เชิงลึก",
+    robots: {
+      index: shouldIndex,
+      follow: true,
+    },
     alternates: {
-      canonical: currentPage === 1 ? `${BASE_URL}/articles` : `${BASE_URL}/articles/page/${currentPage}`,
+      canonical: currentPage === 1 ? `${SITE_URL}/articles` : `${SITE_URL}/articles/page/${currentPage}`,
     },
   };
 }

@@ -7,19 +7,35 @@ import { Pagination } from "@/components/ui/pagination";
 import { PaginationHead } from "@/components/seo";
 
 const ITEMS_PER_PAGE = 24;
+import { SITE_URL } from "@/lib/constants";
 
 interface PageProps {
   params: Promise<{ slug: string; page: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, page } = await params;
+  const currentPage = parseInt(page || "1", 10);
+
+  // page > 5 → noindex, follow (ลด crawl budget leak)
+  const shouldIndex = currentPage <= 5;
 
   try {
     const tag = await tagService.getBySlug(slug, "en");
     return {
-      title: `${tag.name} - Articles | SubTH`,
+      title: currentPage === 1
+        ? `${tag.name} - Articles | SubTH`
+        : `${tag.name} - Page ${currentPage} | SubTH`,
       description: `Browse all articles tagged with ${tag.name}`,
+      robots: {
+        index: shouldIndex,
+        follow: true,
+      },
+      alternates: {
+        canonical: currentPage === 1
+          ? `${SITE_URL}/en/tags/${slug}`
+          : `${SITE_URL}/en/tags/${slug}/page/${currentPage}`,
+      },
     };
   } catch {
     return {

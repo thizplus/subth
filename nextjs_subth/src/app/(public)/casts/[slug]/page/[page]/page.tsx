@@ -7,6 +7,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { PaginationHead } from "@/components/seo";
 
 const ITEMS_PER_PAGE = 24;
+import { SITE_URL } from "@/lib/constants";
 
 interface PageProps {
   params: Promise<{ slug: string; page: string }>;
@@ -23,13 +24,28 @@ function stringToColor(str: string): string {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, page } = await params;
+  const currentPage = parseInt(page || "1", 10);
+
+  // page > 5 → noindex, follow (ลด crawl budget leak)
+  const shouldIndex = currentPage <= 5;
 
   try {
     const cast = await castService.getBySlug(slug, "th");
     return {
-      title: `${cast.name} - บทความและผลงาน | SubTH`,
+      title: currentPage === 1
+        ? `${cast.name} - บทความและผลงาน | SubTH`
+        : `${cast.name} - หน้า ${currentPage} | SubTH`,
       description: `รวมบทความรีวิวผลงานของ ${cast.name} พร้อมวิเคราะห์เชิงลึกและเรื่องย่อ`,
+      robots: {
+        index: shouldIndex,
+        follow: true,
+      },
+      alternates: {
+        canonical: currentPage === 1
+          ? `${SITE_URL}/casts/${slug}`
+          : `${SITE_URL}/casts/${slug}/page/${currentPage}`,
+      },
     };
   } catch {
     return {

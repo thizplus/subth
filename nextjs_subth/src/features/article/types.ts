@@ -245,6 +245,8 @@ export interface ArticleListParams {
   limit?: number;
   lang?: string;
   search?: string;
+  sort?: "published_at" | "updated_at";
+  order?: "asc" | "desc";
 }
 
 export interface ArticleListResponse {

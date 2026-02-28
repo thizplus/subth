@@ -7,15 +7,31 @@ import { SearchInput } from "@/components/ui/search-input";
 import { Tag } from "lucide-react";
 
 const ITEMS_PER_PAGE = 100;
-
-export const metadata: Metadata = {
-  title: "หมวดหมู่ทั้งหมด | SubTH",
-  description: "รายการหมวดหมู่และแท็กทั้งหมดใน SubTH สำหรับค้นหาบทความตามประเภท",
-};
+import { SITE_URL } from "@/lib/constants";
 
 interface PageProps {
   params: Promise<{ page: string }>;
   searchParams: Promise<{ q?: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { page } = await params;
+  const currentPage = parseInt(page || "1", 10);
+
+  // page > 5 → noindex, follow (ลด crawl budget leak)
+  const shouldIndex = currentPage <= 5;
+
+  return {
+    title: currentPage === 1 ? "แท็กทั้งหมด | SubTH" : `แท็กทั้งหมด - หน้า ${currentPage} | SubTH`,
+    description: "รายการหมวดหมู่และแท็กทั้งหมดใน SubTH สำหรับค้นหาบทความตามประเภท",
+    robots: {
+      index: shouldIndex,
+      follow: true,
+    },
+    alternates: {
+      canonical: currentPage === 1 ? `${SITE_URL}/tags` : `${SITE_URL}/tags/page/${currentPage}`,
+    },
+  };
 }
 
 export default async function TagsPagePaginated({ params, searchParams }: PageProps) {

@@ -8,7 +8,7 @@ import { PublicLanguageSwitcher } from "./public-language-switcher";
 import { LoginDialog, useAuthStore } from "@/features/auth";
 import { LogIn, Play } from "lucide-react";
 import Link from "next/link";
-import { ChatProvider, ChatTicker, ChatFab } from "@/features/community-chat";
+import { ChatProvider, ChatFab } from "@/features/community-chat";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { useDictionary } from "@/components/dictionary-provider";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
@@ -77,9 +77,6 @@ export function PublicLayoutClient({ children }: PublicLayoutClientProps) {
               <PublicLanguageSwitcher locale={locale as "th" | "en"} />
             </div>
           </header>
-
-          {/* Chat Ticker */}
-          <ChatTicker locale={locale as "th" | "en"} />
 
           {/* Main Content */}
           <main className="flex-1 px-0 py-4 sm:px-4">

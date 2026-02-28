@@ -6,15 +6,31 @@ import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 
 const ITEMS_PER_PAGE = 60;
-
-export const metadata: Metadata = {
-  title: "All Tags | SubTH",
-  description: "Browse all tags and categories on SubTH",
-};
+import { SITE_URL } from "@/lib/constants";
 
 interface PageProps {
   params: Promise<{ page: string }>;
   searchParams: Promise<{ q?: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { page } = await params;
+  const currentPage = parseInt(page || "1", 10);
+
+  // page > 5 → noindex, follow (ลด crawl budget leak)
+  const shouldIndex = currentPage <= 5;
+
+  return {
+    title: currentPage === 1 ? "All Tags | SubTH" : `All Tags - Page ${currentPage} | SubTH`,
+    description: "Browse all tags and categories on SubTH",
+    robots: {
+      index: shouldIndex,
+      follow: true,
+    },
+    alternates: {
+      canonical: currentPage === 1 ? `${SITE_URL}/en/tags` : `${SITE_URL}/en/tags/page/${currentPage}`,
+    },
+  };
 }
 
 export default async function TagsPagePaginatedEN({ params, searchParams }: PageProps) {

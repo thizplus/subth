@@ -306,7 +306,18 @@ func (r *articleRepositoryImpl) ListPublished(ctx context.Context, params reposi
 	if params.Search != "" {
 		query = query.Where("title ILIKE ? OR slug ILIKE ?", "%"+params.Search+"%", "%"+params.Search+"%")
 	}
-	err := query.Order("published_at DESC").
+
+	// Sorting - validate and apply
+	sortColumn := "published_at"
+	if params.Sort == "updated_at" {
+		sortColumn = "updated_at"
+	}
+	orderDirection := "DESC"
+	if strings.ToUpper(params.Order) == "ASC" {
+		orderDirection = "ASC"
+	}
+
+	err := query.Order(sortColumn + " " + orderDirection).
 		Offset(params.Offset).
 		Limit(params.Limit).
 		Find(&articles).Error

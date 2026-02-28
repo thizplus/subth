@@ -5,7 +5,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { PaginationHead } from "@/components/seo";
 
 const ITEMS_PER_PAGE = 24;
-const BASE_URL = "https://subth.com";
+import { SITE_URL } from "@/lib/constants";
 
 interface GenerateMetadataProps {
   params: Promise<{ page: string }>;
@@ -15,11 +15,18 @@ export async function generateMetadata({ params }: GenerateMetadataProps): Promi
   const { page } = await params;
   const currentPage = parseInt(page || "1", 10);
 
+  // page > 5 → noindex, follow (ลด crawl budget leak)
+  const shouldIndex = currentPage <= 5;
+
   return {
     title: currentPage === 1 ? "All Articles | SubTH" : `All Articles - Page ${currentPage} | SubTH`,
     description: "Browse all articles with reviews and detailed analysis on SubTH",
+    robots: {
+      index: shouldIndex,
+      follow: true,
+    },
     alternates: {
-      canonical: currentPage === 1 ? `${BASE_URL}/en/articles` : `${BASE_URL}/en/articles/page/${currentPage}`,
+      canonical: currentPage === 1 ? `${SITE_URL}/en/articles` : `${SITE_URL}/en/articles/page/${currentPage}`,
     },
   };
 }

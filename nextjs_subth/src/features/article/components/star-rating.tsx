@@ -2,22 +2,21 @@ import { Star, StarHalf } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StarRatingProps {
-  score: number; // 1-10 scale
+  rating: number; // 1-5 scale
   showScore?: boolean;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
 
 export function StarRating({
-  score,
+  rating,
   showScore = true,
   size = "md",
   className,
 }: StarRatingProps) {
-  // Convert 1-10 to 5 stars (e.g., 7 = 3.5 stars, 8 = 4 stars)
-  const starValue = score / 2;
-  const fullStars = Math.floor(starValue);
-  const hasHalfStar = starValue % 1 >= 0.5;
+  // rating is already 1-5 scale
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
   const sizeClasses = {
@@ -65,7 +64,7 @@ export function StarRating({
       </div>
       {showScore && (
         <span className={cn(textClasses[size], "text-muted-foreground")}>
-          {(score / 2).toFixed(1).replace(/\.0$/, "")}/5
+          {rating.toFixed(1).replace(/\.0$/, "")}/5
         </span>
       )}
     </div>

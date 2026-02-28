@@ -71,10 +71,13 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 		language = req.Language
 	}
 
-	// ถ้า qualityScore ไม่ได้ส่งมา ลองอ่านจาก content (V3 ใช้ rating 1-5)
+	// ถ้า qualityScore ไม่ได้ส่งมา ลองอ่านจาก content (rating 1-5 → qualityScore 1-10)
 	qualityScore := req.QualityScore
 	if qualityScore == 0 {
-		qualityScore = extractQualityScoreFromContent(content)
+		rating := extractRatingFromContent(content)
+		if rating > 0 {
+			qualityScore = int(rating * 2)
+		}
 	}
 
 	// ตรวจสอบว่ามี article สำหรับ video + language นี้แล้วหรือไม่
@@ -656,11 +659,8 @@ func (s *ArticleServiceImpl) ListArticlesByMaker(ctx context.Context, makerSlug 
 func (s *ArticleServiceImpl) mapToPublicSummaries(articles []repositories.PublishedArticleWithVideo) []dto.PublicArticleSummary {
 	result := make([]dto.PublicArticleSummary, len(articles))
 	for i, a := range articles {
-		// ถ้า QualityScore เป็น 0 ให้ดึงจาก content (V3 ใช้ rating 1-5)
-		qualityScore := a.QualityScore
-		if qualityScore == 0 {
-			qualityScore = extractQualityScoreFromContent(a.Content)
-		}
+		// ดึง rating (1-5) จาก content โดยตรง
+		rating := extractRatingFromContent(a.Content)
 
 		item := dto.PublicArticleSummary{
 			Slug:            a.Slug,
@@ -670,7 +670,7 @@ func (s *ArticleServiceImpl) mapToPublicSummaries(articles []repositories.Publis
 			MetaDescription: a.MetaDescription,
 			ThumbnailUrl:    a.VideoThumbnail,
 			VideoCode:       a.VideoCode,
-			QualityScore:    qualityScore,
+			Rating:          rating,
 			CastNames:       a.CastNames,
 			MakerName:       a.MakerName,
 			Tags:            a.TagNames,
@@ -829,32 +829,19 @@ func extractThumbnailFromContent(content []byte) string {
 	return data.ThumbnailUrl
 }
 
-// extractQualityScoreFromContent ดึง qualityScore จาก content JSON
-// สำหรับ V2: ใช้ qualityScore (1-10) โดยตรง
-// สำหรับ V3: แปลง rating (1-5) เป็น qualityScore (1-10) โดยคูณ 2
-func extractQualityScoreFromContent(content []byte) int {
+// extractRatingFromContent ดึง rating (1-5) จาก content JSON
+func extractRatingFromContent(content []byte) float64 {
 	if len(content) == 0 {
 		return 0
 	}
 
 	var data struct {
-		QualityScore int     `json:"qualityScore"` // V2 format (1-10)
-		Rating       float64 `json:"rating"`       // V3 format (1-5)
+		Rating float64 `json:"rating"` // 1-5 scale
 	}
 
 	if err := json.Unmarshal(content, &data); err != nil {
 		return 0
 	}
 
-	// ถ้ามี qualityScore (V2) ใช้เลย
-	if data.QualityScore > 0 {
-		return data.QualityScore
-	}
-
-	// ถ้ามี rating (V3) แปลงเป็น 1-10 scale
-	if data.Rating > 0 {
-		return int(data.Rating * 2)
-	}
-
-	return 0
+	return data.Rating
 }

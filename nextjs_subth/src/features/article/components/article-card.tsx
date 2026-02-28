@@ -75,8 +75,8 @@ export function ArticleCard({ article, priority = false }: ArticleCardProps) {
 
         {/* Rating & Date */}
         <div className="mt-1.5 flex items-center justify-between">
-          {article.qualityScore ? (
-            <StarRating score={article.qualityScore} size="sm" showScore={false} />
+          {article.rating ? (
+            <StarRating rating={article.rating} size="sm" showScore={false} />
           ) : (
             <div />
           )}

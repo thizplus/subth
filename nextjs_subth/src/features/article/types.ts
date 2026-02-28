@@ -129,7 +129,7 @@ export interface ContextualLink {
   linkedTitle: string;
   text: string;
   thumbnailUrl?: string;
-  qualityScore?: number;
+  rating?: number; // 1-5 scale
 }
 
 export interface KeyMoment {
@@ -176,7 +176,7 @@ export interface ArticleSummary {
   castNames?: string[];
   makerName?: string;
   tags?: string[];
-  qualityScore?: number;
+  rating?: number; // 1-5 scale
 }
 
 export interface ArticleListParams {

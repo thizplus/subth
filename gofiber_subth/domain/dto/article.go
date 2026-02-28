@@ -165,7 +165,7 @@ type PublicArticleSummary struct {
 	ThumbnailUrl    string   `json:"thumbnailUrl"`
 	VideoCode       string   `json:"videoCode"`
 	PublishedAt     string   `json:"publishedAt"`
-	QualityScore    int      `json:"qualityScore,omitempty"`
+	Rating          float64  `json:"rating,omitempty"` // 1-5 scale
 	CastNames       []string `json:"castNames,omitempty"`
 	MakerName       string   `json:"makerName,omitempty"`
 	Tags            []string `json:"tags,omitempty"`

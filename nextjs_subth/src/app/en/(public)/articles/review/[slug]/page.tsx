@@ -7,6 +7,7 @@ import {
   // Above-fold components (critical path)
   AudioPlayer,
   ThumbnailWithCTA,
+  ThumbnailImage,
   KeyMomentsPreview,
   CastCard,
   MakerCard,
@@ -21,7 +22,6 @@ import {
   FAQPageSchema,
   ArticleSchema,
   BreadcrumbSchema,
-  HowToSchema,
 } from "@/features/article";
 
 // Below-fold components - dynamic import with SSR for SEO
@@ -161,15 +161,6 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
         locale="en"
       />
       <BreadcrumbSchema title={article.title} slug={article.slug} type="review" locale="en" />
-      {content.viewingTips && (
-        <HowToSchema
-          title={`How to Watch ${article.title}`}
-          description={`Tips for watching ${article.videoCode} for the best experience`}
-          tips={content.viewingTips}
-          videoCode={article.videoCode}
-          locale="en"
-        />
-      )}
 
       <article className="mx-auto max-w-4xl px-4 py-6 md:py-8">
         <ArticleBreadcrumb
@@ -181,12 +172,12 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
           
         />
 
-        <ThumbnailWithCTA
-          thumbnailUrl={content.thumbnailUrl}
-          thumbnailAlt={content.thumbnailAlt}
-          videoId={content.videoId}
-          title={article.title}
-        />
+        <ThumbnailWithCTA videoId={content.videoId}>
+          <ThumbnailImage
+            src={content.thumbnailUrl}
+            alt={content.thumbnailAlt || article.title}
+          />
+        </ThumbnailWithCTA>
 
         {content.summaryShort && (
           <p className="mt-4 text-lg text-muted-foreground">

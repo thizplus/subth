@@ -2,6 +2,7 @@ export { ArticleCard } from "./article-card";
 export { AudioPlayer } from "./audio-player";
 export { StarRating } from "./star-rating";
 export { ThumbnailWithCTA } from "./thumbnail-with-cta";
+export { ThumbnailImage } from "./thumbnail-image";
 export { KeyMomentsPreview } from "./key-moments-preview";
 export { GallerySection } from "./gallery-section";
 export { InlineGallery } from "./inline-gallery";
@@ -39,5 +40,4 @@ export {
   ArticleSchema,
   BreadcrumbSchema,
   ItemListSchema,
-  HowToSchema,
 } from "./schema";

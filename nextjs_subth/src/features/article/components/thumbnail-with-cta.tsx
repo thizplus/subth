@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,17 +7,14 @@ import { LoginDialog, useAuthStore } from "@/features/auth";
 import { useDictionary } from "@/components/dictionary-provider";
 
 interface ThumbnailWithCTAProps {
-  thumbnailUrl: string;
-  thumbnailAlt: string;
   videoId: string;
-  title: string;
+  children: React.ReactNode; // Server-rendered image
 }
 
+// Client Component - แค่ CTA overlay, image มาจาก children (Server Component)
 export function ThumbnailWithCTA({
-  thumbnailUrl,
-  thumbnailAlt,
   videoId,
-  title,
+  children,
 }: ThumbnailWithCTAProps) {
   const { isAuthenticated } = useAuthStore();
   const { t, locale, getLocalizedPath } = useDictionary();
@@ -27,17 +23,10 @@ export function ThumbnailWithCTA({
 
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
-      <Image
-        src={thumbnailUrl}
-        alt={thumbnailAlt || title}
-        fill
-        priority
-        fetchPriority="high"
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-      />
+      {/* Server-rendered image (จะอยู่ใน initial HTML) */}
+      {children}
 
-      {/* Play overlay */}
+      {/* Client-side CTA overlay */}
       <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors hover:bg-black/40">
         {isAuthenticated ? (
           <Button size="lg" className="gap-2 rounded-full px-6 py-6" asChild>

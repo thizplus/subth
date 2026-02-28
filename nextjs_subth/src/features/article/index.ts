@@ -3,6 +3,7 @@ export {
   ArticleCard,
   AudioPlayer,
   ThumbnailWithCTA,
+  ThumbnailImage,
   KeyMomentsPreview,
   GallerySection,
   FAQAccordion,
@@ -18,7 +19,6 @@ export {
   ArticleSchema,
   BreadcrumbSchema,
   ItemListSchema,
-  HowToSchema,
   // Chunk 4: Deep Analysis Sections
   CharacterJourneySection,
   CinematographySection,

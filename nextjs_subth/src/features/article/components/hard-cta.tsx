@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Play, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDictionary } from "@/components/dictionary-provider";
+import { LoginDialog, useAuthStore } from "@/features/auth";
 
 interface HardCTAProps {
   videoId: string;
@@ -11,13 +12,24 @@ interface HardCTAProps {
 }
 
 export function HardCTA({ videoId, className }: HardCTAProps) {
-  const { t, getLocalizedPath } = useDictionary();
+  const { t, locale, getLocalizedPath } = useDictionary();
+  const { isAuthenticated } = useAuthStore();
 
   const benefits = [
     t("article.benefitQualitySub"),
     t("article.benefitDailyUpdate"),
     t("article.benefitNoAds"),
   ];
+
+  const buttonContent = (
+    <>
+      <Play className="h-5 w-5" />
+      {t("common.watchVideo")}
+    </>
+  );
+
+  const buttonClassName =
+    "inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors";
 
   return (
     <div
@@ -43,13 +55,15 @@ export function HardCTA({ videoId, className }: HardCTAProps) {
           ))}
         </div>
 
-        <Link
-          href={getLocalizedPath(`/member/videos/${videoId}`)}
-          className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors"
-        >
-          <Play className="h-5 w-5" />
-          {t("common.watchVideo")}
-        </Link>
+        {isAuthenticated ? (
+          <Link href={getLocalizedPath(`/member/videos/${videoId}`)} className={buttonClassName}>
+            {buttonContent}
+          </Link>
+        ) : (
+          <LoginDialog locale={locale as "th" | "en"}>
+            <button className={buttonClassName}>{buttonContent}</button>
+          </LoginDialog>
+        )}
       </div>
     </div>
   );

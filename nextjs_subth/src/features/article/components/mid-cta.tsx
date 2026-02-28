@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDictionary } from "@/components/dictionary-provider";
+import { LoginDialog, useAuthStore } from "@/features/auth";
 
 interface MidCTAProps {
   videoId: string;
@@ -11,7 +12,18 @@ interface MidCTAProps {
 }
 
 export function MidCTA({ videoId, className }: MidCTAProps) {
-  const { t, getLocalizedPath } = useDictionary();
+  const { t, locale, getLocalizedPath } = useDictionary();
+  const { isAuthenticated } = useAuthStore();
+
+  const buttonContent = (
+    <>
+      <Play className="h-4 w-4" />
+      {t("common.watchVideo")}
+    </>
+  );
+
+  const buttonClassName =
+    "inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors";
 
   return (
     <div
@@ -29,13 +41,18 @@ export function MidCTA({ videoId, className }: MidCTAProps) {
             {t("common.videoTypes")}
           </p>
         </div>
-        <Link
-          href={getLocalizedPath(`/member/videos/${videoId}`)}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors"
-        >
-          <Play className="h-4 w-4" />
-          {t("common.watchVideo")}
-        </Link>
+        {isAuthenticated ? (
+          <Link
+            href={getLocalizedPath(`/member/videos/${videoId}`)}
+            className={buttonClassName}
+          >
+            {buttonContent}
+          </Link>
+        ) : (
+          <LoginDialog locale={locale as "th" | "en"}>
+            <button className={buttonClassName}>{buttonContent}</button>
+          </LoginDialog>
+        )}
       </div>
     </div>
   );

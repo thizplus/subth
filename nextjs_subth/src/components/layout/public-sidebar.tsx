@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Play, FileText, Users, Tags } from "lucide-react";
+import { Home, Play, FileText, Users, Tags, Film } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -46,6 +46,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
       allReviews: "รีวิวทั้งหมด",
       casts: "นักแสดง",
       tags: "แท็ก",
+      reels: "คลิปสั้น",
       memberTitle: "ดูวิดีโอทั้งหมด",
       memberSubtitle: "JAV ซับไทย ครบทุกค่าย",
     },
@@ -55,6 +56,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
       allReviews: "All Reviews",
       casts: "Casts",
       tags: "Tags",
+      reels: "Reels",
       memberTitle: "All Our Videos",
       memberSubtitle: "JAV Thai Sub, All Studios",
     },
@@ -71,6 +73,11 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
       title: t.allReviews,
       href: `${basePath}/articles`,
       icon: FileText,
+    },
+    {
+      title: t.reels,
+      href: `${basePath}/reels`,
+      icon: Film,
     },
     {
       title: t.casts,

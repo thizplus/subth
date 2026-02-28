@@ -122,7 +122,7 @@ export function ArticleMainContent({
           <div className="mt-4 flex flex-wrap gap-4">
             {content.tone && (
               <div className="px-3 py-1.5 bg-muted rounded-lg text-sm">
-                <span className="text-muted-foreground">อารมณ์: </span>
+                <span className="text-muted-foreground">{t("article.tone")}: </span>
                 <span className="font-medium">{content.tone}</span>
               </div>
             )}
@@ -207,6 +207,3 @@ export function ArticleMainContent({
     </div>
   );
 }
-
-// Backward compatibility alias
-export const ArticleContentV3Component = ArticleMainContent;

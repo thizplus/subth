@@ -10,8 +10,8 @@ export { RelatedSearches } from "./related-searches";
 export { FactsTable } from "./facts-table";
 export { MidCTA } from "./mid-cta";
 export { HardCTA } from "./hard-cta";
-export { ArticleMainContent, ArticleContentV3Component } from "./article-content-v3";
-export { ArticlePage, ArticlePageV3 } from "./article-page-v3";
+export { ArticleMainContent } from "./article-content";
+export { ArticlePage } from "./article-page";
 export { ThumbnailWithCTA } from "./thumbnail-with-cta";
 export { ThumbnailImage } from "./thumbnail-image";
 export { EntityContext } from "./entity-context";
@@ -50,7 +50,6 @@ export {
   ArticleSchema,
   BreadcrumbSchema,
   ItemListSchema,
-  VideoObjectSchemaV3,
+  VideoObjectSchema,
   JsonLdScripts,
-  JsonLdScriptsV3,
 } from "./schema";

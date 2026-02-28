@@ -1,7 +1,7 @@
 import { SITE_URL } from "@/lib/constants";
 import type { ArticleContent } from "../../types";
 
-interface VideoObjectSchemaV3Props {
+interface VideoObjectSchemaProps {
   content: ArticleContent;
   videoCode: string;
   videoId: string;
@@ -20,13 +20,13 @@ function formatDateWithTimezone(dateStr: string): string {
   return date.toISOString();
 }
 
-export function VideoObjectSchemaV3({
+export function VideoObjectSchema({
   content,
   videoCode,
   videoId,
   publishedAt,
   locale = "th",
-}: VideoObjectSchemaV3Props) {
+}: VideoObjectSchemaProps) {
   const videoPageUrl = videoId ? `${SITE_URL}/member/videos/${videoId}` : null;
 
   // Convert durationMinutes to ISO 8601 duration

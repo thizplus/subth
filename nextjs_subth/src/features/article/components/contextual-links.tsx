@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, ArrowUpRight } from "lucide-react";
+import { Sparkles, Play } from "lucide-react";
 import { useDictionary } from "@/components/dictionary-provider";
 import type { ContextualLink } from "../types";
 import { StarRating } from "./star-rating";
@@ -12,7 +12,7 @@ interface ContextualLinksProps {
 }
 
 export function ContextualLinks({ links }: ContextualLinksProps) {
-  const { t } = useDictionary();
+  const { t, getLocalizedPath } = useDictionary();
 
   if (!links?.length) {
     return null;
@@ -25,41 +25,50 @@ export function ContextualLinks({ links }: ContextualLinksProps) {
         {t("article.youMayLike")}
       </h2>
 
-      <div className="space-y-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         {links.map((link, index) => (
           <Link
             key={index}
-            href={`/articles/review/${link.linkedSlug}`}
-            className="group flex flex-col sm:flex-row gap-3 sm:gap-4 rounded-xl border bg-gradient-to-br from-muted/30 to-transparent p-3 transition-all hover:border-primary/30 hover:shadow-md"
+            href={getLocalizedPath(`/articles/review/${link.linkedSlug}`)}
+            className="group block overflow-hidden rounded-xl border bg-card transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
           >
-            {link.thumbnailUrl && (
-              <div className="relative aspect-video sm:aspect-auto sm:h-20 sm:w-32 shrink-0 overflow-hidden rounded-lg">
+            {/* Thumbnail with overlay */}
+            <div className="relative aspect-video overflow-hidden">
+              {link.thumbnailUrl ? (
                 <Image
                   src={link.thumbnailUrl}
                   alt={link.linkedTitle}
                   fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, 128px"
+                  className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  sizes="(max-width: 640px) 100vw, 50vw"
                 />
+              ) : (
+                <div className="h-full w-full bg-muted" />
+              )}
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              {/* Play indicator */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/90 text-primary-foreground shadow-lg">
+                  <Play className="h-5 w-5 fill-current" />
+                </div>
               </div>
-            )}
-            <div className="flex flex-1 flex-col gap-1.5 sm:gap-1 sm:py-0.5">
-              <p className="text-sm text-muted-foreground">
+              {/* Rating badge */}
+              {link.rating && (
+                <div className="absolute bottom-2 left-2">
+                  <StarRating rating={link.rating} showScore={true} size="sm" />
+                </div>
+              )}
+            </div>
+
+            {/* Content */}
+            <div className="p-3">
+              <p className="mb-1 text-xs text-primary font-medium line-clamp-1">
                 {link.text}
               </p>
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-medium text-sm line-clamp-1 group-hover:text-primary min-w-0">
-                  {link.linkedTitle}
-                </p>
-                <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" />
-              </div>
-              {link.rating && (
-                <StarRating
-                  rating={link.rating}
-                  showScore={true}
-                  size="sm"
-                />
-              )}
+              <h3 className="font-semibold text-sm line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+                {link.linkedTitle}
+              </h3>
             </div>
           </Link>
         ))}

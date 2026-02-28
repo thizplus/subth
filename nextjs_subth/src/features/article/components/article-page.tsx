@@ -17,8 +17,8 @@ import { ThumbnailWithCTA } from "./thumbnail-with-cta";
 import { ThumbnailImage } from "./thumbnail-image";
 import { AuthorByline } from "./author-byline";
 import { TrustBadge } from "./trust-badge";
-import { ArticleMainContent } from "./article-content-v3";
-import { JsonLdScripts } from "./schema/json-ld-scripts-v3";
+import { ArticleMainContent } from "./article-content";
+import { JsonLdScripts } from "./schema/json-ld-scripts";
 import type { Article } from "../types";
 
 interface ArticlePageProps {
@@ -95,6 +95,3 @@ export function ArticlePage({ article, locale = "th" }: ArticlePageProps) {
       </PublicLayout>
   );
 }
-
-// Backward compatibility alias
-export const ArticlePageV3 = ArticlePage;

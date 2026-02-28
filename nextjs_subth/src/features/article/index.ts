@@ -19,7 +19,7 @@ export {
   ArticleSchema,
   BreadcrumbSchema,
   ItemListSchema,
-  // Chunk 4: Deep Analysis Sections
+  // Deep Analysis Sections
   CharacterJourneySection,
   CinematographySection,
   EducationalSection,
@@ -43,13 +43,10 @@ export {
   MidCTA,
   HardCTA,
   ArticleMainContent,
-  ArticleContentV3Component, // Backward compat alias
   ArticlePage,
-  ArticlePageV3, // Backward compat alias
   // Schemas
-  VideoObjectSchemaV3,
+  VideoObjectSchema,
   JsonLdScripts,
-  JsonLdScriptsV3, // Backward compat alias
 } from "./components";
 
 // Service
@@ -71,13 +68,11 @@ export type {
   FAQItem,
   GalleryImage,
   ArticleResponse,
-  // Legacy V2 types (for backward compatibility)
   EmotionalArcPoint,
   ContextualLink,
   KeyMoment,
   RelatedVideo,
   TopQuote,
-  // List types
   ArticleSummary,
   ArticleListParams,
   ArticleListResponse,

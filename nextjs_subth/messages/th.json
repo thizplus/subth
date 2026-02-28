@@ -92,7 +92,8 @@
     "benefitQualitySub": "ซับไทยคุณภาพ",
     "benefitDailyUpdate": "อัพเดททุกวัน",
     "benefitNoAds": "ไม่มีโฆษณา",
-    "subtitleAvailable": "ซับไทย"
+    "subtitleAvailable": "ซับไทย",
+    "tone": "อารมณ์"
   },
   "home": {
     "title": "SubTH",

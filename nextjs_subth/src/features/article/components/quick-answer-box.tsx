@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 interface QuickAnswerBoxProps {
   quickAnswer: string;
   verdict: string;
-  rating: number; // 1-5 scale (V3 uses 1-5 directly)
+  rating: number; // 1-5 scale
   className?: string;
 }
 

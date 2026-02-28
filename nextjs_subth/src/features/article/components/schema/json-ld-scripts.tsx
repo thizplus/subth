@@ -12,7 +12,7 @@
 import { ArticleSchema } from "./article-schema";
 import { FAQPageSchema } from "./faq-page-schema";
 import { BreadcrumbSchema } from "./breadcrumb-schema";
-import { VideoObjectSchemaV3 } from "./video-object-schema-v3";
+import { VideoObjectSchema } from "./video-object-schema";
 import type { ArticleContent } from "../../types";
 
 interface JsonLdScriptsProps {
@@ -57,7 +57,7 @@ export function JsonLdScripts({
       />
 
       {/* 4. VideoObject Schema */}
-      <VideoObjectSchemaV3
+      <VideoObjectSchema
         content={content}
         videoCode={videoCode}
         videoId={videoId}
@@ -67,6 +67,3 @@ export function JsonLdScripts({
     </>
   );
 }
-
-// Backward compatibility alias
-export const JsonLdScriptsV3 = JsonLdScripts;

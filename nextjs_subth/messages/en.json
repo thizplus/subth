@@ -92,7 +92,8 @@
     "benefitQualitySub": "Quality Subtitles",
     "benefitDailyUpdate": "Daily Updates",
     "benefitNoAds": "Ad-Free",
-    "subtitleAvailable": "Subtitled"
+    "subtitleAvailable": "Subtitled",
+    "tone": "Tone"
   },
   "home": {
     "title": "SubTH",

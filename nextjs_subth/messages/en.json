@@ -88,7 +88,11 @@
     "whoShouldWatch": "Who Should Watch",
     "storyRecap": "Story Recap",
     "reviewSection": "Review",
-    "searchIntents": "Related Topics"
+    "searchIntents": "Related Topics",
+    "benefitQualitySub": "Quality Subtitles",
+    "benefitDailyUpdate": "Daily Updates",
+    "benefitNoAds": "Ad-Free",
+    "subtitleAvailable": "Subtitled"
   },
   "home": {
     "title": "SubTH",

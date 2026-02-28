@@ -88,7 +88,11 @@
     "whoShouldWatch": "เหมาะกับใคร",
     "storyRecap": "สรุปเรื่อง",
     "reviewSection": "รีวิว",
-    "searchIntents": "หัวข้อที่เกี่ยวข้อง"
+    "searchIntents": "หัวข้อที่เกี่ยวข้อง",
+    "benefitQualitySub": "ซับไทยคุณภาพ",
+    "benefitDailyUpdate": "อัพเดททุกวัน",
+    "benefitNoAds": "ไม่มีโฆษณา",
+    "subtitleAvailable": "ซับไทย"
   },
   "home": {
     "title": "SubTH",

@@ -656,6 +656,12 @@ func (s *ArticleServiceImpl) ListArticlesByMaker(ctx context.Context, makerSlug 
 func (s *ArticleServiceImpl) mapToPublicSummaries(articles []repositories.PublishedArticleWithVideo) []dto.PublicArticleSummary {
 	result := make([]dto.PublicArticleSummary, len(articles))
 	for i, a := range articles {
+		// ถ้า QualityScore เป็น 0 ให้ดึงจาก content (V3 ใช้ rating 1-5)
+		qualityScore := a.QualityScore
+		if qualityScore == 0 {
+			qualityScore = extractQualityScoreFromContent(a.Content)
+		}
+
 		item := dto.PublicArticleSummary{
 			Slug:            a.Slug,
 			Language:        a.Language,
@@ -664,7 +670,7 @@ func (s *ArticleServiceImpl) mapToPublicSummaries(articles []repositories.Publis
 			MetaDescription: a.MetaDescription,
 			ThumbnailUrl:    a.VideoThumbnail,
 			VideoCode:       a.VideoCode,
-			QualityScore:    a.QualityScore,
+			QualityScore:    qualityScore,
 			CastNames:       a.CastNames,
 			MakerName:       a.MakerName,
 			Tags:            a.TagNames,

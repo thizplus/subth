@@ -62,6 +62,7 @@ export function JsonLdScripts({
         videoCode={videoCode}
         videoId={videoId}
         publishedAt={publishedAt}
+        locale={locale}
       />
     </>
   );

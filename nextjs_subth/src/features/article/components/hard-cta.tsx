@@ -14,9 +14,9 @@ export function HardCTA({ videoId, className }: HardCTAProps) {
   const { t, getLocalizedPath } = useDictionary();
 
   const benefits = [
-    "ซับไทยคุณภาพ",
-    "อัพเดททุกวัน",
-    "ไม่มีโฆษณา",
+    t("article.benefitQualitySub"),
+    t("article.benefitDailyUpdate"),
+    t("article.benefitNoAds"),
   ];
 
   return (

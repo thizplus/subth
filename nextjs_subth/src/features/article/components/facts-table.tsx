@@ -137,7 +137,7 @@ export function FactsTable({
         {subtitleAvailable && (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-primary/10 text-primary rounded-full">
             <Subtitles className="h-3 w-3" />
-            ซับไทย
+            {t("article.subtitleAvailable")}
           </span>
         )}
       </div>

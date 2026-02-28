@@ -6,6 +6,7 @@ interface VideoObjectSchemaV3Props {
   videoCode: string;
   videoId: string;
   publishedAt: string;
+  locale?: "th" | "en";
 }
 
 // Ensure date has ISO 8601 format with timezone
@@ -24,6 +25,7 @@ export function VideoObjectSchemaV3({
   videoCode,
   videoId,
   publishedAt,
+  locale = "th",
 }: VideoObjectSchemaV3Props) {
   const videoPageUrl = videoId ? `${SITE_URL}/member/videos/${videoId}` : null;
 
@@ -32,10 +34,15 @@ export function VideoObjectSchemaV3({
     ? `PT${content.facts.durationMinutes}M`
     : undefined;
 
+  // Localized video name for schema
+  const videoName = locale === "en"
+    ? `${videoCode} English Subtitles`
+    : `${videoCode} ซับไทย`;
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
-    name: `${videoCode} ซับไทย`,
+    name: videoName,
     description: content.metaDescription,
     thumbnailUrl: content.thumbnailUrl,
     uploadDate: formatDateWithTimezone(publishedAt),

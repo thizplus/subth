@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { PublicLayout } from "@/components/layout/server";
 import {
   getArticleByTypeAndSlug,
@@ -142,6 +142,11 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
     article = await getArticleByTypeAndSlug("review", slug, "en");
   } catch {
     notFound();
+  }
+
+  // Redirect ไปยัง slug ที่ถูกต้องถ้าภาษาไม่ตรง
+  if (article.redirectSlug) {
+    redirect(`/en/articles/review/${article.redirectSlug}`);
   }
 
   const { content } = article;

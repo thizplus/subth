@@ -455,6 +455,15 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 	article, err := s.articleRepo.GetPublishedByTypeSlugAndLanguage(ctx, articleType, slug, language)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// Fallback: ลองหา article จาก slug เดิมแต่ภาษาอื่น
+			// แล้วหา article ที่มี videoId เดียวกันในภาษาที่ต้องการ
+			fallbackArticle, fallbackErr := s.findArticleBySlugFallback(ctx, articleType, slug, language)
+			if fallbackErr == nil && fallbackArticle != nil {
+				// พบ article ในภาษาที่ต้องการ แต่ slug ต่างกัน → return redirect
+				return &dto.PublicArticleResponse{
+					RedirectSlug: fallbackArticle.Slug,
+				}, nil
+			}
 			return nil, errors.New("article not found")
 		}
 		logger.ErrorContext(ctx, "Failed to get published article by type", "type", articleType, "slug", slug, "language", language, "error", err)
@@ -495,6 +504,29 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 	}
 
 	return response, nil
+}
+
+// findArticleBySlugFallback - หา article จาก slug อื่นที่มี videoId เดียวกัน
+// ใช้เมื่อ slug ไม่ตรงกับภาษาที่ต้องการ (เช่น EN slug แต่ขอ TH)
+func (s *ArticleServiceImpl) findArticleBySlugFallback(ctx context.Context, articleType string, slug string, targetLanguage string) (*models.Article, error) {
+	// 1. หา article จาก slug โดยไม่สน language
+	sourceArticle, err := s.articleRepo.GetPublishedByTypeSlugAndLanguage(ctx, articleType, slug, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. ถ้าภาษาตรงกันอยู่แล้ว ไม่ต้อง fallback
+	if sourceArticle.Language == targetLanguage {
+		return nil, errors.New("same language")
+	}
+
+	// 3. หา article ที่มี videoId เดียวกัน แต่ภาษาที่ต้องการ
+	targetArticle, err := s.articleRepo.GetPublishedByVideoIDAndLanguage(ctx, sourceArticle.VideoID, targetLanguage)
+	if err != nil {
+		return nil, err
+	}
+
+	return targetArticle, nil
 }
 
 // ========================================

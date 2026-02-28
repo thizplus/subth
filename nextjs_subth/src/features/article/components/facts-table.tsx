@@ -46,7 +46,6 @@ export function FactsTable({
               <Link
                 href={getLocalizedPath(profile.profileUrl)}
                 className="text-primary hover:underline"
-                itemProp="actor"
               >
                 {profile.name}
               </Link>
@@ -56,7 +55,7 @@ export function FactsTable({
         </div>
       );
     }
-    return <span itemProp="actor">{cast.join(", ")}</span>;
+    return <span>{cast.join(", ")}</span>;
   };
 
   // Build studio display with link if makerInfo available
@@ -66,13 +65,12 @@ export function FactsTable({
         <Link
           href={getLocalizedPath(makerInfo.profileUrl)}
           className="text-primary hover:underline"
-          itemProp="productionCompany"
         >
           {makerInfo.name}
         </Link>
       );
     }
-    return <span itemProp="productionCompany">{studio}</span>;
+    return <span>{studio}</span>;
   };
 
   const facts = [
@@ -80,7 +78,6 @@ export function FactsTable({
       icon: Tag,
       label: t("video.code"),
       value: code,
-      itemProp: "identifier",
     },
     {
       icon: Building2,
@@ -96,14 +93,11 @@ export function FactsTable({
       icon: Clock,
       label: t("article.duration"),
       value: duration,
-      itemProp: "duration",
-      itemValue: `PT${durationMinutes}M`,
     },
     {
       icon: Calendar,
       label: t("video.releaseDate"),
       value: releaseYear,
-      itemProp: "datePublished",
     },
   ];
 
@@ -113,8 +107,6 @@ export function FactsTable({
         "rounded-xl border bg-card p-4 my-6",
         className
       )}
-      itemScope
-      itemType="https://schema.org/Movie"
     >
       <div className="grid gap-3 sm:grid-cols-2">
         {facts.map((fact, i) => (
@@ -125,13 +117,7 @@ export function FactsTable({
             <div className="flex-1 min-w-0">
               <p className="text-xs text-muted-foreground">{fact.label}</p>
               <div className="font-medium text-sm truncate">
-                {fact.itemProp ? (
-                  <span itemProp={fact.itemProp} content={fact.itemValue}>
-                    {fact.value}
-                  </span>
-                ) : (
-                  fact.value
-                )}
+                {fact.value}
               </div>
             </div>
           </div>
@@ -144,7 +130,6 @@ export function FactsTable({
           <span
             key={i}
             className="px-2.5 py-1 text-xs bg-muted rounded-full"
-            itemProp="genre"
           >
             {g}
           </span>

@@ -39,6 +39,7 @@ type ArticleRepository interface {
 	GetPublishedBySlugAndLanguage(ctx context.Context, slug string, language string) (*models.Article, error)
 	GetPublishedByTypeAndSlug(ctx context.Context, articleType string, slug string) (*models.Article, error)
 	GetPublishedByTypeSlugAndLanguage(ctx context.Context, articleType string, slug string, language string) (*models.Article, error)
+	GetPublishedByVideoIDAndLanguage(ctx context.Context, videoID uuid.UUID, language string) (*models.Article, error)
 
 	// Public Listing (for SEO pages)
 	ListPublished(ctx context.Context, params PublicArticleListParams) ([]PublishedArticleWithVideo, int64, error)

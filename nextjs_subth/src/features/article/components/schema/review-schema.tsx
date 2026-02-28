@@ -43,7 +43,7 @@ export function ReviewSchema({
     "@context": "https://schema.org",
     "@type": "Review",
     itemReviewed: {
-      "@type": "Movie",
+      "@type": "CreativeWork",
       name: itemName,
       identifier: videoCode,
     },

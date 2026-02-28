@@ -12,6 +12,7 @@ export interface Article {
   content: ArticleContent;
   videoCode: string;
   publishedAt: string;
+  redirectSlug?: string; // สำหรับ redirect เมื่อ slug ไม่ตรงกับภาษา
 }
 
 export interface ArticleContent {
@@ -299,6 +300,7 @@ export interface ArticleV3 {
   videoId: string;
   publishedAt: string;
   content: ArticleContentV3;
+  redirectSlug?: string; // สำหรับ redirect เมื่อ slug ไม่ตรงกับภาษา
 }
 
 export interface ArticleV3Response {

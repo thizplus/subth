@@ -262,6 +262,19 @@ func (r *articleRepositoryImpl) GetPublishedByTypeSlugAndLanguage(ctx context.Co
 	return &article, nil
 }
 
+func (r *articleRepositoryImpl) GetPublishedByVideoIDAndLanguage(ctx context.Context, videoID uuid.UUID, language string) (*models.Article, error) {
+	var article models.Article
+
+	query := r.db.WithContext(ctx).
+		Where("video_id = ? AND status = ? AND language = ?", videoID, models.ArticleStatusPublished, language)
+
+	err := query.First(&article).Error
+	if err != nil {
+		return nil, err
+	}
+	return &article, nil
+}
+
 // ========================================
 // Public Listing Methods (for SEO pages)
 // ========================================

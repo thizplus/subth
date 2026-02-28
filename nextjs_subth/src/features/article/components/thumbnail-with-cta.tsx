@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Play, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,26 +32,30 @@ export function ThumbnailWithCTA({
   const [embedUrl, setEmbedUrl] = useState<string | null>(null);
   const [error, setError] = useState(false);
 
-  // Fetch video embedUrl when authenticated user clicks play
-  const handlePlayClick = useCallback(async () => {
-    if (!videoId || embedUrl) return;
+  // Auto-fetch video embedUrl when user is authenticated
+  useEffect(() => {
+    if (!isAuthenticated || !videoId || embedUrl || isLoading) return;
 
-    setIsLoading(true);
-    setError(false);
+    const fetchVideo = async () => {
+      setIsLoading(true);
+      setError(false);
 
-    try {
-      const video = await apiClient.get<VideoData>(API_ROUTES.VIDEOS.BY_ID(videoId));
-      if (video.embedUrl) {
-        setEmbedUrl(video.embedUrl);
-      } else {
+      try {
+        const video = await apiClient.get<VideoData>(API_ROUTES.VIDEOS.BY_ID(videoId));
+        if (video.embedUrl) {
+          setEmbedUrl(video.embedUrl);
+        } else {
+          setError(true);
+        }
+      } catch {
         setError(true);
+      } finally {
+        setIsLoading(false);
       }
-    } catch {
-      setError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [videoId, embedUrl]);
+    };
+
+    fetchVideo();
+  }, [isAuthenticated, videoId, embedUrl, isLoading]);
 
   // Show video player if embedUrl is loaded
   if (embedUrl) {
@@ -67,45 +71,46 @@ export function ThumbnailWithCTA({
     );
   }
 
+  // Loading state for authenticated users
+  if (isAuthenticated && isLoading) {
+    return (
+      <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
+        {children}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+          <Loader2 className="h-10 w-10 animate-spin text-white" />
+        </div>
+      </div>
+    );
+  }
+
+  // Error fallback for authenticated users - link to video page
+  if (isAuthenticated && error) {
+    return (
+      <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
+        {children}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+          <Button size="lg" className="gap-2 rounded-full px-6 py-6" asChild>
+            <Link href={videoPath}>
+              <Play className="h-6 w-6 fill-current" />
+              <span className="text-lg font-semibold">{buttonText}</span>
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Default: Show thumbnail with login CTA for non-authenticated users
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
-      {/* Server-rendered image (จะอยู่ใน initial HTML) */}
       {children}
-
-      {/* Client-side CTA overlay */}
       <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors hover:bg-black/40">
-        {isAuthenticated ? (
-          isLoading ? (
-            <Button size="lg" className="gap-2 rounded-full px-6 py-6" disabled>
-              <Loader2 className="h-6 w-6 animate-spin" />
-              <span className="text-lg font-semibold">{t("common.loading")}</span>
-            </Button>
-          ) : error ? (
-            // Fallback to link if embed fails
-            <Button size="lg" className="gap-2 rounded-full px-6 py-6" asChild>
-              <Link href={videoPath}>
-                <Play className="h-6 w-6 fill-current" />
-                <span className="text-lg font-semibold">{buttonText}</span>
-              </Link>
-            </Button>
-          ) : (
-            <Button
-              size="lg"
-              className="gap-2 rounded-full px-6 py-6"
-              onClick={handlePlayClick}
-            >
-              <Play className="h-6 w-6 fill-current" />
-              <span className="text-lg font-semibold">{buttonText}</span>
-            </Button>
-          )
-        ) : (
-          <LoginDialog locale={locale as "th" | "en"}>
-            <Button size="lg" className="gap-2 rounded-full px-6 py-6">
-              <Play className="h-6 w-6 fill-current" />
-              <span className="text-lg font-semibold">{buttonText}</span>
-            </Button>
-          </LoginDialog>
-        )}
+        <LoginDialog locale={locale as "th" | "en"}>
+          <Button size="lg" className="gap-2 rounded-full px-6 py-6">
+            <Play className="h-6 w-6 fill-current" />
+            <span className="text-lg font-semibold">{buttonText}</span>
+          </Button>
+        </LoginDialog>
       </div>
     </div>
   );

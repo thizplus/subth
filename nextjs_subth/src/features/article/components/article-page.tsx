@@ -61,13 +61,15 @@ export function ArticlePage({ article, locale = "th" }: ArticlePageProps) {
           {/* Breadcrumb */}
           <ArticleBreadcrumb items={breadcrumbItems} />
 
-          {/* Thumbnail with CTA */}
-          <ThumbnailWithCTA videoId={article.videoId}>
-            <ThumbnailImage
-              src={content.thumbnailUrl}
-              alt={content.titleBalanced}
-            />
-          </ThumbnailWithCTA>
+          {/* Video Player / Thumbnail */}
+          <div id="video-player" className="scroll-mt-20">
+            <ThumbnailWithCTA videoId={article.videoId}>
+              <ThumbnailImage
+                src={content.thumbnailUrl}
+                alt={content.titleBalanced}
+              />
+            </ThumbnailWithCTA>
+          </div>
 
           {/* H1 Title */}
           <h1 className="mt-6 text-2xl font-bold md:text-3xl">

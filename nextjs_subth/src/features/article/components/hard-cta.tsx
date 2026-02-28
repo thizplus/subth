@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Play, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDictionary } from "@/components/dictionary-provider";
@@ -12,8 +11,15 @@ interface HardCTAProps {
 }
 
 export function HardCTA({ videoId, className }: HardCTAProps) {
-  const { t, locale, getLocalizedPath } = useDictionary();
+  const { t, locale } = useDictionary();
   const { isAuthenticated } = useAuthStore();
+
+  const handleScrollToVideo = () => {
+    const videoSection = document.getElementById("video-player");
+    if (videoSection) {
+      videoSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const benefits = [
     t("article.benefitQualitySub"),
@@ -29,7 +35,7 @@ export function HardCTA({ videoId, className }: HardCTAProps) {
   );
 
   const buttonClassName =
-    "inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors";
+    "inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors cursor-pointer";
 
   return (
     <div
@@ -56,9 +62,9 @@ export function HardCTA({ videoId, className }: HardCTAProps) {
         </div>
 
         {isAuthenticated ? (
-          <Link href={getLocalizedPath(`/member/videos/${videoId}`)} className={buttonClassName}>
+          <button onClick={handleScrollToVideo} className={buttonClassName}>
             {buttonContent}
-          </Link>
+          </button>
         ) : (
           <LoginDialog locale={locale as "th" | "en"}>
             <button className={buttonClassName}>{buttonContent}</button>

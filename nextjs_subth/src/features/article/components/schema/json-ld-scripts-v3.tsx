@@ -1,5 +1,5 @@
 /**
- * JsonLdScriptsV3 - Combined JSON-LD schemas for V3 Article pages
+ * JsonLdScripts - Combined JSON-LD schemas for Article pages
  * Server Component - outputs all 4 required schemas
  *
  * Schemas included:
@@ -13,23 +13,23 @@ import { ArticleSchema } from "./article-schema";
 import { FAQPageSchema } from "./faq-page-schema";
 import { BreadcrumbSchema } from "./breadcrumb-schema";
 import { VideoObjectSchemaV3 } from "./video-object-schema-v3";
-import type { ArticleContentV3 } from "../../types";
+import type { ArticleContent } from "../../types";
 
-interface JsonLdScriptsV3Props {
-  content: ArticleContentV3;
+interface JsonLdScriptsProps {
+  content: ArticleContent;
   videoCode: string;
   videoId: string;
   publishedAt: string;
   locale?: "th" | "en";
 }
 
-export function JsonLdScriptsV3({
+export function JsonLdScripts({
   content,
   videoCode,
   videoId,
   publishedAt,
   locale = "th",
-}: JsonLdScriptsV3Props) {
+}: JsonLdScriptsProps) {
   return (
     <>
       {/* 1. Article Schema */}
@@ -66,3 +66,6 @@ export function JsonLdScriptsV3({
     </>
   );
 }
+
+// Backward compatibility alias
+export const JsonLdScriptsV3 = JsonLdScripts;

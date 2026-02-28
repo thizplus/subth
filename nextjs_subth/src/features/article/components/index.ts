@@ -2,7 +2,7 @@ export { ArticleCard } from "./article-card";
 export { AudioPlayer } from "./audio-player";
 export { StarRating } from "./star-rating";
 
-// V3 Components
+// Article Components
 export { QuickAnswerBox } from "./quick-answer-box";
 export { FeaturedSceneBox } from "./featured-scene-box";
 export { ProsCons } from "./pros-cons";
@@ -10,8 +10,8 @@ export { RelatedSearches } from "./related-searches";
 export { FactsTable } from "./facts-table";
 export { MidCTA } from "./mid-cta";
 export { HardCTA } from "./hard-cta";
-export { ArticleContentV3Component } from "./article-content-v3";
-export { ArticlePageV3 } from "./article-page-v3";
+export { ArticleMainContent, ArticleContentV3Component } from "./article-content-v3";
+export { ArticlePage, ArticlePageV3 } from "./article-page-v3";
 export { ThumbnailWithCTA } from "./thumbnail-with-cta";
 export { ThumbnailImage } from "./thumbnail-image";
 export { EntityContext } from "./entity-context";
@@ -34,7 +34,6 @@ export { EducationalSection } from "./educational-section";
 export { ViewingTipsSection } from "./viewing-tips-section";
 
 // Navigation
-export { TableOfContents } from "./table-of-contents";
 export { ArticleBreadcrumb } from "./article-breadcrumb";
 
 // Author
@@ -47,12 +46,11 @@ export { ThematicKeywords } from "./thematic-keywords";
 
 // Schema components
 export {
-  VideoObjectSchema,
   FAQPageSchema,
   ArticleSchema,
   BreadcrumbSchema,
   ItemListSchema,
-  // V3 Schemas
   VideoObjectSchemaV3,
+  JsonLdScripts,
   JsonLdScriptsV3,
 } from "./schema";

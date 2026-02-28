@@ -1,23 +1,12 @@
 /**
- * ArticlePageV3 - Complete V3 Article Page Layout
- *
- * Usage: Replace the entire page content with V3 layout
- *
- * Backend ต้อง return V3 content structure:
- * - content.quickAnswer, content.verdict, content.rating
- * - content.facts (code, studio, cast, duration, genre, etc.)
- * - content.synopsis, content.featuredScene, content.keyScenes
- * - content.reviewSummary, content.strengths, content.weaknesses
- * - content.faqItems, content.searchIntents
+ * ArticlePage - Complete Article Page Layout (Intent-Driven)
  *
  * ```tsx
- * // app/(public)/articles/review/[slug]/page.tsx
- * import { ArticlePageV3 } from "@/features/article";
+ * import { ArticlePage } from "@/features/article";
  *
  * export default async function Page({ params }) {
  *   const article = await getArticleByTypeAndSlug("review", params.slug, "th");
- *   // Transform to V3 format if needed, or backend returns V3 directly
- *   return <ArticlePageV3 article={article} locale="th" />;
+ *   return <ArticlePage article={article} locale="th" />;
  * }
  * ```
  */
@@ -29,16 +18,16 @@ import { ThumbnailWithCTA } from "./thumbnail-with-cta";
 import { ThumbnailImage } from "./thumbnail-image";
 import { AuthorByline } from "./author-byline";
 import { TrustBadge } from "./trust-badge";
-import { ArticleContentV3Component } from "./article-content-v3";
-import { JsonLdScriptsV3 } from "./schema/json-ld-scripts-v3";
-import type { ArticleV3 } from "../types";
+import { ArticleMainContent } from "./article-content-v3";
+import { JsonLdScripts } from "./schema/json-ld-scripts-v3";
+import type { Article } from "../types";
 
-interface ArticlePageV3Props {
-  article: ArticleV3;
+interface ArticlePageProps {
+  article: Article;
   locale?: "th" | "en";
 }
 
-export function ArticlePageV3({ article, locale = "th" }: ArticlePageV3Props) {
+export function ArticlePage({ article, locale = "th" }: ArticlePageProps) {
   const { content } = article;
 
   const breadcrumbItems =
@@ -61,7 +50,7 @@ export function ArticlePageV3({ article, locale = "th" }: ArticlePageV3Props) {
     >
       <PublicLayout locale={locale}>
         {/* JSON-LD Schemas - SSR */}
-        <JsonLdScriptsV3
+        <JsonLdScripts
           content={content}
           videoCode={article.videoCode}
           videoId={article.videoId}
@@ -95,9 +84,9 @@ export function ArticlePageV3({ article, locale = "th" }: ArticlePageV3Props) {
             <TrustBadge updatedAt={content.updatedAt} />
           </div>
 
-          {/* Main Content - V3 Layout */}
+          {/* Main Content */}
           <div className="mt-8">
-            <ArticleContentV3Component
+            <ArticleMainContent
               content={content}
               videoCode={article.videoCode}
               videoId={article.videoId}
@@ -108,3 +97,6 @@ export function ArticlePageV3({ article, locale = "th" }: ArticlePageV3Props) {
     </ArticleTranslationsProvider>
   );
 }
+
+// Backward compatibility alias
+export const ArticlePageV3 = ArticlePage;

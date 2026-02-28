@@ -9,7 +9,7 @@ import { RelatedSearches } from "./related-searches";
 import { MidCTA } from "./mid-cta";
 import { HardCTA } from "./hard-cta";
 import { useDictionary } from "@/components/dictionary-provider";
-import type { ArticleContentV3 } from "../types";
+import type { ArticleContent } from "../types";
 
 // Dynamic imports for below-fold components
 const FAQAccordion = dynamic(
@@ -25,17 +25,17 @@ const RelatedArticles = dynamic(
   { ssr: true }
 );
 
-interface ArticleContentV3Props {
-  content: ArticleContentV3;
+interface ArticleMainContentProps {
+  content: ArticleContent;
   videoCode: string;
   videoId: string;
 }
 
-export function ArticleContentV3Component({
+export function ArticleMainContent({
   content,
   videoCode,
   videoId,
-}: ArticleContentV3Props) {
+}: ArticleMainContentProps) {
   const { t } = useDictionary();
 
   // Calculate word count for MidCTA display
@@ -207,3 +207,6 @@ export function ArticleContentV3Component({
     </div>
   );
 }
+
+// Backward compatibility alias
+export const ArticleContentV3Component = ArticleMainContent;

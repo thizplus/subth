@@ -1,8 +1,8 @@
 import { SITE_URL } from "@/lib/constants";
-import type { ArticleContentV3 } from "../../types";
+import type { ArticleContent } from "../../types";
 
 interface VideoObjectSchemaV3Props {
-  content: ArticleContentV3;
+  content: ArticleContent;
   videoCode: string;
   videoId: string;
   publishedAt: string;

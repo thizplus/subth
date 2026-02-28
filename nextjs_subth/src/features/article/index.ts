@@ -15,7 +15,6 @@ export {
   TagsList,
   ExpertBox,
   ContextualLinks,
-  VideoObjectSchema,
   FAQPageSchema,
   ArticleSchema,
   BreadcrumbSchema,
@@ -26,7 +25,6 @@ export {
   EducationalSection,
   ViewingTipsSection,
   // Navigation
-  TableOfContents,
   ArticleBreadcrumb,
   // Author
   AuthorByline,
@@ -36,7 +34,7 @@ export {
   ThematicKeywords,
   // Rating
   StarRating,
-  // V3 Components
+  // Article Content & Page
   QuickAnswerBox,
   FeaturedSceneBox,
   ProsCons,
@@ -44,11 +42,14 @@ export {
   FactsTable,
   MidCTA,
   HardCTA,
-  ArticleContentV3Component,
-  ArticlePageV3,
-  // V3 Schemas
+  ArticleMainContent,
+  ArticleContentV3Component, // Backward compat alias
+  ArticlePage,
+  ArticlePageV3, // Backward compat alias
+  // Schemas
   VideoObjectSchemaV3,
-  JsonLdScriptsV3,
+  JsonLdScripts,
+  JsonLdScriptsV3, // Backward compat alias
 } from "./components";
 
 // Service
@@ -60,31 +61,24 @@ export { getArticleByTypeAndSlug } from "./cached-service";
 // Utils (can be used on both server and client)
 export { formatTimestamp, parseDuration, formatDuration } from "./utils";
 
-// Type Guards
-export { isV3Content } from "./types";
-
 // Types
 export type {
   Article,
   ArticleContent,
-  KeyMoment,
   CastProfile,
   MakerInfo,
-  PreviousWork,
-  RelatedVideo,
   TagDescription,
-  ContextualLink,
-  TopQuote,
   FAQItem,
   GalleryImage,
   ArticleResponse,
+  // Legacy V2 types (for backward compatibility)
   EmotionalArcPoint,
+  ContextualLink,
+  KeyMoment,
+  RelatedVideo,
+  TopQuote,
   // List types
   ArticleSummary,
   ArticleListParams,
   ArticleListResponse,
-  // V3 types
-  ArticleContentV3,
-  ArticleV3,
-  ArticleV3Response,
 } from "./types";

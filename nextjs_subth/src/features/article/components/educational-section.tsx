@@ -1,3 +1,7 @@
+"use client";
+
+import { useDictionary } from "@/components/dictionary-provider";
+
 interface EducationalSectionProps {
   // Educational Context
   thematicExplanation?: string;
@@ -17,6 +21,7 @@ export function EducationalSection({
   actorEvolution,
   genreRanking,
 }: EducationalSectionProps) {
+  const { t } = useDictionary();
   const hasEducational = thematicExplanation || culturalContext || (genreInsights && genreInsights.length > 0);
   const hasComparative = studioComparison || actorEvolution || genreRanking;
 
@@ -31,7 +36,7 @@ export function EducationalSection({
         <div>
           <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
             <span>📚</span>
-            <span>บริบทเชิงลึก</span>
+            <span>{t("article.educational")}</span>
           </h2>
 
           {/* Genre Insights */}
@@ -60,7 +65,7 @@ export function EducationalSection({
           {/* Cultural Context */}
           {culturalContext && (
             <div className="rounded-lg border-l-4 border-primary/50 bg-muted/20 p-4">
-              <h3 className="mb-2 text-sm font-medium">บริบทวัฒนธรรมญี่ปุ่น</h3>
+              <h3 className="mb-2 text-sm font-medium">{t("article.culturalContext")}</h3>
               <p className="text-sm text-muted-foreground">{culturalContext}</p>
             </div>
           )}
@@ -72,14 +77,14 @@ export function EducationalSection({
         <div>
           <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
             <span>⚖️</span>
-            <span>การเปรียบเทียบ</span>
+            <span>{t("article.comparison")}</span>
           </h2>
 
           <div className="grid gap-4 md:grid-cols-2">
             {/* Studio Comparison */}
             {studioComparison && (
               <div className="rounded-lg border bg-gradient-to-br from-muted/30 to-transparent p-4">
-                <h3 className="mb-2 font-medium">เปรียบเทียบกับค่าย</h3>
+                <h3 className="mb-2 font-medium">{t("article.studioComparison")}</h3>
                 <p className="text-sm text-muted-foreground">{studioComparison}</p>
               </div>
             )}
@@ -87,7 +92,7 @@ export function EducationalSection({
             {/* Actor Evolution */}
             {actorEvolution && (
               <div className="rounded-lg border bg-gradient-to-br from-muted/30 to-transparent p-4">
-                <h3 className="mb-2 font-medium">พัฒนาการนักแสดง</h3>
+                <h3 className="mb-2 font-medium">{t("article.actorEvolution")}</h3>
                 <p className="text-sm text-muted-foreground">{actorEvolution}</p>
               </div>
             )}
@@ -96,7 +101,7 @@ export function EducationalSection({
           {/* Genre Ranking */}
           {genreRanking && (
             <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <h3 className="mb-2 font-medium text-primary">ตำแหน่งในแนวเรื่อง</h3>
+              <h3 className="mb-2 font-medium text-primary">{t("article.genreRanking")}</h3>
               <p className="text-sm">{genreRanking}</p>
             </div>
           )}

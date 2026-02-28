@@ -178,7 +178,7 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
             { label: "Reviews", href: "/en/articles?type=review" },
             { label: article.title },
           ]}
-          locale="en"
+          
         />
 
         <ThumbnailWithCTA
@@ -222,12 +222,12 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
           <AuthorByline
             publishedAt={article.publishedAt}
             updatedAt={content.updatedAt}
-            locale="en"
+            
           />
         </div>
 
         <div className="mt-3">
-          <TrustBadge updatedAt={content.updatedAt} locale="en" />
+          <TrustBadge updatedAt={content.updatedAt} />
         </div>
 
         <div className="mt-6 space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">
@@ -361,7 +361,7 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
 
         <ThematicKeywords
           keywords={content.thematicKeywords || []}
-          locale="en"
+          
         />
 
         <div className="mt-8">
@@ -399,7 +399,7 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
 
         <RelatedArticles
           articles={content.relatedVideos || []}
-          locale="en"
+          
         />
       </article>
     </PublicLayout>

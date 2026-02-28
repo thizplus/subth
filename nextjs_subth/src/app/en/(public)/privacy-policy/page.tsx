@@ -14,7 +14,7 @@ export default function PrivacyPolicyPageEN() {
       <div className="mx-auto max-w-4xl px-4 py-8">
         <ArticleBreadcrumb
           items={[{ label: "Privacy Policy" }]}
-          locale="en"
+          
         />
 
         <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>

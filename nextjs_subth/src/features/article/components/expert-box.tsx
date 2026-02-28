@@ -6,6 +6,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useDictionary } from "@/components/dictionary-provider";
 
 interface ExpertBoxProps {
   expertAnalysis?: string;
@@ -18,6 +19,8 @@ export function ExpertBox({
   dialogueAnalysis,
   characterInsight,
 }: ExpertBoxProps) {
+  const { t } = useDictionary();
+
   if (!expertAnalysis && !dialogueAnalysis && !characterInsight) {
     return null;
   }
@@ -26,7 +29,7 @@ export function ExpertBox({
     {
       id: "expert",
       icon: Sparkles,
-      title: "บทวิเคราะห์",
+      title: t("article.expertAnalysis"),
       content: expertAnalysis,
       color: "text-amber-500",
       bg: "bg-amber-500/10",
@@ -34,7 +37,7 @@ export function ExpertBox({
     {
       id: "dialogue",
       icon: MessageSquare,
-      title: "วิเคราะห์บทสนทนา",
+      title: t("article.dialogueAnalysis"),
       content: dialogueAnalysis,
       color: "text-blue-500",
       bg: "bg-blue-500/10",
@@ -42,7 +45,7 @@ export function ExpertBox({
     {
       id: "character",
       icon: Users,
-      title: "วิเคราะห์ตัวละคร",
+      title: t("article.characterInsight"),
       content: characterInsight,
       color: "text-purple-500",
       bg: "bg-purple-500/10",
@@ -53,7 +56,7 @@ export function ExpertBox({
     <section className="space-y-3">
       <h2 className="flex items-center gap-2 text-lg font-semibold">
         <Sparkles className="h-5 w-5 text-primary" />
-        บทวิเคราะห์จากผู้เชี่ยวชาญ
+        {t("article.expertAnalysis")}
       </h2>
 
       <div className="space-y-2">

@@ -14,7 +14,7 @@ export default function AboutPage() {
       <div className="mx-auto max-w-4xl px-4 py-8">
         <ArticleBreadcrumb
           items={[{ label: "เกี่ยวกับเรา" }]}
-          locale="th"
+          
         />
 
         <h1 className="text-3xl font-bold mb-6">เกี่ยวกับ SubTH</h1>

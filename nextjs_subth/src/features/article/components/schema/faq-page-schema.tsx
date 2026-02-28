@@ -6,7 +6,7 @@ interface FAQPageSchemaProps {
 }
 
 export function FAQPageSchema({ faqItems, technicalFaq }: FAQPageSchemaProps) {
-  const allFaqs = [...faqItems, ...(technicalFaq || [])];
+  const allFaqs = [...(faqItems || []), ...(technicalFaq || [])];
 
   if (!allFaqs.length) {
     return null;

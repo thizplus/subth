@@ -1,13 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { CDN_URL } from "@/lib/constants";
+import { useDictionary } from "@/components/dictionary-provider";
 import type { ArticleSummary } from "../types";
 import { StarRating } from "./star-rating";
 
 interface ArticleCardProps {
   article: ArticleSummary;
-  locale?: "th" | "en";
-  priority?: boolean; // สำหรับ LCP image (above-the-fold)
+  priority?: boolean;
 }
 
 // Build full thumbnail URL
@@ -17,13 +19,13 @@ function getThumbnailUrl(url?: string): string {
   return `${CDN_URL}${url}`;
 }
 
-export function ArticleCard({ article, locale = "th", priority = false }: ArticleCardProps) {
-  const basePath = locale === "en" ? "/en" : "";
+export function ArticleCard({ article, priority = false }: ArticleCardProps) {
+  const { t, locale, getLocalizedPath } = useDictionary();
   const thumbnailUrl = getThumbnailUrl(article.thumbnailUrl);
 
   return (
     <Link
-      href={`${basePath}/articles/review/${article.slug}`}
+      href={getLocalizedPath(`/articles/review/${article.slug}`)}
       className="group block overflow-hidden rounded-lg border bg-card transition-colors hover:bg-accent"
     >
       {/* Thumbnail */}
@@ -53,7 +55,7 @@ export function ArticleCard({ article, locale = "th", priority = false }: Articl
           {article.castNames && article.castNames.length > 0 && (
             <div className="min-w-0 flex-1">
               <p className="text-xs text-muted-foreground">
-                {locale === "th" ? "นักแสดง" : "Cast"}
+                {t("article.castLabel")}
               </p>
               <p className="text-sm truncate">
                 {article.castNames.slice(0, 2).join(", ")}
@@ -64,7 +66,7 @@ export function ArticleCard({ article, locale = "th", priority = false }: Articl
           {article.makerName && (
             <div className="shrink-0">
               <p className="text-xs text-muted-foreground">
-                {locale === "th" ? "ค่าย" : "Studio"}
+                {t("article.makerLabel")}
               </p>
               <p className="text-sm">{article.makerName}</p>
             </div>

@@ -81,7 +81,7 @@ export default async function MakerDetailPageEN({ params, searchParams }: PagePr
             { label: "Studios", href: "/en/makers" },
             { label: maker.name },
           ]}
-          locale="en"
+          
         />
 
         <div className="flex items-center gap-4 mb-6">
@@ -108,7 +108,7 @@ export default async function MakerDetailPageEN({ params, searchParams }: PagePr
         {articles.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {articles.map((article) => (
-              <ArticleCard key={article.slug} article={article} locale="en" />
+              <ArticleCard key={article.slug} article={article} />
             ))}
           </div>
         ) : (

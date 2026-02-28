@@ -15,7 +15,7 @@ export function ThematicKeywords({
   locale: localeProp,
 }: ThematicKeywordsProps) {
   const { isAuthenticated } = useAuthStore();
-  const { locale: contextLocale, getLocalizedPath } = useDictionary();
+  const { t, locale: contextLocale, getLocalizedPath } = useDictionary();
   const locale = localeProp ?? (contextLocale as "th" | "en");
 
   if (!keywords || keywords.length === 0) return null;
@@ -29,7 +29,7 @@ export function ThematicKeywords({
     <section className="mt-8">
       <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold">
         <Tag className="h-5 w-5 text-primary" />
-        {locale === "en" ? "Related Topics" : "หัวข้อที่เกี่ยวข้อง"}
+        {t("article.relatedTopics")}
       </h2>
       <div className="flex flex-wrap gap-2">
         {keywords.map((keyword, index) =>

@@ -117,7 +117,7 @@ export function PublicSidebar({ locale = "th" }: PublicSidebarProps) {
                     className="h-auto py-2 bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                   >
                     <Link href={`${basePath}/member`} onClick={handleMenuClick}>
-                      <Play />
+                      <Play className="!h-8 !w-8 shrink-0" />
                       <div className="grid leading-tight">
                         <span className="font-medium">{t.memberTitle}</span>
                         <span className="text-xs opacity-80">{t.memberSubtitle}</span>

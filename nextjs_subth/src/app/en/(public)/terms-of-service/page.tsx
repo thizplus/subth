@@ -14,7 +14,7 @@ export default function TermsOfServicePageEN() {
       <div className="mx-auto max-w-4xl px-4 py-8">
         <ArticleBreadcrumb
           items={[{ label: "Terms of Service" }]}
-          locale="en"
+          
         />
 
         <h1 className="text-3xl font-bold mb-2">Terms of Service</h1>

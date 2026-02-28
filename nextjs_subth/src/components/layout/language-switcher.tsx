@@ -11,10 +11,9 @@ import {
 import { Globe, Check } from "lucide-react";
 import { useDictionary } from "@/components/dictionary-provider";
 
-// รองรับหลายภาษาในอนาคต
 const LANGUAGES = [
-  { code: "th", name: "ไทย", prefix: "" },
-  { code: "en", name: "ENGLISH", prefix: "/en" },
+  { code: "th", label: "TH", prefix: "" },
+  { code: "en", label: "EN", prefix: "/en" },
 ] as const;
 
 export function LanguageSwitcher() {
@@ -44,9 +43,9 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2">
+        <Button variant="ghost" size="sm" className="gap-1.5 px-2">
           <Globe className="h-4 w-4" />
-          <span>{currentLang.name}</span>
+          <span className="font-medium">{currentLang.label}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -54,9 +53,9 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={lang.code}
             onClick={() => switchLocale(lang)}
-            className="cursor-pointer"
+            className="cursor-pointer gap-2"
           >
-            <span>{lang.name}</span>
+            <span className="font-medium">{lang.label}</span>
             {locale === lang.code && <Check className="h-4 w-4 ml-auto" />}
           </DropdownMenuItem>
         ))}

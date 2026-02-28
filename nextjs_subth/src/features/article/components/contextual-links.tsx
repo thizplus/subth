@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Sparkles, ArrowUpRight } from "lucide-react";
+import { useDictionary } from "@/components/dictionary-provider";
 import type { ContextualLink } from "../types";
 import { StarRating } from "./star-rating";
 
@@ -9,6 +12,8 @@ interface ContextualLinksProps {
 }
 
 export function ContextualLinks({ links }: ContextualLinksProps) {
+  const { t } = useDictionary();
+
   if (!links?.length) {
     return null;
   }
@@ -17,7 +22,7 @@ export function ContextualLinks({ links }: ContextualLinksProps) {
     <section className="space-y-4">
       <h2 className="flex items-center gap-2 text-lg font-semibold">
         <Sparkles className="h-5 w-5 text-primary" />
-        คุณอาจสนใจ
+        {t("article.youMayLike")}
       </h2>
 
       <div className="space-y-3">

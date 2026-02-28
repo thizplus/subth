@@ -51,7 +51,7 @@ export function GallerySection({
   // Convert images to lightbox format
   const slides = images.map((image, index) => ({
     src: image.url,
-    alt: image.alt || `${videoCode} - ภาพที่ ${index + 1}`,
+    alt: image.alt || `${videoCode} - ${t("article.imageNumber").replace("{number}", String(index + 1))}`,
     width: image.width || 1280,
     height: image.height || 720,
   }));
@@ -80,7 +80,7 @@ export function GallerySection({
           >
             <Image
               src={image.url}
-              alt={image.alt || `${videoCode} - ภาพที่ ${index + 1}`}
+              alt={image.alt || `${videoCode} - ${t("article.imageNumber").replace("{number}", String(index + 1))}`}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"

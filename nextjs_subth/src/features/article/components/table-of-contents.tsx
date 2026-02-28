@@ -7,6 +7,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useDictionary } from "@/components/dictionary-provider";
 import { ArticleContent } from "../types";
 
 interface TOCItem {
@@ -20,38 +21,39 @@ interface TableOfContentsProps {
 
 export function TableOfContents({ content }: TableOfContentsProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useDictionary();
 
   // สร้าง TOC items แบบ dynamic ตามเนื้อหาที่มี
   const tocItems = useMemo(() => {
     const items: TOCItem[] = [];
 
     if (content.summary) {
-      items.push({ id: "summary", label: "เรื่องย่อ" });
+      items.push({ id: "summary", label: t("article.summary") });
     }
     if (content.characterJourney || (content.emotionalArc && content.emotionalArc.length > 0)) {
-      items.push({ id: "character-journey", label: "พัฒนาการตัวละคร" });
+      items.push({ id: "character-journey", label: t("article.characterJourney") });
     }
     if (content.cinematographyAnalysis || content.visualStyle) {
-      items.push({ id: "cinematography", label: "วิเคราะห์งานภาพ" });
+      items.push({ id: "cinematography", label: t("article.cinematography") });
     }
     if (content.galleryImages && content.galleryImages.length > 0) {
-      items.push({ id: "gallery", label: "แกลเลอรี" });
+      items.push({ id: "gallery", label: t("article.gallery") });
     }
     if (content.detailedReview) {
-      items.push({ id: "review", label: "รีวิวละเอียด" });
+      items.push({ id: "review", label: t("article.detailedReview") });
     }
     if (content.thematicExplanation || content.culturalContext || content.studioComparison) {
-      items.push({ id: "educational", label: "บริบทเชิงลึก" });
+      items.push({ id: "educational", label: t("article.educational") });
     }
     if (content.viewingTips || (content.bestMoments && content.bestMoments.length > 0)) {
-      items.push({ id: "viewing-tips", label: "คำแนะนำการรับชม" });
+      items.push({ id: "viewing-tips", label: t("article.viewingTips") });
     }
     if (content.faqItems && content.faqItems.length > 0) {
-      items.push({ id: "faq", label: "คำถามที่พบบ่อย" });
+      items.push({ id: "faq", label: t("article.faq") });
     }
 
     return items;
-  }, [content]);
+  }, [content, t]);
 
   // ไม่แสดง TOC ถ้ามีน้อยกว่า 3 sections
   if (tocItems.length < 3) {
@@ -67,9 +69,9 @@ export function TableOfContents({ content }: TableOfContentsProps) {
               <List className="h-5 w-5 text-primary" />
             </div>
             <div className="text-left">
-              <p className="font-medium">สารบัญ</p>
+              <p className="font-medium">{t("article.tableOfContents")}</p>
               <p className="text-sm text-muted-foreground">
-                {tocItems.length} หัวข้อ - กดเพื่อข้ามไปอ่าน
+                {tocItems.length} {t("article.sections")}
               </p>
             </div>
           </div>

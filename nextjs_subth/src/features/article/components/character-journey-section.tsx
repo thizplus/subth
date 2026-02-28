@@ -1,3 +1,6 @@
+"use client";
+
+import { useDictionary } from "@/components/dictionary-provider";
 import { EmotionalArcPoint } from "../types";
 
 interface CharacterJourneySectionProps {
@@ -9,6 +12,8 @@ export function CharacterJourneySection({
   characterJourney,
   emotionalArc,
 }: CharacterJourneySectionProps) {
+  const { t } = useDictionary();
+
   if (!characterJourney && (!emotionalArc || emotionalArc.length === 0)) {
     return null;
   }
@@ -17,7 +22,7 @@ export function CharacterJourneySection({
     <section className="mt-8">
       <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
         <span>🎭</span>
-        <span>พัฒนาการตัวละคร</span>
+        <span>{t("article.characterJourney")}</span>
       </h2>
 
       {/* Emotional Arc Timeline */}

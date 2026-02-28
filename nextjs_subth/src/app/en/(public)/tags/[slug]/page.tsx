@@ -72,7 +72,7 @@ export default async function TagDetailPageEN({ params, searchParams }: PageProp
             { label: "Tags", href: "/en/tags" },
             { label: tag.name },
           ]}
-          locale="en"
+          
         />
 
         <div className="mb-6">
@@ -94,7 +94,7 @@ export default async function TagDetailPageEN({ params, searchParams }: PageProp
         {articles.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {articles.map((article) => (
-              <ArticleCard key={article.slug} article={article} locale="en" />
+              <ArticleCard key={article.slug} article={article} />
             ))}
           </div>
         ) : (

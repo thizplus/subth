@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Building2 } from "lucide-react";
+import { useDictionary } from "@/components/dictionary-provider";
 import type { MakerInfo } from "../types";
 
 interface MakerCardProps {
@@ -7,6 +10,8 @@ interface MakerCardProps {
 }
 
 export function MakerCard({ maker }: MakerCardProps) {
+  const { t } = useDictionary();
+
   if (!maker) {
     return null;
   }
@@ -15,7 +20,7 @@ export function MakerCard({ maker }: MakerCardProps) {
     <div className="space-y-3">
       <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <Building2 className="h-4 w-4" />
-        ค่าย
+        {t("article.makerLabel")}
       </p>
 
       <Link

@@ -89,7 +89,7 @@ export default async function AuthorPageEN({ params }: PageProps) {
       <div className="mx-auto max-w-4xl px-4 py-8">
         <ArticleBreadcrumb
           items={[{ label: author.name }]}
-          locale="en"
+          
         />
 
         {/* Author Header */}

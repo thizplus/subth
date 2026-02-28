@@ -1,3 +1,5 @@
+"use client";
+
 import { HelpCircle } from "lucide-react";
 import {
   Accordion,
@@ -5,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useDictionary } from "@/components/dictionary-provider";
 import type { FAQItem } from "../types";
 
 interface FAQAccordionProps {
@@ -17,7 +20,8 @@ export function FAQAccordion({
   faqItems,
   technicalFaq,
 }: FAQAccordionProps) {
-  const allFaqs = [...faqItems, ...(technicalFaq || [])];
+  const { t } = useDictionary();
+  const allFaqs = [...(faqItems || []), ...(technicalFaq || [])];
 
   if (!allFaqs.length) {
     return null;
@@ -27,7 +31,7 @@ export function FAQAccordion({
     <section className="space-y-4">
       <h2 className="flex items-center gap-2 text-lg font-semibold">
         <HelpCircle className="h-5 w-5 text-primary" />
-        คำถามที่พบบ่อย
+        {t("article.faq")}
         <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-normal text-primary">
           {allFaqs.length}
         </span>

@@ -87,7 +87,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
 
   try {
-    const article = await getArticleByTypeAndSlug("review", slug);
+    const article = await getArticleByTypeAndSlug("review", slug, "th");
 
     return {
       title: article.metaTitle,
@@ -136,7 +136,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
 
   let article;
   try {
-    article = await getArticleByTypeAndSlug("review", slug);
+    article = await getArticleByTypeAndSlug("review", slug, "th");
   } catch {
     notFound();
   }
@@ -179,7 +179,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
             { label: "รีวิว", href: "/articles?type=review" },
             { label: article.title },
           ]}
-          locale="th"
+          
         />
 
         <ThumbnailWithCTA
@@ -222,12 +222,12 @@ export default async function ReviewArticlePage({ params }: PageProps) {
           <AuthorByline
             publishedAt={article.publishedAt}
             updatedAt={content.updatedAt}
-            locale="th"
+            
           />
         </div>
 
         <div className="mt-3">
-          <TrustBadge updatedAt={content.updatedAt} locale="th" />
+          <TrustBadge updatedAt={content.updatedAt} />
         </div>
 
         <div className="mt-6 space-y-4 rounded-xl border bg-gradient-to-b from-muted/30 to-transparent p-4">
@@ -361,7 +361,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
 
         <ThematicKeywords
           keywords={content.thematicKeywords || []}
-          locale="th"
+          
         />
 
         <div className="mt-8">
@@ -399,7 +399,7 @@ export default async function ReviewArticlePage({ params }: PageProps) {
 
         <RelatedArticles
           articles={content.relatedVideos || []}
-          locale="th"
+          
         />
       </article>
     </PublicLayout>

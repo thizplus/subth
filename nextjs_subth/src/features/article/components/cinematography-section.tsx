@@ -1,3 +1,7 @@
+"use client";
+
+import { useDictionary } from "@/components/dictionary-provider";
+
 interface CinematographySectionProps {
   cinematographyAnalysis?: string;
   visualStyle?: string;
@@ -9,6 +13,8 @@ export function CinematographySection({
   visualStyle,
   atmosphereNotes,
 }: CinematographySectionProps) {
+  const { t } = useDictionary();
+
   if (!cinematographyAnalysis && !visualStyle && (!atmosphereNotes || atmosphereNotes.length === 0)) {
     return null;
   }
@@ -17,14 +23,14 @@ export function CinematographySection({
     <section className="mt-8">
       <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
         <span>🎬</span>
-        <span>วิเคราะห์งานภาพ</span>
+        <span>{t("article.cinematography")}</span>
       </h2>
 
       {/* Visual Style Badge */}
       {visualStyle && (
         <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-3">
           <p className="text-sm font-medium text-primary">
-            สไตล์ภาพ: <span className="font-normal text-foreground">{visualStyle}</span>
+            {t("article.visualStyle")}: <span className="font-normal text-foreground">{visualStyle}</span>
           </p>
         </div>
       )}

@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useDictionary } from "@/components/dictionary-provider";
 import type { TagDescription } from "../types";
 
 interface TagsListProps {
@@ -8,6 +11,8 @@ interface TagsListProps {
 }
 
 export function TagsList({ tags }: TagsListProps) {
+  const { t } = useDictionary();
+
   if (!tags?.length) {
     return null;
   }
@@ -16,7 +21,7 @@ export function TagsList({ tags }: TagsListProps) {
     <section className="space-y-3">
       <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <Tag className="h-4 w-4" />
-        แท็ก
+        {t("article.tagsLabel")}
       </p>
 
       <div className="flex flex-wrap gap-2">

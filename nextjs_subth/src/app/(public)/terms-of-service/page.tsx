@@ -14,7 +14,7 @@ export default function TermsOfServicePage() {
       <div className="mx-auto max-w-4xl px-4 py-8">
         <ArticleBreadcrumb
           items={[{ label: "ข้อกำหนดการใช้งาน" }]}
-          locale="th"
+          
         />
 
         <h1 className="text-3xl font-bold mb-2">ข้อกำหนดการใช้งาน</h1>

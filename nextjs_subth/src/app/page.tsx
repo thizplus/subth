@@ -110,7 +110,7 @@ export default async function HomePage() {
         articles={articles}
         listName="รีวิว JAV ซับไทย ล่าสุด"
         listDescription="รวมบทความรีวิว JAV ซับไทย เชิงลึก อัปเดตใหม่ทุกวัน"
-        locale="th"
+        
       />
 
       {/* Structured Data */}
@@ -152,7 +152,7 @@ export default async function HomePage() {
                 <ArticleCard
                   key={article.slug}
                   article={article}
-                  locale="th"
+                  
                   priority={index < 4}
                 />
               ))}

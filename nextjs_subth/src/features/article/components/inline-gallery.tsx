@@ -4,6 +4,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { ZoomIn } from "lucide-react";
+import { useDictionary } from "@/components/dictionary-provider";
 import type { GalleryImage } from "../types";
 
 // Dynamic import Lightbox
@@ -41,6 +42,7 @@ export function InlineGallery({
   caption,
   className = "",
 }: InlineGalleryProps) {
+  const { t } = useDictionary();
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -48,12 +50,11 @@ export function InlineGallery({
     return null;
   }
 
-  // จำกัดจำนวนภาพตาม columns
   const displayImages = images.slice(0, columns === 1 ? 1 : columns === 2 ? 2 : 3);
 
   const slides = displayImages.map((image, index) => ({
     src: image.url,
-    alt: image.alt || `${videoCode} - ภาพที่ ${index + 1}`,
+    alt: image.alt || `${videoCode} - ${t("article.imageNumber").replace("{number}", String(index + 1))}`,
     width: image.width || 1280,
     height: image.height || 720,
   }));
@@ -78,7 +79,7 @@ export function InlineGallery({
           >
             <Image
               src={image.url}
-              alt={image.alt || `${videoCode} - ภาพที่ ${index + 1}`}
+              alt={image.alt || `${videoCode} - ${t("article.imageNumber").replace("{number}", String(index + 1))}`}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes={columns === 1 ? "100vw" : columns === 2 ? "50vw" : "33vw"}

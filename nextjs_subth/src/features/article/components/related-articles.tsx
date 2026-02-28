@@ -1,30 +1,31 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useDictionary } from "@/components/dictionary-provider";
 import { RelatedVideo } from "../types";
 
 interface RelatedArticlesProps {
   articles: RelatedVideo[];
-  locale?: "th" | "en";
 }
 
 export function RelatedArticles({
   articles,
-  locale = "th",
 }: RelatedArticlesProps) {
-  if (!articles || articles.length === 0) return null;
+  const { t, getLocalizedPath } = useDictionary();
 
-  const basePath = locale === "en" ? "/en" : "";
+  if (!articles || articles.length === 0) return null;
 
   return (
     <section className="mt-8">
       <h2 className="mb-4 text-xl font-semibold">
-        {locale === "en" ? "Related Articles" : "บทความที่เกี่ยวข้อง"}
+        {t("article.relatedArticles")}
       </h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {articles.slice(0, 6).map((article) => (
           <Link
             key={article.id}
-            href={`${basePath}/articles/review/${article.url}`}
+            href={getLocalizedPath(`/articles/review/${article.url}`)}
             className="group flex gap-3 rounded-lg border bg-card p-3 transition-colors hover:bg-muted/50"
           >
             <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-md">

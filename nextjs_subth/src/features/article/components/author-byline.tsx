@@ -1,18 +1,20 @@
+"use client";
+
 import Link from "next/link";
 import { User, Calendar, RefreshCw } from "lucide-react";
+import { useDictionary } from "@/components/dictionary-provider";
 
 interface AuthorBylineProps {
   publishedAt: string;
   updatedAt?: string;
-  locale?: "th" | "en";
 }
 
 export function AuthorByline({
   publishedAt,
   updatedAt,
-  locale = "th",
 }: AuthorBylineProps) {
-  const authorPath = locale === "en" ? "/en/author/subth-editorial" : "/author/subth-editorial";
+  const { t, locale, getLocalizedPath } = useDictionary();
+  const authorPath = getLocalizedPath("/author/subth-editorial");
   const authorName = "SubTH Editorial";
 
   const dateLocale = locale === "en" ? "en-US" : "th-TH";
@@ -39,7 +41,7 @@ export function AuthorByline({
       <div className="flex items-center gap-1.5">
         <User className="h-4 w-4" />
         <span>
-          {locale === "en" ? "Written by" : "เขียนโดย"}{" "}
+          {t("article.writtenBy")}{" "}
           <Link
             href={authorPath}
             className="font-medium text-foreground hover:text-primary hover:underline"
@@ -60,7 +62,7 @@ export function AuthorByline({
         <div className="flex items-center gap-1.5">
           <RefreshCw className="h-3.5 w-3.5" />
           <span>
-            {locale === "en" ? "Updated" : "อัพเดท"}: {updatedDate}
+            {t("article.updated")}: {updatedDate}
           </span>
         </div>
       )}

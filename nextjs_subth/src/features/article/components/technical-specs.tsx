@@ -1,4 +1,7 @@
+"use client";
+
 import { Settings2, Clock, Film, Volume2, Subtitles, Languages } from "lucide-react";
+import { useDictionary } from "@/components/dictionary-provider";
 import { formatDuration } from "../utils";
 
 interface TechnicalSpecsProps {
@@ -20,31 +23,33 @@ export function TechnicalSpecs({
   duration,
   readingTime,
 }: TechnicalSpecsProps) {
+  const { t } = useDictionary();
+
   const specs = [
     {
       icon: Film,
-      label: "ความละเอียด",
+      label: t("article.resolution"),
       value: videoQuality,
       color: "text-blue-500",
       bg: "bg-blue-500/10",
     },
     {
       icon: Volume2,
-      label: "คุณภาพเสียง",
+      label: t("article.audioQuality"),
       value: audioQuality,
       color: "text-green-500",
       bg: "bg-green-500/10",
     },
     {
       icon: Subtitles,
-      label: "คุณภาพซับ",
+      label: t("article.subQuality"),
       value: subtitleQuality,
       color: "text-purple-500",
       bg: "bg-purple-500/10",
     },
     {
       icon: Clock,
-      label: "ความยาว",
+      label: t("article.duration"),
       value: formatDuration(duration),
       color: "text-orange-500",
       bg: "bg-orange-500/10",
@@ -59,7 +64,7 @@ export function TechnicalSpecs({
     <section className="space-y-4">
       <h2 className="flex items-center gap-2 text-lg font-semibold">
         <Settings2 className="h-5 w-5" />
-        ข้อมูลเทคนิค
+        {t("article.technicalSpecs")}
       </h2>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -85,7 +90,7 @@ export function TechnicalSpecs({
             <Languages className="h-5 w-5 text-primary" />
           </div>
           <div className="flex-1">
-            <p className="text-xs text-muted-foreground">วิธีการแปล</p>
+            <p className="text-xs text-muted-foreground">{t("article.translationMethod")}</p>
             <p className="font-medium">{translationMethod}</p>
             {translationNote && (
               <p className="mt-1 text-sm text-muted-foreground">
@@ -98,7 +103,7 @@ export function TechnicalSpecs({
 
       {readingTime && (
         <p className="text-center text-xs text-muted-foreground">
-          เวลาอ่านโดยประมาณ {readingTime} นาที
+          {t("article.readingTime").replace("{time}", String(readingTime))}
         </p>
       )}
     </section>

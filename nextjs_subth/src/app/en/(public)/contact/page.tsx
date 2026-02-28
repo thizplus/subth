@@ -14,7 +14,7 @@ export default function ContactPageEN() {
       <div className="mx-auto max-w-4xl px-4 py-8">
         <ArticleBreadcrumb
           items={[{ label: "Contact Us" }]}
-          locale="en"
+          
         />
 
         <h1 className="text-3xl font-bold mb-6">Contact Us</h1>

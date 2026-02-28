@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Play, Pause, Volume2, VolumeX, RotateCcw } from "lucide-react";
 import { CDN_URL } from "@/lib/constants";
+import { useDictionary } from "@/components/dictionary-provider";
 
 interface AudioPlayerProps {
   audioUrl?: string;
@@ -23,13 +24,14 @@ function getFullAudioUrl(url?: string): string | undefined {
 }
 
 export function AudioPlayer({ audioUrl, audioDuration, title }: AudioPlayerProps) {
+  const { t } = useDictionary();
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(audioDuration || 0); // ใช้ค่าประมาณก่อน แล้วอัพเดทเมื่อได้ค่าจริง
+  const [duration, setDuration] = useState(audioDuration || 0);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const fullAudioUrl = getFullAudioUrl(audioUrl);
@@ -115,7 +117,7 @@ export function AudioPlayer({ audioUrl, audioDuration, title }: AudioPlayerProps
       <div className="mb-3 flex items-center gap-2">
         <span className="text-lg">🎧</span>
         <span className="text-sm font-medium">
-          {title || "ฟังสรุปเรื่องนี้"}
+          {title || t("article.listenSummary")}
         </span>
         <span className="text-xs text-muted-foreground">
           ({formatTime(duration)})
@@ -128,7 +130,7 @@ export function AudioPlayer({ audioUrl, audioDuration, title }: AudioPlayerProps
         <button
           onClick={togglePlay}
           className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 active:scale-95"
-          aria-label={isPlaying ? "หยุดเล่น" : "เล่น"}
+          aria-label={isPlaying ? t("article.pause") : t("article.play")}
         >
           {isPlaying ? (
             <Pause className="h-5 w-5" />
@@ -170,7 +172,7 @@ export function AudioPlayer({ audioUrl, audioDuration, title }: AudioPlayerProps
           <button
             onClick={restart}
             className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            aria-label="เริ่มใหม่"
+            aria-label={t("article.restart")}
           >
             <RotateCcw className="h-4 w-4" />
           </button>
@@ -179,7 +181,7 @@ export function AudioPlayer({ audioUrl, audioDuration, title }: AudioPlayerProps
           <button
             onClick={toggleMute}
             className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            aria-label={isMuted ? "เปิดเสียง" : "ปิดเสียง"}
+            aria-label={isMuted ? t("article.unmute") : t("article.mute")}
           >
             {isMuted ? (
               <VolumeX className="h-4 w-4" />
@@ -192,7 +194,7 @@ export function AudioPlayer({ audioUrl, audioDuration, title }: AudioPlayerProps
 
       {/* Hint text */}
       <p className="mt-3 text-xs text-muted-foreground">
-        ฟังเสียงสรุปเนื้อหาแบบกระชับ ขณะทำกิจกรรมอื่น
+        {t("article.audioHint")}
       </p>
     </div>
   );

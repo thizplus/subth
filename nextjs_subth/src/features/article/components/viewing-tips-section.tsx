@@ -1,3 +1,7 @@
+"use client";
+
+import { useDictionary } from "@/components/dictionary-provider";
+
 interface ViewingTipsSectionProps {
   viewingTips?: string;
   bestMoments?: string[];
@@ -11,6 +15,8 @@ export function ViewingTipsSection({
   audienceMatch,
   replayValue,
 }: ViewingTipsSectionProps) {
+  const { t } = useDictionary();
+
   if (!viewingTips && (!bestMoments || bestMoments.length === 0) && !audienceMatch && !replayValue) {
     return null;
   }
@@ -19,7 +25,7 @@ export function ViewingTipsSection({
     <section className="mt-8">
       <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
         <span>👁️</span>
-        <span>คำแนะนำการรับชม</span>
+        <span>{t("article.viewingTips")}</span>
       </h2>
 
       {/* Viewing Tips Content */}
@@ -34,7 +40,7 @@ export function ViewingTipsSection({
       {/* Best Moments */}
       {bestMoments && bestMoments.length > 0 && (
         <div className="mb-6">
-          <h3 className="mb-3 font-medium">ช่วงเวลาที่ดีที่สุด</h3>
+          <h3 className="mb-3 font-medium">{t("article.bestMoments")}</h3>
           <ul className="space-y-2">
             {bestMoments.map((moment, i) => (
               <li
@@ -57,7 +63,7 @@ export function ViewingTipsSection({
         {audienceMatch && (
           <div className="rounded-lg border bg-gradient-to-br from-success/5 to-transparent p-4">
             <h3 className="mb-2 font-medium text-success">
-              เหมาะกับใคร
+              {t("article.audienceMatch")}
             </h3>
             <p className="text-sm text-muted-foreground">{audienceMatch}</p>
           </div>
@@ -67,7 +73,7 @@ export function ViewingTipsSection({
         {replayValue && (
           <div className="rounded-lg border bg-gradient-to-br from-primary/5 to-transparent p-4">
             <h3 className="mb-2 font-medium text-primary">
-              ความคุ้มค่าดูซ้ำ
+              {t("article.replayValue")}
             </h3>
             <p className="text-sm text-muted-foreground">{replayValue}</p>
           </div>

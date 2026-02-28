@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useDictionary } from "@/components/dictionary-provider";
 import type { CastProfile } from "../types";
 
 interface CastCardProps {
@@ -8,6 +11,8 @@ interface CastCardProps {
 }
 
 export function CastCard({ casts }: CastCardProps) {
+  const { t } = useDictionary();
+
   if (!casts?.length) {
     return null;
   }
@@ -16,7 +21,7 @@ export function CastCard({ casts }: CastCardProps) {
     <div className="space-y-3">
       <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <User className="h-4 w-4" />
-        นักแสดง
+        {t("article.castLabel")}
       </p>
 
       <div className="flex flex-wrap gap-2">

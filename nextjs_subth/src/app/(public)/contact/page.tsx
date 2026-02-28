@@ -14,7 +14,7 @@ export default function ContactPage() {
       <div className="mx-auto max-w-4xl px-4 py-8">
         <ArticleBreadcrumb
           items={[{ label: "ติดต่อเรา" }]}
-          locale="th"
+          
         />
 
         <h1 className="text-3xl font-bold mb-6">ติดต่อเรา</h1>

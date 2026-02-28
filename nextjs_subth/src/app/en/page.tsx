@@ -110,7 +110,7 @@ export default async function EnglishHomePage() {
         articles={articles}
         listName="Latest JAV Thai Subtitle Reviews"
         listDescription="In-depth JAV Thai subtitle reviews updated daily"
-        locale="en"
+        
       />
 
       {/* Structured Data */}
@@ -152,7 +152,7 @@ export default async function EnglishHomePage() {
                 <ArticleCard
                   key={article.slug}
                   article={article}
-                  locale="en"
+                  
                   priority={index < 4}
                 />
               ))}

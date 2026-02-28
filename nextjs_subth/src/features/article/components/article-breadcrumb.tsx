@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment } from "react";
 import Link from "next/link";
 import { Home } from "lucide-react";
@@ -9,6 +11,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useDictionary } from "@/components/dictionary-provider";
 
 interface BreadcrumbItemType {
   label: string;
@@ -17,12 +20,12 @@ interface BreadcrumbItemType {
 
 interface ArticleBreadcrumbProps {
   items: BreadcrumbItemType[];
-  locale?: "th" | "en";
 }
 
-export function ArticleBreadcrumb({ items, locale = "th" }: ArticleBreadcrumbProps) {
-  const homeHref = locale === "en" ? "/en" : "/";
-  const homeLabel = locale === "en" ? "Home" : "หน้าแรก";
+export function ArticleBreadcrumb({ items }: ArticleBreadcrumbProps) {
+  const { t, getLocalizedPath } = useDictionary();
+  const homeHref = getLocalizedPath("/");
+  const homeLabel = t("article.home");
 
   return (
     <Breadcrumb className="mb-4">

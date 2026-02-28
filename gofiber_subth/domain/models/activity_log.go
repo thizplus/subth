@@ -26,6 +26,7 @@ func (ActivityLog) TableName() string {
 
 // PageType constants
 const (
+	PageTypeHome     = "home"
 	PageTypeVideo    = "video"
 	PageTypeCast     = "cast"
 	PageTypeTag      = "tag"
@@ -35,5 +36,6 @@ const (
 	PageTypeAISearch = "ai-search"
 	PageTypeReel     = "reel"
 	PageTypeFeed     = "feed"
+	PageTypeArticle  = "article"
 	PageTypeProfile  = "profile"
 )

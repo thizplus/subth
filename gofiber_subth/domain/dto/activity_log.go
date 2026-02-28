@@ -9,7 +9,7 @@ import (
 
 // LogActivityRequest request สำหรับบันทึก activity
 type LogActivityRequest struct {
-	PageType string  `json:"pageType" validate:"required,oneof=video cast tag maker category search ai-search reel feed profile"`
+	PageType string  `json:"pageType" validate:"required,oneof=home video cast tag maker category search ai-search reel feed article profile"`
 	PageID   *string `json:"pageId"`   // UUID string (nullable)
 	Path     string  `json:"path" validate:"required"`
 	Metadata *string `json:"metadata"` // JSON string

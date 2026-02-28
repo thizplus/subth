@@ -1,17 +1,15 @@
 /**
  * JsonLdScriptsV3 - Combined JSON-LD schemas for V3 Article pages
- * Server Component - outputs all 5 required schemas
+ * Server Component - outputs all 4 required schemas
  *
  * Schemas included:
  * 1. Article - Main article schema
- * 2. Review - Review with rating
- * 3. FAQPage - FAQ items
- * 4. BreadcrumbList - Navigation breadcrumbs
- * 5. VideoObject - Video metadata
+ * 2. FAQPage - FAQ items
+ * 3. BreadcrumbList - Navigation breadcrumbs
+ * 4. VideoObject - Video metadata
  */
 
 import { ArticleSchema } from "./article-schema";
-import { ReviewSchema } from "./review-schema";
 import { FAQPageSchema } from "./faq-page-schema";
 import { BreadcrumbSchema } from "./breadcrumb-schema";
 import { VideoObjectSchemaV3 } from "./video-object-schema-v3";
@@ -32,11 +30,6 @@ export function JsonLdScriptsV3({
   publishedAt,
   locale = "th",
 }: JsonLdScriptsV3Props) {
-  // Build review body from reviewSummary (first paragraph)
-  const reviewBody = content.reviewSummary
-    ?.split("[PARA]")[0]
-    ?.trim() || content.quickAnswer;
-
   return (
     <>
       {/* 1. Article Schema */}
@@ -52,21 +45,10 @@ export function JsonLdScriptsV3({
         locale={locale}
       />
 
-      {/* 2. Review Schema with Rating */}
-      <ReviewSchema
-        itemName={content.titleBalanced}
-        videoCode={content.facts.code}
-        reviewBody={reviewBody}
-        rating={content.rating}
-        slug={content.slug}
-        publishedAt={publishedAt}
-        locale={locale}
-      />
-
-      {/* 3. FAQ Page Schema */}
+      {/* 2. FAQ Page Schema */}
       <FAQPageSchema faqItems={content.faqItems} />
 
-      {/* 4. Breadcrumb Schema */}
+      {/* 3. Breadcrumb Schema */}
       <BreadcrumbSchema
         title={content.titleBalanced}
         slug={content.slug}
@@ -74,7 +56,7 @@ export function JsonLdScriptsV3({
         locale={locale}
       />
 
-      {/* 5. VideoObject Schema */}
+      {/* 4. VideoObject Schema */}
       <VideoObjectSchemaV3
         content={content}
         videoCode={videoCode}

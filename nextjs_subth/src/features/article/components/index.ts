@@ -53,7 +53,6 @@ export {
   BreadcrumbSchema,
   ItemListSchema,
   // V3 Schemas
-  ReviewSchema,
   VideoObjectSchemaV3,
   JsonLdScriptsV3,
 } from "./schema";

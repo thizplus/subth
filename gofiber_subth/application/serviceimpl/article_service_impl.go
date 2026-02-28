@@ -71,6 +71,12 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 		language = req.Language
 	}
 
+	// ถ้า qualityScore ไม่ได้ส่งมา ลองอ่านจาก content (V3 ใช้ rating 1-5)
+	qualityScore := req.QualityScore
+	if qualityScore == 0 {
+		qualityScore = extractQualityScoreFromContent(content)
+	}
+
 	// ตรวจสอบว่ามี article สำหรับ video + language นี้แล้วหรือไม่
 	existing, _ := s.articleRepo.GetByVideoIDAndLanguage(ctx, videoID, language)
 	if existing != nil {
@@ -81,7 +87,7 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 		existing.MetaDescription = req.MetaDescription
 		existing.Slug = req.Slug
 		existing.Content = json.RawMessage(content)
-		existing.QualityScore = req.QualityScore
+		existing.QualityScore = qualityScore
 		existing.ReadingTime = req.ReadingTime
 
 		if err := s.articleRepo.Update(ctx, existing); err != nil {
@@ -115,7 +121,7 @@ func (s *ArticleServiceImpl) IngestArticle(ctx context.Context, req *dto.IngestA
 		Content:         json.RawMessage(content),
 		Status:          models.ArticleStatusDraft,
 		IndexingStatus:  models.IndexingPending,
-		QualityScore:    req.QualityScore,
+		QualityScore:    qualityScore,
 		ReadingTime:     req.ReadingTime,
 	}
 
@@ -432,6 +438,12 @@ func (s *ArticleServiceImpl) GetPublishedArticle(ctx context.Context, slug strin
 		response.PublishedAt = article.PublishedAt.Format(time.RFC3339)
 	}
 
+	// Get translations for language switcher
+	translations := s.getTranslations(ctx, article.VideoID, article.Language)
+	if len(translations) > 0 {
+		response.Translations = translations
+	}
+
 	return response, nil
 }
 
@@ -496,6 +508,12 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 		response.PublishedAt = article.PublishedAt.Format(time.RFC3339)
 	}
 
+	// Get translations for language switcher (smooth navigation)
+	translations := s.getTranslations(ctx, article.VideoID, article.Language)
+	if len(translations) > 0 {
+		response.Translations = translations
+	}
+
 	// 3. Cache for next time
 	if s.cache != nil {
 		if err := s.cache.Set(ctx, cacheKey, response, cache.ArticleCacheTTL); err != nil {
@@ -504,6 +522,25 @@ func (s *ArticleServiceImpl) GetPublishedArticleByType(ctx context.Context, arti
 	}
 
 	return response, nil
+}
+
+// getTranslations - หา slug ของ article ในภาษาอื่นๆ
+// returns map[language]slug เช่น {"en": "dldss-471-review", "th": "dldss-471-sub-thai"}
+func (s *ArticleServiceImpl) getTranslations(ctx context.Context, videoID uuid.UUID, currentLanguage string) map[string]string {
+	translations := make(map[string]string)
+	languages := []string{"th", "en"}
+
+	for _, lang := range languages {
+		if lang == currentLanguage {
+			continue // skip current language
+		}
+		article, err := s.articleRepo.GetPublishedByVideoIDAndLanguage(ctx, videoID, lang)
+		if err == nil && article != nil {
+			translations[lang] = article.Slug
+		}
+	}
+
+	return translations
 }
 
 // findArticleBySlugFallback - หา article จาก slug อื่นที่มี videoId เดียวกัน
@@ -768,4 +805,34 @@ func extractThumbnailFromContent(content []byte) string {
 	}
 
 	return data.ThumbnailUrl
+}
+
+// extractQualityScoreFromContent ดึง qualityScore จาก content JSON
+// สำหรับ V2: ใช้ qualityScore (1-10) โดยตรง
+// สำหรับ V3: แปลง rating (1-5) เป็น qualityScore (1-10) โดยคูณ 2
+func extractQualityScoreFromContent(content []byte) int {
+	if len(content) == 0 {
+		return 0
+	}
+
+	var data struct {
+		QualityScore int     `json:"qualityScore"` // V2 format (1-10)
+		Rating       float64 `json:"rating"`       // V3 format (1-5)
+	}
+
+	if err := json.Unmarshal(content, &data); err != nil {
+		return 0
+	}
+
+	// ถ้ามี qualityScore (V2) ใช้เลย
+	if data.QualityScore > 0 {
+		return data.QualityScore
+	}
+
+	// ถ้ามี rating (V3) แปลงเป็น 1-10 scale
+	if data.Rating > 0 {
+		return int(data.Rating * 2)
+	}
+
+	return 0
 }

@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Globe, Check } from "lucide-react";
+import { useArticleTranslations } from "@/components/article-translations-provider";
 
 const LANGUAGES = [
   { code: "th", label: "TH", prefix: "" },
@@ -20,18 +21,29 @@ interface PublicLanguageSwitcherProps {
 }
 
 /**
- * Language switcher for public pages (ไม่ต้องใช้ DictionaryProvider)
+ * Language switcher for public pages
+ * - ถ้ามี ArticleTranslationsProvider จะใช้ translations สำหรับ smooth navigation
+ * - ถ้าไม่มี จะใช้ path-based switching ปกติ
  */
 export function PublicLanguageSwitcher({ locale }: PublicLanguageSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { translations, articleType } = useArticleTranslations();
 
   const currentLang = LANGUAGES.find((l) => l.code === locale) || LANGUAGES[0];
 
   const switchLocale = (targetLang: (typeof LANGUAGES)[number]) => {
     if (targetLang.code === locale) return;
 
-    // ลบ prefix ภาษาปัจจุบันออกก่อน
+    // ถ้ามี translations จาก article → ใช้ slug ตรงๆ (smooth navigation)
+    if (translations && translations[targetLang.code] && articleType) {
+      const targetSlug = translations[targetLang.code];
+      const basePath = targetLang.prefix + `/articles/${articleType}/${targetSlug}`;
+      router.push(basePath);
+      return;
+    }
+
+    // Fallback: path-based switching
     let cleanPath = pathname;
     for (const lang of LANGUAGES) {
       if (lang.prefix && pathname.startsWith(lang.prefix)) {
@@ -40,7 +52,6 @@ export function PublicLanguageSwitcher({ locale }: PublicLanguageSwitcherProps) 
       }
     }
 
-    // เพิ่ม prefix ภาษาใหม่
     const newPath = targetLang.prefix + cleanPath;
     router.push(newPath || "/");
   };

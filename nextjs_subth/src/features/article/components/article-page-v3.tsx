@@ -23,6 +23,7 @@
  */
 
 import { PublicLayout } from "@/components/layout/server";
+import { ArticleTranslationsProvider } from "@/components/article-translations-provider";
 import { ArticleBreadcrumb } from "./article-breadcrumb";
 import { ThumbnailWithCTA } from "./thumbnail-with-cta";
 import { ThumbnailImage } from "./thumbnail-image";
@@ -54,51 +55,56 @@ export function ArticlePageV3({ article, locale = "th" }: ArticlePageV3Props) {
         ];
 
   return (
-    <PublicLayout locale={locale}>
-      {/* JSON-LD Schemas - SSR */}
-      <JsonLdScriptsV3
-        content={content}
-        videoCode={article.videoCode}
-        videoId={article.videoId}
-        publishedAt={article.publishedAt}
-        locale={locale}
-      />
+    <ArticleTranslationsProvider
+      translations={article.translations}
+      articleType={article.type || "review"}
+    >
+      <PublicLayout locale={locale}>
+        {/* JSON-LD Schemas - SSR */}
+        <JsonLdScriptsV3
+          content={content}
+          videoCode={article.videoCode}
+          videoId={article.videoId}
+          publishedAt={article.publishedAt}
+          locale={locale}
+        />
 
-      <article className="mx-auto max-w-4xl px-4 py-6 md:py-8">
-        {/* Breadcrumb */}
-        <ArticleBreadcrumb items={breadcrumbItems} />
+        <article className="mx-auto max-w-4xl px-4 py-6 md:py-8">
+          {/* Breadcrumb */}
+          <ArticleBreadcrumb items={breadcrumbItems} />
 
-        {/* Thumbnail with CTA */}
-        <ThumbnailWithCTA videoId={article.videoId}>
-          <ThumbnailImage
-            src={content.thumbnailUrl}
-            alt={content.titleBalanced}
-          />
-        </ThumbnailWithCTA>
+          {/* Thumbnail with CTA */}
+          <ThumbnailWithCTA videoId={article.videoId}>
+            <ThumbnailImage
+              src={content.thumbnailUrl}
+              alt={content.titleBalanced}
+            />
+          </ThumbnailWithCTA>
 
-        {/* H1 Title */}
-        <h1 className="mt-6 text-2xl font-bold md:text-3xl">
-          {content.titleBalanced}
-        </h1>
+          {/* H1 Title */}
+          <h1 className="mt-6 text-2xl font-bold md:text-3xl">
+            {content.titleBalanced}
+          </h1>
 
-        {/* Author & Trust */}
-        <div className="mt-3 flex flex-wrap items-center gap-4">
-          <AuthorByline
-            publishedAt={article.publishedAt}
-            updatedAt={content.updatedAt}
-          />
-          <TrustBadge updatedAt={content.updatedAt} />
-        </div>
+          {/* Author & Trust */}
+          <div className="mt-3 flex flex-wrap items-center gap-4">
+            <AuthorByline
+              publishedAt={article.publishedAt}
+              updatedAt={content.updatedAt}
+            />
+            <TrustBadge updatedAt={content.updatedAt} />
+          </div>
 
-        {/* Main Content - V3 Layout */}
-        <div className="mt-8">
-          <ArticleContentV3Component
-            content={content}
-            videoCode={article.videoCode}
-            videoId={article.videoId}
-          />
-        </div>
-      </article>
-    </PublicLayout>
+          {/* Main Content - V3 Layout */}
+          <div className="mt-8">
+            <ArticleContentV3Component
+              content={content}
+              videoCode={article.videoCode}
+              videoId={article.videoId}
+            />
+          </div>
+        </article>
+      </PublicLayout>
+    </ArticleTranslationsProvider>
   );
 }

@@ -124,9 +124,10 @@ type PublicArticleResponse struct {
 	MetaDescription string                 `json:"metaDescription"`
 	Content         map[string]interface{} `json:"content"`
 	VideoCode       string                 `json:"videoCode"`
-	VideoID         string                 `json:"videoId"`              // V3: needed for CTA links
+	VideoID         string                 `json:"videoId"`                  // V3: needed for CTA links
 	PublishedAt     string                 `json:"publishedAt"`
-	RedirectSlug    string                 `json:"redirectSlug,omitempty"` // redirect ไป slug ที่ถูกต้อง (เมื่อภาษาต่างกัน)
+	Translations    map[string]string      `json:"translations,omitempty"`   // slug ของแต่ละภาษา {"en": "...", "th": "..."}
+	RedirectSlug    string                 `json:"redirectSlug,omitempty"`   // redirect ไป slug ที่ถูกต้อง (fallback)
 }
 
 // Public Article List (for SEO pages)

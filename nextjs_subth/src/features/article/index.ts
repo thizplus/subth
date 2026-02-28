@@ -47,7 +47,6 @@ export {
   ArticleContentV3Component,
   ArticlePageV3,
   // V3 Schemas
-  ReviewSchema,
   VideoObjectSchemaV3,
   JsonLdScriptsV3,
 } from "./components";

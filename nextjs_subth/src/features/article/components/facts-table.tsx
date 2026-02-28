@@ -44,7 +44,7 @@ export function FactsTable({
           {castProfiles.map((profile, i) => (
             <span key={profile.id}>
               <Link
-                href={getLocalizedPath(`/casts/${profile.id}`)}
+                href={getLocalizedPath(profile.profileUrl)}
                 className="text-primary hover:underline"
                 itemProp="actor"
               >
@@ -64,7 +64,7 @@ export function FactsTable({
     if (makerInfo) {
       return (
         <Link
-          href={getLocalizedPath(`/makers/${makerInfo.id}`)}
+          href={getLocalizedPath(makerInfo.profileUrl)}
           className="text-primary hover:underline"
           itemProp="productionCompany"
         >

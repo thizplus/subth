@@ -59,7 +59,7 @@ export function RelatedSearches({
             {tags.map((tag) => (
               <Link
                 key={tag.id}
-                href={getLocalizedPath(`/tags/${tag.id}`)}
+                href={getLocalizedPath(tag.url)}
                 className="px-3 py-1.5 text-sm bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors"
               >
                 {tag.name}
@@ -74,7 +74,7 @@ export function RelatedSearches({
             {casts.map((cast) => (
               <Link
                 key={cast.id}
-                href={getLocalizedPath(`/casts/${cast.id}`)}
+                href={getLocalizedPath(cast.profileUrl)}
                 className="px-3 py-1.5 text-sm bg-secondary text-secondary-foreground rounded-full hover:bg-secondary/80 transition-colors"
               >
                 {cast.name}
@@ -87,7 +87,7 @@ export function RelatedSearches({
         {maker && (
           <div>
             <Link
-              href={getLocalizedPath(`/makers/${maker.id}`)}
+              href={getLocalizedPath(maker.profileUrl)}
               className="inline-flex px-3 py-1.5 text-sm border rounded-full hover:bg-muted transition-colors"
             >
               {maker.name}

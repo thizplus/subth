@@ -61,6 +61,9 @@ export { getArticleByTypeAndSlug } from "./cached-service";
 // Utils (can be used on both server and client)
 export { formatTimestamp, parseDuration, formatDuration } from "./utils";
 
+// Type Guards
+export { isV3Content } from "./types";
+
 // Types
 export type {
   Article,

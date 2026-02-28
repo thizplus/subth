@@ -23,6 +23,9 @@ import {
   FAQPageSchema,
   ArticleSchema,
   BreadcrumbSchema,
+  // V3 Components
+  ArticlePageV3,
+  isV3Content,
 } from "@/features/article";
 
 // Below-fold components - dynamic import with SSR for SEO
@@ -143,6 +146,12 @@ export default async function ReviewArticlePageEN({ params }: PageProps) {
 
   const { content } = article;
 
+  // V3 Content Detection - use V3 layout if content has V3 structure
+  if (isV3Content(content)) {
+    return <ArticlePageV3 article={article as any} locale="en" />;
+  }
+
+  // V2 Layout (legacy)
   return (
     <PublicLayout locale="en">
       <VideoObjectSchema content={content} videoCode={article.videoCode} />

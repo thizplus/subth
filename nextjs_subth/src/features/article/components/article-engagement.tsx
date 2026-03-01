@@ -5,6 +5,7 @@ import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { LoginDialog, useAuthStore } from "@/features/auth";
 import {
   useToggleArticleLike,
+  useArticleLikeStatus,
   ArticleCommentsSheet,
 } from "@/features/engagement";
 import { cn } from "@/lib/utils";
@@ -33,7 +34,18 @@ export function ArticleEngagement({
   const [likesCount, setLikesCount] = useState(initialLikeCount);
   const toggleLike = useToggleArticleLike();
 
-  // Sync state with props when articleId changes
+  // Fetch actual like status for authenticated users
+  const { data: likeStatus } = useArticleLikeStatus(articleId);
+
+  // Sync with API response when available
+  useEffect(() => {
+    if (likeStatus?.data) {
+      setIsLiked(likeStatus.data.isLiked);
+      setLikesCount(likeStatus.data.likesCount);
+    }
+  }, [likeStatus]);
+
+  // Sync state with props when articleId changes (for SSR initial)
   useEffect(() => {
     setIsLiked(initialIsLiked);
     setLikesCount(initialLikeCount);

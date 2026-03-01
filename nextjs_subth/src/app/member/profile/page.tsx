@@ -290,10 +290,13 @@ function ActivityHistoryTab() {
       {activities.map((activity) => {
         const config = PAGE_TYPE_CONFIG[activity.pageType] || PAGE_TYPE_CONFIG.video;
         const Icon = config.icon;
-        const href = activity.pageId ? config.href(activity.pageId) : config.href();
 
-        // Parse metadata for search query
-        let displayText = config.label;
+        // Only create link with ID if pageId exists and is valid UUID
+        const hasValidId = activity.pageId && activity.pageId !== "undefined" && activity.pageId !== "null";
+        const href = hasValidId ? config.href(activity.pageId) : config.href();
+
+        // Display text priority: pageTitle > search query > page type label
+        let displayText = activity.pageTitle || config.label;
         if (activity.pageType === "search" && activity.metadata) {
           try {
             const meta = JSON.parse(activity.metadata);
@@ -314,11 +317,12 @@ function ActivityHistoryTab() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{displayText}</p>
-              <p className="text-xs text-muted-foreground truncate">{activity.path}</p>
+              <p className="text-xs text-muted-foreground">
+                <span className="text-primary/70">{config.label}</span>
+                {hasValidId && <span className="mx-1">·</span>}
+                <span className="truncate">{formatRelativeTime(activity.createdAt)}</span>
+              </p>
             </div>
-            <span className="text-xs text-muted-foreground whitespace-nowrap">
-              {formatRelativeTime(activity.createdAt)}
-            </span>
           </Link>
         );
       })}

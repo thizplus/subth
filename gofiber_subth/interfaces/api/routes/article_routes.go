@@ -28,7 +28,7 @@ func SetupArticleRoutes(api fiber.Router, h *handlers.Handlers) {
 	articles.Get("/news/:slug", h.ArticleHandler.GetPublishedArticleByType)     // News articles
 
 	// Like/Comment (public read, protected write)
-	articles.Get("/:id/like", h.ArticleLikeHandler.GetStatus)       // Get like status (optional auth handled in handler)
+	articles.Get("/:id/like", middleware.Optional(), h.ArticleLikeHandler.GetStatus) // Get like status (optional auth)
 	articles.Post("/:id/like", middleware.Protected(), h.ArticleLikeHandler.Toggle)            // Toggle like
 	articles.Get("/:id/comments", h.ArticleCommentHandler.List)                                // List comments
 	articles.Post("/:id/comments", middleware.Protected(), h.ArticleCommentHandler.Create)    // Create comment

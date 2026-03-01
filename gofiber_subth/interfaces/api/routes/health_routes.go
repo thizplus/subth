@@ -21,4 +21,12 @@ func SetupHealthRoutes(app *fiber.App) {
 			"health":  "/health",
 		})
 	})
+
+	// robots.txt - Disallow all crawling for API server
+	app.Get("/robots.txt", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "text/plain; charset=utf-8")
+		return c.SendString(`User-agent: *
+Disallow: /
+`)
+	})
 }

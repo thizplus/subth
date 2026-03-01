@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Heart, MessageCircle, Share2, Link2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { LoginDialog, useAuthStore } from "@/features/auth";
 import {
   useToggleArticleLike,
@@ -76,116 +75,78 @@ export function ArticleEngagement({
     }
   }, []);
 
-  const likeLabel = locale === "th" ? "ถูกใจ" : "Like";
-  const commentLabel = locale === "th" ? "แสดงความคิดเห็น" : "Comment";
-  const shareLabel = copied
-    ? locale === "th"
-      ? "คัดลอกแล้ว!"
-      : "Copied!"
-    : locale === "th"
-      ? "แชร์"
-      : "Share";
+  const likeText = locale === "th" ? "ถูกใจ" : "Like";
+  const commentText = locale === "th" ? "ความคิดเห็น" : "Comment";
+  const shareText = locale === "th" ? "แชร์" : "Share";
+  const copiedText = locale === "th" ? "คัดลอกแล้ว!" : "Copied!";
 
-  // Like button content
-  const LikeButtonContent = (
-    <>
+  // Like button
+  const LikeBtn = (
+    <button
+      className={cn(
+        "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all",
+        "hover:bg-muted active:scale-95",
+        isLiked
+          ? "text-red-500"
+          : "text-muted-foreground hover:text-foreground"
+      )}
+      onClick={isAuthenticated ? handleLike : undefined}
+      disabled={toggleLike.isPending}
+    >
       <Heart
         className={cn(
           "h-5 w-5 transition-all",
-          isLiked && "fill-red-500 text-red-500 scale-110"
+          isLiked && "fill-current"
         )}
       />
-      <span>
-        {likesCount > 0 ? `${likesCount} ${likeLabel}` : likeLabel}
-      </span>
-    </>
+      <span>{likesCount > 0 ? likesCount : ""} {likeText}</span>
+    </button>
   );
 
   return (
-    <div className="my-6 rounded-xl border bg-muted/30 p-4">
-      {/* Engagement Stats */}
-      {(likesCount > 0 || initialCommentCount > 0) && (
-        <div className="flex items-center gap-4 mb-3 pb-3 border-b text-sm text-muted-foreground">
-          {likesCount > 0 && (
-            <span className="flex items-center gap-1.5">
-              <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-              {likesCount.toLocaleString()} {locale === "th" ? "คนถูกใจ" : "likes"}
-            </span>
-          )}
-          {initialCommentCount > 0 && (
-            <span
-              className="flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors"
-              onClick={() => setCommentsOpen(true)}
-            >
-              <MessageCircle className="h-4 w-4" />
-              {initialCommentCount.toLocaleString()} {locale === "th" ? "ความคิดเห็น" : "comments"}
-            </span>
-          )}
-        </div>
+    <div className="flex items-center justify-center gap-2 py-4 my-6 border-y">
+      {/* Like */}
+      {isAuthenticated ? (
+        LikeBtn
+      ) : (
+        <LoginDialog locale={locale}>{LikeBtn}</LoginDialog>
       )}
 
-      {/* Action Buttons */}
-      <div className="flex items-center justify-between gap-2">
-        {/* Like */}
-        {isAuthenticated ? (
-          <Button
-            variant={isLiked ? "default" : "outline"}
-            size="sm"
-            className={cn(
-              "flex-1 gap-2 h-10 font-medium transition-all",
-              isLiked && "bg-red-500 hover:bg-red-600 text-white border-red-500"
-            )}
-            onClick={handleLike}
-            disabled={toggleLike.isPending}
-          >
-            {LikeButtonContent}
-          </Button>
-        ) : (
-          <LoginDialog locale={locale}>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1 gap-2 h-10 font-medium"
-            >
-              {LikeButtonContent}
-            </Button>
-          </LoginDialog>
+      <span className="text-muted-foreground/30">|</span>
+
+      {/* Comment */}
+      <button
+        className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all active:scale-95"
+        onClick={() => setCommentsOpen(true)}
+      >
+        <MessageCircle className="h-5 w-5" />
+        <span>{initialCommentCount > 0 ? initialCommentCount : ""} {commentText}</span>
+      </button>
+
+      {/* Comments sheet (controlled) */}
+      <ArticleCommentsSheet
+        articleId={articleId}
+        locale={locale}
+        commentsCount={initialCommentCount}
+        open={commentsOpen}
+        onOpenChange={setCommentsOpen}
+      />
+
+      <span className="text-muted-foreground/30">|</span>
+
+      {/* Share */}
+      <button
+        className={cn(
+          "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95",
+          copied
+            ? "text-green-500"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted"
         )}
-
-        {/* Comment */}
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 gap-2 h-10 font-medium"
-          onClick={() => setCommentsOpen(true)}
-        >
-          <MessageCircle className="h-5 w-5" />
-          <span>{commentLabel}</span>
-        </Button>
-
-        {/* Comments sheet (controlled) */}
-        <ArticleCommentsSheet
-          articleId={articleId}
-          locale={locale}
-          commentsCount={initialCommentCount}
-          open={commentsOpen}
-          onOpenChange={setCommentsOpen}
-        />
-
-        {/* Share */}
-        <Button
-          variant="outline"
-          size="sm"
-          className={cn(
-            "flex-1 gap-2 h-10 font-medium transition-all",
-            copied && "bg-green-500 hover:bg-green-600 text-white border-green-500"
-          )}
-          onClick={handleShare}
-        >
-          {copied ? <Link2 className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
-          <span>{shareLabel}</span>
-        </Button>
-      </div>
+        onClick={handleShare}
+      >
+        <Share2 className="h-5 w-5" />
+        <span>{copied ? copiedText : shareText}</span>
+      </button>
     </div>
   );
 }

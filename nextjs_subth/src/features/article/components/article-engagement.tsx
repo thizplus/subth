@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoginDialog, useAuthStore } from "@/features/auth";
 import {
@@ -26,6 +26,7 @@ export function ArticleEngagement({
   initialIsLiked = false,
 }: ArticleEngagementProps) {
   const [commentsOpen, setCommentsOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { isAuthenticated } = useAuthStore();
 
   // Like state - initialized from props
@@ -67,91 +68,123 @@ export function ArticleEngagement({
         });
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        // TODO: Toast notification
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
       }
     } catch (error) {
       console.error("Share failed:", error);
     }
   }, []);
 
-  // Like button with auth check
-  const LikeButton = isAuthenticated ? (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="gap-1.5"
-      onClick={handleLike}
-      disabled={toggleLike.isPending}
-    >
+  const likeLabel = locale === "th" ? "ถูกใจ" : "Like";
+  const commentLabel = locale === "th" ? "แสดงความคิดเห็น" : "Comment";
+  const shareLabel = copied
+    ? locale === "th"
+      ? "คัดลอกแล้ว!"
+      : "Copied!"
+    : locale === "th"
+      ? "แชร์"
+      : "Share";
+
+  // Like button content
+  const LikeButtonContent = (
+    <>
       <Heart
         className={cn(
-          "h-5 w-5 transition-colors",
-          isLiked && "fill-red-500 text-red-500"
+          "h-5 w-5 transition-all",
+          isLiked && "fill-red-500 text-red-500 scale-110"
         )}
       />
-      <span className="text-sm">{likesCount > 0 ? likesCount : ""}</span>
-    </Button>
-  ) : (
-    <LoginDialog locale={locale}>
-      <Button variant="ghost" size="sm" className="gap-1.5">
-        <Heart className="h-5 w-5" />
-        <span className="text-sm">{likesCount > 0 ? likesCount : ""}</span>
-      </Button>
-    </LoginDialog>
+      <span>
+        {likesCount > 0 ? `${likesCount} ${likeLabel}` : likeLabel}
+      </span>
+    </>
   );
 
   return (
-    <div className="flex items-center gap-1 border-t border-b py-2 my-6">
-      {/* Like */}
-      {LikeButton}
+    <div className="my-6 rounded-xl border bg-muted/30 p-4">
+      {/* Engagement Stats */}
+      {(likesCount > 0 || initialCommentCount > 0) && (
+        <div className="flex items-center gap-4 mb-3 pb-3 border-b text-sm text-muted-foreground">
+          {likesCount > 0 && (
+            <span className="flex items-center gap-1.5">
+              <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+              {likesCount.toLocaleString()} {locale === "th" ? "คนถูกใจ" : "likes"}
+            </span>
+          )}
+          {initialCommentCount > 0 && (
+            <span
+              className="flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors"
+              onClick={() => setCommentsOpen(true)}
+            >
+              <MessageCircle className="h-4 w-4" />
+              {initialCommentCount.toLocaleString()} {locale === "th" ? "ความคิดเห็น" : "comments"}
+            </span>
+          )}
+        </div>
+      )}
 
-      {/* Comment */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="gap-1.5"
-        onClick={() => setCommentsOpen(true)}
-      >
-        <MessageCircle className="h-5 w-5" />
-        <span className="text-sm">
-          {initialCommentCount > 0 ? initialCommentCount : ""}
-        </span>
-      </Button>
-
-      {/* Comments sheet (controlled) */}
-      <ArticleCommentsSheet
-        articleId={articleId}
-        locale={locale}
-        commentsCount={initialCommentCount}
-        open={commentsOpen}
-        onOpenChange={setCommentsOpen}
-      />
-
-      {/* Share */}
-      <Button variant="ghost" size="sm" className="gap-1.5" onClick={handleShare}>
-        <Share2 className="h-5 w-5" />
-      </Button>
-
-      {/* Spacer + Labels */}
-      <div className="flex-1" />
-      <div className="text-sm text-muted-foreground">
-        {likesCount > 0 && (
-          <span>
-            {likesCount.toLocaleString()} {locale === "th" ? "ถูกใจ" : "likes"}
-          </span>
-        )}
-        {likesCount > 0 && initialCommentCount > 0 && (
-          <span className="mx-1">·</span>
-        )}
-        {initialCommentCount > 0 && (
-          <span
-            className="cursor-pointer hover:underline"
-            onClick={() => setCommentsOpen(true)}
+      {/* Action Buttons */}
+      <div className="flex items-center justify-between gap-2">
+        {/* Like */}
+        {isAuthenticated ? (
+          <Button
+            variant={isLiked ? "default" : "outline"}
+            size="sm"
+            className={cn(
+              "flex-1 gap-2 h-10 font-medium transition-all",
+              isLiked && "bg-red-500 hover:bg-red-600 text-white border-red-500"
+            )}
+            onClick={handleLike}
+            disabled={toggleLike.isPending}
           >
-            {initialCommentCount.toLocaleString()}{" "}
-            {locale === "th" ? "ความคิดเห็น" : "comments"}
-          </span>
+            {LikeButtonContent}
+          </Button>
+        ) : (
+          <LoginDialog locale={locale}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 gap-2 h-10 font-medium"
+            >
+              {LikeButtonContent}
+            </Button>
+          </LoginDialog>
         )}
+
+        {/* Comment */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1 gap-2 h-10 font-medium"
+          onClick={() => setCommentsOpen(true)}
+        >
+          <MessageCircle className="h-5 w-5" />
+          <span>{commentLabel}</span>
+        </Button>
+
+        {/* Comments sheet (controlled) */}
+        <ArticleCommentsSheet
+          articleId={articleId}
+          locale={locale}
+          commentsCount={initialCommentCount}
+          open={commentsOpen}
+          onOpenChange={setCommentsOpen}
+        />
+
+        {/* Share */}
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn(
+            "flex-1 gap-2 h-10 font-medium transition-all",
+            copied && "bg-green-500 hover:bg-green-600 text-white border-green-500"
+          )}
+          onClick={handleShare}
+        >
+          {copied ? <Link2 className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
+          <span>{shareLabel}</span>
+        </Button>
       </div>
     </div>
   );

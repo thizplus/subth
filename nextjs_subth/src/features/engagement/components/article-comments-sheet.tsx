@@ -159,7 +159,7 @@ export function ArticleCommentsSheet({
                       getInitials={getInitials}
                       getDisplayName={getDisplayName}
                       onDelete={handleDelete}
-                      isOwner={user?.id === comment.userId}
+                      isOwner={user?.id === comment.user?.id}
                       isDeleting={deleteComment.isPending}
                     />
                   ))}

@@ -40,8 +40,16 @@ func NewActivityLogService(
 	}
 }
 
-// LogActivity - Push to Redis queue (Fire & Forget, < 10ms response)
+// LogActivity - Push to Redis queue with rate limiting (30 min per user+page)
 func (s *activityLogServiceImpl) LogActivity(ctx context.Context, userID uuid.UUID, req *dto.LogActivityRequest, ipAddress, userAgent string) error {
+	// Rate limit: 1 log per user per page per 30 minutes
+	rateLimitKey := s.queue.GetRateLimitKey(userID, req.PageType, req.PageID)
+	if s.queue.IsRateLimited(ctx, rateLimitKey) {
+		// Already logged recently, skip
+		logger.DebugContext(ctx, "Activity log rate limited", "user_id", userID, "page_type", req.PageType)
+		return nil
+	}
+
 	item := &dto.ActivityQueueItem{
 		UserID:    userID,
 		PageType:  req.PageType,
@@ -58,6 +66,9 @@ func (s *activityLogServiceImpl) LogActivity(ctx context.Context, userID uuid.UU
 		logger.WarnContext(ctx, "Failed to queue activity log", "error", err, "user_id", userID)
 		return err
 	}
+
+	// Set rate limit key (30 minutes TTL)
+	s.queue.SetRateLimit(ctx, rateLimitKey, 30*time.Minute)
 
 	return nil
 }

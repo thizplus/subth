@@ -3,7 +3,10 @@ package redis
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"time"
 
+	"github.com/google/uuid"
 	"gofiber-template/domain/dto"
 	"gofiber-template/pkg/logger"
 
@@ -11,6 +14,7 @@ import (
 )
 
 const ActivityQueueKey = "activity_log_queue"
+const ActivityRateLimitPrefix = "activity_rate:"
 
 type ActivityQueue struct {
 	client *redis.Client
@@ -74,4 +78,32 @@ func (q *ActivityQueue) Length(ctx context.Context) (int64, error) {
 // Clear ลบทุก items ใน queue (สำหรับ testing)
 func (q *ActivityQueue) Clear(ctx context.Context) error {
 	return q.client.Del(ctx, ActivityQueueKey).Err()
+}
+
+// ========== Rate Limiting ==========
+
+// GetRateLimitKey สร้าง key สำหรับ rate limit (user:pageType:pageID)
+func (q *ActivityQueue) GetRateLimitKey(userID uuid.UUID, pageType string, pageID *string) string {
+	pid := "none"
+	if pageID != nil {
+		pid = *pageID
+	}
+	return fmt.Sprintf("%s%s:%s:%s", ActivityRateLimitPrefix, userID.String(), pageType, pid)
+}
+
+// IsRateLimited เช็คว่า user นี้เพิ่ง log activity ไปหรือยัง
+func (q *ActivityQueue) IsRateLimited(ctx context.Context, key string) bool {
+	exists, err := q.client.Exists(ctx, key).Result()
+	if err != nil {
+		logger.WarnContext(ctx, "Failed to check rate limit", "error", err, "key", key)
+		return false // Allow on error
+	}
+	return exists > 0
+}
+
+// SetRateLimit ตั้ง rate limit key พร้อม TTL
+func (q *ActivityQueue) SetRateLimit(ctx context.Context, key string, ttl time.Duration) {
+	if err := q.client.Set(ctx, key, "1", ttl).Err(); err != nil {
+		logger.WarnContext(ctx, "Failed to set rate limit", "error", err, "key", key)
+	}
 }

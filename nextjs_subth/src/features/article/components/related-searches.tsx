@@ -38,54 +38,72 @@ export function RelatedSearches({
         {t("article.searchIntents")}
       </h3>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         {/* Search Intents - text only */}
         {searchIntents && searchIntents.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {searchIntents.map((intent, i) => (
-              <span
-                key={i}
-                className="px-3 py-1.5 text-sm bg-muted rounded-full text-muted-foreground"
-              >
-                {intent}
-              </span>
-            ))}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-2">
+              {t("article.relatedKeywords")}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {searchIntents.map((intent, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1.5 text-sm bg-muted rounded-full text-muted-foreground"
+                >
+                  {intent}
+                </span>
+              ))}
+            </div>
           </div>
         )}
 
         {/* Tags - linked */}
         {tags && tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <Link
-                key={tag.id}
-                href={getLocalizedPath(tag.url)}
-                className="px-3 py-1.5 text-sm bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors"
-              >
-                {tag.name}
-              </Link>
-            ))}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-2">
+              {t("article.tags")}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <Link
+                  key={tag.id}
+                  href={getLocalizedPath(tag.url)}
+                  className="px-3 py-1.5 text-sm bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors"
+                >
+                  {tag.name}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 
         {/* Casts - linked */}
         {casts && casts.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {casts.map((cast) => (
-              <Link
-                key={cast.id}
-                href={getLocalizedPath(cast.profileUrl)}
-                className="px-3 py-1.5 text-sm bg-secondary text-secondary-foreground rounded-full hover:bg-secondary/80 transition-colors"
-              >
-                {cast.name}
-              </Link>
-            ))}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-2">
+              {t("article.casts")}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {casts.map((cast) => (
+                <Link
+                  key={cast.id}
+                  href={getLocalizedPath(cast.profileUrl)}
+                  className="px-3 py-1.5 text-sm bg-secondary text-secondary-foreground rounded-full hover:bg-secondary/80 transition-colors"
+                >
+                  {cast.name}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 
         {/* Maker - linked */}
         {maker && (
           <div>
+            <p className="text-sm font-medium text-muted-foreground mb-2">
+              {t("article.studio")}
+            </p>
             <Link
               href={getLocalizedPath(maker.profileUrl)}
               className="inline-flex px-3 py-1.5 text-sm border rounded-full hover:bg-muted transition-colors"

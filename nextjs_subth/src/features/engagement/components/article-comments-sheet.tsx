@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { th, enUS } from "date-fns/locale";
 import { Send, Loader2, MoreHorizontal, Trash2 } from "lucide-react";
@@ -38,6 +38,8 @@ interface ArticleCommentsSheetProps {
   // Controlled mode props
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  // Callback when comment count changes
+  onCommentCountChange?: (count: number) => void;
 }
 
 export function ArticleCommentsSheet({
@@ -47,6 +49,7 @@ export function ArticleCommentsSheet({
   commentsCount = 0,
   open: controlledOpen,
   onOpenChange,
+  onCommentCountChange,
 }: ArticleCommentsSheetProps) {
   const [internalOpen, setInternalOpen] = useState(false);
 
@@ -64,6 +67,13 @@ export function ArticleCommentsSheet({
 
   const comments = data?.pages.flatMap((page) => page.data) ?? [];
   const totalComments = data?.pages[0]?.meta.total ?? commentsCount;
+
+  // Notify parent when comment count changes
+  useEffect(() => {
+    if (data?.pages[0]?.meta.total !== undefined) {
+      onCommentCountChange?.(data.pages[0].meta.total);
+    }
+  }, [data?.pages[0]?.meta.total, onCommentCountChange]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {

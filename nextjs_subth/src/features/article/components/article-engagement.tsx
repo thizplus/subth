@@ -27,6 +27,7 @@ export function ArticleEngagement({
 }: ArticleEngagementProps) {
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [commentCount, setCommentCount] = useState(initialCommentCount);
   const { isAuthenticated } = useAuthStore();
 
   // Like state - initialized from props
@@ -49,7 +50,13 @@ export function ArticleEngagement({
   useEffect(() => {
     setIsLiked(initialIsLiked);
     setLikesCount(initialLikeCount);
-  }, [articleId, initialIsLiked, initialLikeCount]);
+    setCommentCount(initialCommentCount);
+  }, [articleId, initialIsLiked, initialLikeCount, initialCommentCount]);
+
+  // Callback when comment count changes (from CommentsSheet)
+  const handleCommentCountChange = useCallback((newCount: number) => {
+    setCommentCount(newCount);
+  }, []);
 
   const handleLike = useCallback(() => {
     if (!isAuthenticated) return;
@@ -132,16 +139,17 @@ export function ArticleEngagement({
         onClick={() => setCommentsOpen(true)}
       >
         <MessageCircle className="h-5 w-5" />
-        <span>{initialCommentCount > 0 ? initialCommentCount : ""} {commentText}</span>
+        <span>{commentCount > 0 ? commentCount : ""} {commentText}</span>
       </button>
 
       {/* Comments sheet (controlled) */}
       <ArticleCommentsSheet
         articleId={articleId}
         locale={locale}
-        commentsCount={initialCommentCount}
+        commentsCount={commentCount}
         open={commentsOpen}
         onOpenChange={setCommentsOpen}
+        onCommentCountChange={handleCommentCountChange}
       />
 
       <span className="text-muted-foreground/30">|</span>

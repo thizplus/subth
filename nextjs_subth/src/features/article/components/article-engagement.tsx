@@ -104,7 +104,7 @@ export function ArticleEngagement({
   );
 
   return (
-    <div className="flex items-center justify-center gap-2 py-4 my-6 border-y">
+    <div className="flex items-center justify-center gap-2 py-4 my-6">
       {/* Like */}
       {isAuthenticated ? (
         LikeBtn

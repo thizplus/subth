@@ -13,15 +13,18 @@ import (
 
 func main() {
 	// Load config
-	cfg := config.Load()
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
 
 	// Create R2 adapter
 	r2, err := storage.NewR2Adapter(storage.R2Config{
-		AccountID:       cfg.R2AccountID,
-		AccessKeyID:     cfg.R2AccessKeyID,
-		SecretAccessKey: cfg.R2SecretAccessKey,
-		Bucket:          cfg.R2Bucket,
-		PublicURL:       cfg.R2PublicURL,
+		AccountID:       cfg.R2.AccountID,
+		AccessKeyID:     cfg.R2.AccessKeyID,
+		SecretAccessKey: cfg.R2.SecretAccessKey,
+		Bucket:          cfg.R2.Bucket,
+		PublicURL:       cfg.R2.PublicURL,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create R2 adapter: %v", err)

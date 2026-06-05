@@ -1,0 +1,52 @@
+
+สีพื้นหลังและสีพื้นหน้ามีอัตราส่วนคอนทราสต์ไม่เพียงพอ
+ข้อความคอนทราสต์ต่ำมักทำให้ผู้ใช้จำนวนมากอ่านได้ยากหรืออ่านไม่ได้เลย ดูวิธีทำให้สีมีคอนทราสต์เพียงพอ
+องค์ประกอบที่ไม่ผ่านการตรวจสอบ
+นักแสดง
+<p class="text-xs text-muted-foreground/70">
+rv4kjsxp MIDA-533 Ishikawa Mio: ครูฝึกสอนสุดฮอตกับนักเรียนสาวสุดเซ็กซี่ แอบกิ๊กกันหลังเลิกเรียน…
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/mida-533">
+ค่าย
+<p class="text-xs text-muted-foreground/70">
+rv4kjsxp MIDA-533 Ishikawa Mio: ครูฝึกสอนสุดฮอตกับนักเรียนสาวสุดเซ็กซี่ แอบกิ๊กกันหลังเลิกเรียน…
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/mida-533">
+นักแสดง
+<p class="text-xs text-muted-foreground/70">
+kvhywqxm FNS-146 Hachimitsu Rin: กลับบ้านเกิดเจอรักแรก! แผนแก้หนี้สุดซี้ด? นักแสดง Hachi…
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/fns-146">
+ค่าย
+<p class="text-xs text-muted-foreground/70">
+kvhywqxm FNS-146 Hachimitsu Rin: กลับบ้านเกิดเจอรักแรก! แผนแก้หนี้สุดซี้ด? นักแสดง Hachi…
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/fns-146">
+นักแสดง
+<p class="text-xs text-muted-foreground/70">
+aeu7mrxd ABF-324 Nanashima Mai: เมื่อเซ็กส์คือเครื่องมือแก้ปัญหาบริษัท นักแสดง Nanashima M…
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/abf-324">
+ค่าย
+<p class="text-xs text-muted-foreground/70">
+aeu7mrxd ABF-324 Nanashima Mai: เมื่อเซ็กส์คือเครื่องมือแก้ปัญหาบริษัท นักแสดง Nanashima M…
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/abf-324">
+นักแสดง
+<p class="text-xs text-muted-foreground/70">
+npxehcn5 SDHS-065 ซับไทย: Satsuki Nao หวนคืนวงการ ครูอนุบาลสุดฮอตกับความทรงจำในสตูดิโอ …
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/sdhs-065">
+ค่าย
+<p class="text-xs text-muted-foreground/70">
+npxehcn5 SDHS-065 ซับไทย: Satsuki Nao หวนคืนวงการ ครูอนุบาลสุดฮอตกับความทรงจำในสตูดิโอ …
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/sdhs-065">
+นักแสดง
+<p class="text-xs text-muted-foreground/70">
+psfyxgqh JUR-177 เมรี่วัย 40 พลิกชีวิตแซ่บ! สวิงกิ้งกับเพื่อนสนิท ชีวิตหลังแต่งงานสุดเหวี่ยง นักแสดง…
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/jur-177">
+ค่าย
+<p class="text-xs text-muted-foreground/70">
+psfyxgqh JUR-177 เมรี่วัย 40 พลิกชีวิตแซ่บ! สวิงกิ้งกับเพื่อนสนิท ชีวิตหลังแต่งงานสุดเหวี่ยง นักแสดง…
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/jur-177">
+นักแสดง
+<p class="text-xs text-muted-foreground/70">
+3993bp6j DASS-541 Tachibana Mary: ความสัมพันธ์ลับๆ ในโลกของผู้ใหญ่, ความรักและการแก้แค้น …
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/dass-541">
+ค่าย
+<p class="text-xs text-muted-foreground/70">
+3993bp6j DASS-541 Tachibana Mary: ความสัมพันธ์ลับๆ ในโลกของผู้ใหญ่, ความรักและการแก้แค้น …
+<a class="group block overflow-hidden rounded-lg border bg-card transition-colors ho…" href="/articles/review/dass-541">

@@ -1,0 +1,242 @@
+โอเค อันนี้ผมจะตอบแบบ สาย SEO จริง + สายระบบ content pipeline เลยนะ
+ไม่โลกสวย ไม่พูดกว้าง ๆ — จะชี้ว่าของคุณดีตรงไหน และอะไรที่ทำให้ “ไม่ขึ้นอันดับ”
+
+ผมอ่าน chunk1-4 แล้ว
+สรุปสั้น ๆ ก่อน:
+
+👉 ระบบคุณ “เก่งมากในเชิง content generation”
+👉 แต่ “ไม่ได้ออกแบบเพื่อ ranking signal”
+
+นี่คือเหตุผลหลักที่ผมมั่นใจว่าปรับแล้วอันดับดีขึ้น:
+
+🔴 ปัญหาใหญ่ของ pipeline คุณ (อันดับไม่ขึ้นเพราะสิ่งนี้)
+1️⃣ คุณ optimize เพื่อ “ความยาว” ไม่ใช่ “intent”
+
+ดู chunk1:
+
+บังคับ 400-500 คำ
+
+บังคับ paragraph count
+
+บังคับ tone
+
+บังคับ teaser style
+
+👉 ทั้งหมดคือ content formatting
+
+แต่ Google สนใจ:
+
+query match
+
+topical relevance
+
+semantic coverage
+
+entity clarity
+
+ไม่ใช่ word count
+
+ผลคือ:
+
+👉 ได้บทความยาว
+👉 แต่ semantic density ต่ำ
+👉 เลยไม่ rank
+
+2️⃣ คุณ “หลบคำตรง intent” เยอะเกิน
+
+เช่น:
+
+ห้ามใช้คำตรง ๆ
+
+ใช้คำอ้อมค้อม
+
+หลีกเลี่ยงชื่อซ้ำ
+
+หลีกเลี่ยงคำแรง
+
+ซึ่งดีสำหรับ moderation
+แต่ SEO มองว่า:
+
+👉 relevance ต่ำ
+👉 keyword confidence ต่ำ
+👉 topical authority ต่ำ
+
+Google ไม่สนใจว่าคำสุภาพไหม
+มันสนใจว่าคำตรงไหม
+
+3️⃣ pipeline คุณ “เล่าเรื่อง” แต่ไม่ “ตอบ query”
+
+Content คุณเหมาะกับ:
+
+🎬 Blog reader
+📖 Story summary
+📝 Review site
+
+แต่ search intent ของ keyword คือ:
+
+👉 คนอยากรู้เรื่องอะไร
+👉 ใครแสดง
+👉 เรื่องแนวไหน
+👉 ดูที่ไหน
+
+แต่ pipeline คุณ:
+
+เริ่ม narrative
+
+emphasis emotion
+
+emphasis writing style
+
+ไม่ใช่ data-first
+
+🟢 สิ่งที่คุณทำถูกแล้ว (และโคตรดี)
+
+ต้องชมจริง:
+
+✔ ใช้ SRT เป็น source
+
+นี่คือ goldmine SEO
+เพราะมันคือ original content
+
+✔ มี entity control
+
+ดีมาก
+ช่วยลด hallucination
+
+✔ แยก chunk
+
+ดีสุด
+เพราะ scale ได้
+
+✔ มี schema
+
+ดีต่อ structured data ในอนาคต
+
+ระบบคุณ “เก่งแล้ว”
+แค่ optimize ผิดทิศ
+
+🔧 ถ้าผมปรับ ผมจะเปลี่ยน 5 อย่างนี้
+1️⃣ เพิ่ม Intent Block ตอนต้นบทความ
+
+ก่อน narrative ต้องมี:
+
+เรื่องนี้เกี่ยวกับอะไร
+แนวไหน
+ใครแสดง
+เหมาะกับใคร
+
+Google ต้องอ่าน block นี้ก่อน
+
+ไม่ใช่ teaser
+
+2️⃣ เพิ่ม Semantic Coverage Block
+
+เช่น:
+
+โครงเรื่องย่อ
+
+ตัวละครหลัก
+
+แนวเรื่อง
+
+mood
+
+จุดเด่น
+
+ต้อง explicit
+
+ไม่ใช่ซ่อนใน prose
+
+3️⃣ เปลี่ยน summary จาก “เล่าเรื่อง” → “semantic summary”
+
+ตอนนี้:
+
+👉 narrative-heavy
+👉 emotional-heavy
+
+ที่ควรเป็น:
+
+👉 information-heavy
+👉 entity-rich
+👉 keyword-dense
+
+4️⃣ เพิ่ม Entity Intro Section
+
+Google ต้องเห็น:
+
+นักแสดงคือใคร
+
+แนวผลงานคืออะไร
+
+เรื่องนี้อยู่ใน category ไหน
+
+ก่อนอ่าน review
+
+5️⃣ เปลี่ยน meta strategy
+
+ตอนนี้ meta ของคุณ = clickbait
+
+แต่ SEO ต้อง:
+
+👉 keyword match ก่อน
+👉 hook ทีหลัง
+
+🔥 Prompt ที่ผมจะเพิ่มใน chunk1
+
+เพิ่ม block นี้:
+
+## SEARCH INTENT FIRST
+
+ก่อนเขียน summary:
+1. ระบุประเภทของเรื่อง
+2. ระบุ theme หลักแบบชัด
+3. ระบุผู้ชมเป้าหมาย
+4. ระบุจุดขายของเรื่อง
+5. สร้าง "info paragraph" ก่อน narrative
+
+⚠️ Info paragraph ต้อง:
+- ตรง
+- ชัด
+- keyword rich
+- entity clear
+🔥 และผมจะเพิ่ม output field นี้
+"searchIntentBlock": "Paragraph ตอบคำถามคนค้นหา"
+
+เช่น:
+
+เรื่องนี้เป็นแนวโรแมนติกดราม่าที่เล่าเรื่องของหญิงสาวที่ต้องเผชิญสถานการณ์ไม่คาดคิดในสถานที่ทำงาน การดำเนินเรื่องเน้นอารมณ์และความสัมพันธ์ของตัวละคร เหมาะสำหรับผู้ชมที่ชอบแนวเน้นบรรยากาศและการแสดง
+
+นี่แหละคือ SEO fuel
+
+🎯 สรุปตรง ๆ
+
+ผมมั่นใจว่าปรับแล้วดีขึ้นเพราะ:
+
+👉 ระบบคุณมี data ดีมาก
+👉 content original จริง
+👉 pipeline scalable
+
+แต่ตอนนี้:
+
+👉 เขียนเพื่อ “อ่าน”
+👉 ไม่ได้เขียนเพื่อ “ค้นหา”
+
+ปรับนิดเดียว = ranking เปลี่ยน
+
+ถ้าคุณอยาก ผมทำให้ดูจริงได้
+
+ผมสามารถ:
+
+rewrite chunk1 prompt ให้ SEO-first
+
+เพิ่ม field ใหม่
+
+ไม่ทำให้เว็บดู cheap
+
+ไม่ทำให้โดน filter
+
+บอกผมได้เลย:
+
+👉 อยากให้ผมเขียน prompt ใหม่ให้ทั้ง chunk1 เลยไหม
+หรือ
+👉 อยากให้ผมปรับทีละส่วนก่อน

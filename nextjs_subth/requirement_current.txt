@@ -1,0 +1,23 @@
+ผมอยากทำให้ระบบนี้เป็นระบบการ login ครับ
+
+หน้า public จะมีแค่ 
+
+หน้าแรก /
+หน้า reels
+
+ถ้าจะดูเนื้อหาที่เป็น vdo ที่เป็นของปุจจุบัน  จะต้อง login ก่อนครับ
+https://subth.com/ อาจจะต้องย้ายไป /member/
+https://subth.com/casts อาจจะต้องย้ายไป /member/casts
+https://subth.com/tags อาจจะต้องย้ายไป /member/tags
+
+งงไหมครับ
+
+
+ในส่วนของการแสดงเนื้อหาของ vdo 
+อาจจะต้องแบ่งเป็น 2 ส่วนครับ ส่วนที่ public ที่จะแสดงใน reels และหน้าแรก
+
+หน้าแรก ก็จะเป็นภาพ cover .jpg มี title , description , #hashtag เหมือนกัน แนว reviews ครับ  รูปแบบคล้ายๆ facebook , ig ครับ
+reel ก็จะมี vdo .mp4  title , description , #hashtag
+
+
+ส่วนของ member คือที่เรามีอยู่แล้ว ไม่น่าจะต้องปรับอะไรครับ งงไหม

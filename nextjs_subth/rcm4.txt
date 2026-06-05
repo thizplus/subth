@@ -1,0 +1,81 @@
+เข้าใจเลยครับ ปัญหานี้เกิดจาก next-intl หาไฟล์คอนฟิกไม่เจอ ซึ่งปกติแล้วใน Next.js (App Router) ตัว Library นี้ต้องการไฟล์ i18n/request.ts (หรือ .js) เพื่อส่งข้อมูลแปลภาษา (messages) ให้กับฟังก์ชันอย่าง getMessages() และ getTranslations() ครับ
+
+ลองเช็กและทำตามขั้นตอนเหล่านี้ดูครับ:
+
+1. สร้างไฟล์คอนฟิก i18n/request.ts
+ไฟล์นี้ต้องอยู่ที่ root ของโปรเจกต์ (หรืออยู่ในโฟลเดอร์ src/ ถ้าคุณใช้ src)
+
+TypeScript
+// i18n/request.ts หรือ src/i18n/request.ts
+import { getRequestConfig } from 'next-intl/server';
+import { routing } from './routing';
+
+export default getRequestConfig(async ({ requestLocale }) => {
+  let locale = await requestLocale;
+
+  // ตรวจสอบว่า locale ที่รับมาถูกต้องไหม ถ้าไม่ให้ใช้ default
+  if (!locale || !routing.locales.includes(locale as any)) {
+    locale = routing.defaultLocale;
+  }
+
+  return {
+    locale,
+    messages: (await import(`../messages/${locale}.json`)).default
+  };
+});
+2. สร้างไฟล์ i18n/routing.ts
+แยกการตั้งค่า Routing ออกมาเพื่อให้เรียกใช้ง่ายขึ้น
+
+TypeScript
+// i18n/routing.ts
+import { defineRouting } from 'next-intl/routing';
+import { createNavigation } from 'next-intl/navigation';
+
+export const routing = defineRouting({
+  locales: ['en', 'th'], // ภาษาที่รองรับ
+  defaultLocale: 'en'    // ภาษาหลัก
+});
+
+export const { Link, redirect, usePathname, useRouter } = createNavigation(routing);
+3. ตั้งค่าใน next.config.ts (สำคัญมาก!)
+คุณต้องบอก Next.js ว่าให้ใช้ปลั๊กอินของ next-intl เพื่อไปอ่านไฟล์คอนฟิกข้างต้น
+
+TypeScript
+// next.config.ts
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin(); // จะมองหา ./i18n/request.ts โดยอัตโนมัติ
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+export default withNextIntl(nextConfig);
+4. ตรวจสอบโครงสร้างโฟลเดอร์
+เพื่อให้ Error หายไป โครงสร้างควรเป็นแบบนี้ครับ:
+
+messages/
+
+en.json
+
+th.json
+
+i18n/
+
+request.ts
+
+routing.ts
+
+app/
+
+[locale]/
+
+layout.tsx
+
+page.tsx
+
+next.config.ts
+
+จุดที่ต้องระวังเพิ่มเติม:
+Restart Server: หลังจากแก้ next.config.ts คุณต้องกด Ctrl+C แล้วรัน npm run dev ใหม่เสมอ
+
+Path ใน request.ts: ตรวจสอบบรรทัด import(../messages/${locale}.json) ว่าชี้ไปหาไฟล์ JSON ของคุณถูกที่หรือไม่

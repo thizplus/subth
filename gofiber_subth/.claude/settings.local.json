@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(tree:*)",
+      "Bash(go build:*)",
+      "Bash(go get:*)",
+      "Bash(go run:*)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(cat:*)"
+    ]
+  }
+}

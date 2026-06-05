@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where:*)",
+      "Bash(\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.exe\" ps -a)",
+      "Bash(\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.exe\" exec subth-postgres psql -U postgres -d subth -c \"\\\\d categories\")",
+      "Bash(\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.exe\" exec subth-postgres psql:*)",
+      "Bash(\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.exe\" exec subth-postgres psql -U postgres -d subth -c \"SELECT id, name, slug, video_count FROM categories\")",
+      "Bash(\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.exe\" exec subth-postgres psql -U postgres -d subth -c \"\\\\d video_translations\")",
+      "Bash(\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.exe\" exec subth-postgres psql -U postgres -d subth -c \"SELECT v.id, vt.title, v.category, v.category_id FROM videos v JOIN video_translations vt ON v.id = vt.video_id WHERE vt.title ILIKE ''%HND-863%'' LIMIT 5\")",
+      "Bash(\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.exe\" exec subth-postgres psql -U postgres -d subth -c \"SELECT COUNT\\(*\\) FROM videos WHERE category_id = ''590d86ca-bfae-4a1c-9edb-c7adac05faa8''\")",
+      "Bash(\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\resources\\\\bin\\\\docker.exe\" exec subth-postgres psql -U postgres -d subth -c \"SELECT v.id, vt.title, v.category, c.name as category_name FROM videos v JOIN video_translations vt ON v.id = vt.video_id JOIN categories c ON v.category_id = c.id WHERE vt.title ILIKE ''%HND-863%'' AND vt.lang = ''en'' LIMIT 1\")"
+    ]
+  }
+}

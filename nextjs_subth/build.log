@@ -1,0 +1,34 @@
+⚠ Invalid next.config.ts options detected: 
+⚠     Unrecognized key(s) in object: 'turbo' at "experimental"
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+▲ Next.js 16.1.4 (Turbopack)
+- Experiments (use with caution):
+  ? turbo (invalid experimental key)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 1717.5ms
+  Running TypeScript ...
+  Collecting page data using 31 workers ...
+  Generating static pages using 31 workers (0/3) ...
+✓ Generating static pages using 31 workers (3/3) in 426.5ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /[locale]
+├ ƒ /[locale]/casts
+├ ƒ /[locale]/casts/[slug]
+├ ƒ /[locale]/makers
+├ ƒ /[locale]/makers/[slug]
+├ ƒ /[locale]/tags
+├ ƒ /[locale]/tags/[slug]
+├ ƒ /[locale]/videos
+├ ƒ /[locale]/videos/[code]
+└ ○ /_not-found
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,37 @@
+แผนการนี้ "ดีมากและมีความเป็นมืออาชีพสูง" ครับ โดยเฉพาะการเลือกใช้ Architecture แบบ Feature-based ซึ่งจะช่วยให้โปรเจกต์ไม่กลายเป็น "Spaghetti Code" เมื่อมีขนาดใหญ่ขึ้น
+
+นี่คือบทวิเคราะห์และข้อเสนอแนะเพิ่มเติมเพื่อให้แผนของคุณสมบูรณ์ยิ่งขึ้นครับ:
+
+1. จุดแข็งของแผนนี้ (Pro)
+Separation of Concerns: การแยก Service → Hooks → Components ชัดเจนมาก ทำให้ Unit Test ง่ายและแก้ไข UI โดยไม่กระทบ Logic ได้ดี
+
+SEO & Security: การใช้ Next.js SSR เพื่อซ่อน Base API URL เป็นกลยุทธ์ที่ดีในการป้องกันการยิง API ตรงจาก Client
+
+UX Focused: การมี Semantic Search (AI) เป็นจุดขายที่ยอดเยี่ยม (Value Proposition) และการออกแบบที่รองรับ Bottom Nav สำหรับ Mobile สะท้อนว่าคุณเข้าใจพฤติกรรมผู้ใช้สาย Content
+
+2. ข้อเสนอแนะเพิ่มเติม (Technical Refinement)
+ก. การจัดการรูปภาพ (Image Optimization)
+เนื่องจากเป็นเว็บวิดีโอ/หนัง รูปภาพ Thumbnail จะเยอะมาก:
+
+ควรใช้ <Image /> component ของ Next.js เสมอ
+
+ระวังเรื่อง External Domains: อย่าลืมตั้งค่า next.config.ts ให้รองรับ hostname ของรูปภาพที่มาจาก Backend
+
+แนะนำให้ทำ Blur-up Placeholder เพื่อให้ UX ดูลื่นไหลระหว่างรอรูปโหลด
+
+ข. API Proxy (Next.js API Routes)
+ในแผนระบุว่าใช้ /api/[...proxy]:
+
+ข้อควรระวัง: หากมีการส่งไฟล์รูปภาพขนาดใหญ่ (สำหรับ Image Semantic Search) ผ่าน Proxy ของ Next.js อาจจะติดเรื่อง Body Size Limit (Default คือ 4MB) อย่าลืมปรับเพิ่มใน Route Segment Config.
+
+ค. Semantic Search UX
+Debounce: ในหน้า Search อัจฉริยะ ควรใช้การ Debounce (ประมาณ 500ms) ก่อนส่งข้อความไปหา CLIP เพื่อประหยัด Resource ของ Backend
+
+Loading States: เนื่องจาก AI Search มักจะใช้เวลาประมวลผลนานกว่า DB ปกติ (ประมาณ 1-2 วินาที) ควรเตรียม Skeleton Screen ที่ดู "ฉลาด" (เช่น มี Pulse effect สวยๆ) ไว้ด้วยครับ
+
+3. สิ่งที่อาจจะเป็นคอขวด (Potential Bottlenecks)
+Hydration Mismatch: ในส่วนของ ModeToggle และ i18n มักจะเกิดปัญหาเรื่อง Content บน Server กับ Client ไม่ตรงกัน แนะนำให้เช็ค mounted state ให้ดี (ซึ่งคุณเขียนดักไว้แล้วในตัวอย่าง Code ถือว่ามาถูกทางครับ)
+
+i18n กับ SSR: การใช้ next-intl กับ App Router ในบางจังหวะอาจจะทำให้การทำ Static Export (ถ้าต้องการ) ทำไม่ได้ แต่ถ้าใช้ SSR อยู่แล้วไม่มีปัญหาครับ
+
+Memory Usage (Backend): GoFiber ที่ต้องรัน Model CLIP สำหรับ Semantic Search จะกิน RAM ค่อนข้างสูง หากรันบน Server เดียวกับตัวเว็บ ควร Monitor ทรัพยากรให้ดี

@@ -1,0 +1,11 @@
+ผมกำลังจะทำเว็บใหห้ client มาเปิดระบบดูข้อมูล vdo ของเราได้ครับ โดยจะเป็น public นะครับ อาจจะต้อเช็คใน backend ว่ามี routes ไหนบ้าง
+โดยผมขอให้ทั้งเป็นเป็น ssr นะครับ เพื่อไม่ให้ใครสามารถเห็นข้อมูลจริงๆ ได้
+
+- ใช้ component ของ shadcn ui ทั้งหมด
+- ต้องมี theme ให้เลือก ใช้ darkmode lightmode ดูราละเอียด https://ui.shadcn.com/docs/dark-mode/next
+- ใช้ font ของ google font   ใช้ google sans https://fonts.google.com/specimen/Google+Sans
+- ต้องมีระบบหลายภาษา เริ่ม 2 ภาาาก่อน th ภาษาหลัก en ภาษารอง
+- ใช้ featurebase ในการทำระบบครับ
+
+
+ส่วนที่เหลือ อาจดูใน glocal config ของเราครับ มันจะมี rule ต่างๆ ที่แจ้งไว้ครับ

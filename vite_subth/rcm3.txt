@@ -1,0 +1,30 @@
+แผนผังความพร้อมที่คุณทำมา "โคตรชัดเจน" ครับ! และการวิเคราะห์ของคุณที่ว่า "ต้องมี Worker แยกอีก 1 ตัว" คือการตัดสินใจทางสถาปัตยกรรม (Architecture) ที่ ถูกต้อง 100% ครับ
+
+เพราะถ้าคุณเอา Logic 28 ฟิลด์ที่ต้องรอ AI + TTS + Embedding ไปรันใน HTTP Request ปกติ หน้าเว็บ Admin จะ Time out แน่นอนครับ เพราะ Gemini สรุป 500 คำบวกวิเคราะห์บทสนทนาใช้เวลาอย่างน้อย 15-30 วินาที
+
+🏗️ สถาปัตยกรรมใหม่: "SEO Content Worker"
+ผมแนะนำให้สร้าง Worker ตัวนี้ขึ้นมาเพื่อทำหน้าที่เป็น "Orchestrator" (ผู้คุมวง) โดยเฉพาะครับ
+
+1. หน้าที่ของ SEO Worker (The Single-Button Logic)
+เมื่อ Admin กดปุ่ม "Generate Article":
+
+Data Fetcher: ไปรวบรวมวัตถุดิบ (Raw Materials)
+
+ดึง SRT จาก api.suekk.com
+
+ดึง Metadata/Casts จาก api.subth.com
+
+ดึง Previous Works มาทำเป็น Context
+
+AI Processing (Gemini): ส่งวัตถุดิบเข้าเครื่องบด
+
+สั่งให้ Gemini สกัด 28 ฟิลด์ออกมาเป็น JSON Format ชุดเดียว
+
+TTS Generation (ElevenLabs): ส่งบทสรุปที่ AI เขียนไปทำไฟล์เสียง
+
+Embedding (Vectorization): นำ Summary ไปทำ Vector เก็บลง pgvector
+
+Final Update: บันทึกกลับลงฐานข้อมูลในสถานะ Draft หรือ Published
+
+
+🚨 ข้อควรระวังและการปรับจูน (Refinement)จาก Data Matrix ของคุณ มี 2 จุดที่ต้องระวังครับ:1. SRT Path (Dependancy หลัก)ถ้าไฟล์ SRT ยังแปลไม่เสร็จ หรือ api.suekk.com ยังไม่มีไฟล์ Worker จะทำงานไม่ได้วิธีแก้: เพิ่ม Check ใน Admin UI ว่า "ซับไทยต้องเสร็จก่อนถึงจะกดปุ่ม Generate SEO ได้"2. Gallery Image Alt Textในเมื่อ AI ต้องสร้าง thumbnailAlt และ gallery.altเทคนิค: ส่งชื่อ "ฉากสำคัญ" ที่ AI สรุปได้ใน highlights มาเป็นตัวตั้งต้นในการทำ Alt Text จะทำให้ภาพใน Gallery ติด Google Image Search ได้แม่นยำมาก📈 สรุปความคุ้มค่าของการมี Workerเปรียบเทียบทำมือ (Manual)SEO Worker (AI)เวลาที่ใช้2-4 ชั่วโมง / เรื่อง1-2 นาที / เรื่องความละเอียดแล้วแต่ความขยันของคนละเอียดระดับ EEAT ทุกเรื่องความเสถียรข้อมูลอาจหลุด/พิมพ์ผิดข้อมูลครบตาม Schema 100%ต้นทุนค่าแรงคนมหาศาลค่า API (Gemini + ElevenLabs)🎯 เป้าหมายถัดไป:ผมแนะนำให้คุณเริ่มร่าง "Gemini Multi-Field Prompt" ครับ เพราะมันคือหัวใจของ Worker ตัวนี้ ถ้า Prompt นี้ส่ง JSON กลับมาได้แม่นยำ งานที่เหลือ (TTS, Vector) ก็แค่การเรียก API ธรรมดาๆ เท่านั้นเอง

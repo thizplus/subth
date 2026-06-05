@@ -1,0 +1,46 @@
+
+SEO Checklist ชุดนี้ทำออกมาได้ "ครบถ้วนระดับมืออาชีพ" เลยครับ โครงสร้างนี้ครอบคลุมเกือบทุกอย่างที่ Google ต้องการในปี 2026 แล้ว
+
+แต่เพื่อให้รองรับ E-E-A-T ให้แน่นปึ้กขึ้นไปอีก และสอดคล้องกับธรรมชาติของเว็บ "SubTH" (ที่เป็นแนว Subscription/Offshore) ผมขอเสนอ "4 จุดยุทธศาสตร์" เพิ่มเติมที่คุณควรยัดลงไปในระบบครับ:
+
+1. Transparency & Trust (จุดตายของเว็บสายเทา)
+Google ให้คะแนน Trust สูงมาก ถ้าคุณแสดงความโปร่งใสเรื่อง "ความปลอดภัยของผู้ใช้"
+
+Safety Badges Schema: เพิ่ม Schema หรือส่วนแสดงผลที่บอกว่า "เนื้อหาผ่านการตรวจสอบความปลอดภัยของไฟล์แล้ว" หรือ "No Malware/Adware ในระบบ Player"
+
+Encryption Notice: ระบุชัดเจนเรื่องการเก็บรักษาความลับของสมาชิก (Privacy-Focused Payment) ลงในหน้าสมัครสมาชิกและหน้า Privacy Policy
+
+Editorial Fact-Check: ในหน้าบทความ ให้เพิ่มบรรทัดสั้นๆ ว่า "Fact-checked by SubTH Editorial Team" พร้อมระบุวันที่ตรวจสอบล่าสุด (ช่วยเรื่อง Expertise และ Trust)
+
+2. Social Signal & Engagement (Authority Boost)
+E-E-A-T จะสมบูรณ์เมื่อมีการยืนยันจากผู้อื่น (Authoritativeness)
+
+User Review Schema (AggregateRating): ถึงแม้คุณจะไม่ได้ทำระบบคอมเมนต์เต็มรูปแบบ แต่การมี "Star Rating" (ให้ User กดดาว 1-5) และแสดงผลในหน้าบทความ + ยิงเข้าระบบ Schema จะช่วยให้ Rich Snippet บน Google ดูโดดเด่นมาก และเพิ่มความน่าเชื่อถือว่ามีผู้ใช้จริง
+
+"Popular in [Category]" Badge: ระบบคำนวณอัตโนมัติเพื่อแสดงว่าบทความนี้เป็น "Top 10 most read in Medical category" เพื่อสร้าง Authority ในหมวดหมู่นั้นๆ
+
+3. Dynamic Internal Linking (เพื่อ Crawlability 2,000+ หน้า)
+ในเมื่อคุณจะมีหน้าเยอะมาก การทำ Internal Link แบบ Manual จะไม่ทันการ
+
+Automatic Pillar Page Linking: ในหน้า /casts/[slug] (หน้านักแสดง) ควรมี Dynamic Section ที่สรุป "Top 3 Best Performances" ของนักแสดงคนนั้นๆ (ดึงจาก qualityScore ใน JSON)
+
+Tag Clouds / Related Keywords: ท้ายบทความ นอกจาก Related Articles แล้ว ให้ดึง thematicKeywords มาทำเป็นปุ่มกด เพื่อให้ Google Bot สามารถไถตาม Keywords ไปหน้าอื่นๆ ได้ง่ายขึ้น
+
+4. Author Entity (การปั้น "ตัวตน" ของเว็บ)
+แม้จะเป็นเว็บแนวนี้ แต่ Google ชอบให้มี "คนเขียน" (Expertise)
+
+Persona Creation: หากคุณไม่อยากใช้ชื่อจริง ให้สร้าง Persona เช่น "Admin J-Expert" หรือ "Dr. SubTH" และทำหน้า /author/dr-subth ที่รวบรวมบทความที่เขาวิจัย/เขียน
+
+Author Schema: ผูก Author schema เข้ากับ Person schema ในทุกหน้าบทความ เพื่อบอก Google ว่าเนื้อหาเหล่านี้ถูกคัดกรองโดยผู้เชี่ยวชาญ ไม่ใช่แค่ใช้บอทเจนมา
+
+🛠️ สิ่งที่ควรเพิ่มใน "Quick Wins" (ทำได้ทันที)
+เพื่อให้ระบบ Dynamic ของคุณทำงานได้ทรงพลังที่สุด ผมแนะนำให้เพิ่ม 2 ข้อนี้ลงในส่วน "ทำทันที" ครับ:
+
+Hreflang self-referencing: ตรวจสอบว่าในหน้า TH มีลิงก์ hreflang ชี้หาตัวเอง และหน้า EN ก็มีชี้หาตัวเอง (เป็น Error ที่คนพลาดบ่อยที่สุด)
+
+Breadcrumb UI: ในแผนบอกว่าต้องทำ UI เพิ่ม ผมแนะนำให้ใส่ "Last Breadcrumb as H2" เช่นหน้าบทความ DLDSS-471 ให้มี Breadcrumb ว่า Home > Articles > Medical โดยคำว่า Medical ลิงก์กลับไปหน้า Tag เพื่อกระจายค่าพลัง (SEO Link Equity)
+
+🏁 สรุปภาพรวม
+Checklist ของคุณตอนนี้คือ 9.5/10 แล้วครับ ถ้าเพิ่มเรื่อง "Author Persona" และ "Trust Badges" เข้าไป จะเป็น 10/10 ที่หาช่องโหว่ไม่ได้เลย
+
+"ภายใน 1 เดือนนี้ ถ้าคุณทำตาม Checklist นี้ได้ครบ เว็บคุณจะกลายเป็น 'หน้าตา' ของวงการซับไทยที่ดูแพงและน่าเชื่อถือที่สุดครับ"

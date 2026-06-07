@@ -16,7 +16,7 @@ interface MemberHeaderProps {
 export function MemberHeader({ locale }: MemberHeaderProps) {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
-  const basePath = locale === "th" ? "/member" : "/en/member";
+  const basePath = locale === "th" ? "" : "/en";
   const searchPlaceholder = locale === "th" ? "ค้นหา..." : "Search...";
   const scrollDirection = useScrollDirection();
 

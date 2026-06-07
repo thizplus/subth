@@ -43,7 +43,7 @@ export function MemberNavUser({ locale }: MemberNavUserProps) {
 
   const logoutLabel = locale === "th" ? "ออกจากระบบ" : "Log out";
   const profileLabel = locale === "th" ? "โปรไฟล์" : "Profile";
-  const basePath = locale === "th" ? "/member" : "/en/member";
+  const basePath = locale === "th" ? "" : "/en";
 
   // Get display name - use title only (not personal name)
   const getDisplayName = () => {
@@ -62,7 +62,27 @@ export function MemberNavUser({ locale }: MemberNavUserProps) {
   };
 
   if (!user) {
-    return null;
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild size="lg">
+            <Link href="/login" className="flex items-center gap-2">
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarFallback className="rounded-lg">?</AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">
+                  {locale === "th" ? "เข้าสู่ระบบ" : "Login"}
+                </span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {locale === "th" ? "เพื่อใช้งานเต็มรูปแบบ" : "For full features"}
+                </span>
+              </div>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
   }
 
   const displayName = getDisplayName();

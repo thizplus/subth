@@ -54,7 +54,8 @@ interface MemberSidebarProps {
 export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
-  const basePath = locale === "th" ? "/member" : "/en/member";
+  // Public routes: ใช้ root path แทน /member
+  const basePath = locale === "th" ? "" : "/en";
 
   // ปิด sidebar บน mobile เมื่อกดเมนู
   const handleMenuClick = () => {
@@ -71,7 +72,7 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
       casts: "นักแสดง",
       tags: "แท็ก",
       aiSearch: "AI Search",
-      exitToMain: "กลับไปหน้ารีวิว",
+      exitToMain: "หน้ารีวิว",
     },
     en: {
       menu: "Menu",
@@ -81,7 +82,7 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
       casts: "Casts",
       tags: "Tags",
       aiSearch: "AI Search",
-      exitToMain: "Back to Reviews",
+      exitToMain: "Reviews",
     },
   };
 
@@ -91,7 +92,7 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
   const navItems: NavItem[] = [
     {
       title: t.home,
-      url: basePath,
+      url: basePath || "/",
       icon: Home,
     },
     {
@@ -127,8 +128,9 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
   ];
 
   const isActive = (url: string) => {
-    if (url === basePath) {
-      return pathname === basePath;
+    // Home: basePath is "" or "/member" — check exact match
+    if (url === basePath || url === "/") {
+      return pathname === "/" || pathname === basePath;
     }
     return pathname.startsWith(url);
   };
@@ -202,7 +204,7 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* Exit to main page - เด่นชัด */}
+        {/* Link to articles/reviews */}
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu>
@@ -212,7 +214,7 @@ export function MemberSidebar({ locale, categories }: MemberSidebarProps) {
                   tooltip={t.exitToMain}
                   className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                 >
-                  <Link href={locale === "th" ? "/" : "/en"} onClick={handleMenuClick}>
+                  <Link href={locale === "th" ? "/articles" : "/en/articles"} onClick={handleMenuClick}>
                     <LogOut />
                     <span>{t.exitToMain}</span>
                   </Link>

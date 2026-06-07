@@ -132,6 +132,9 @@
   },
   "search": {
     "placeholder": "Search videos, casts, tags...",
+    "found": "Found",
+    "results": "results for",
+    "prompt": "Type to search for videos",
     "ai": "AI Search",
     "aiDescription": "Smart Search System",
     "aiPlaceholder": "Describe what you want to watch...",

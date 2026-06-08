@@ -166,6 +166,8 @@
     "found": "Found",
     "results": "results for",
     "prompt": "Type to search for videos",
+    "recommended": "You may be interested in",
+    "viewAllResults": "View all results",
     "ai": "AI Search",
     "aiDescription": "Smart Search System",
     "aiPlaceholder": "Describe what you want to watch...",

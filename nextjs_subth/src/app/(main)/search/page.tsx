@@ -57,6 +57,24 @@ export default async function SearchPage({ searchParams }: PageProps) {
     }
   }
 
+  // ถ้าไม่มี query → แสดงเรื่องแนะนำ
+  let recommended: VideoListItem[] = [];
+  if (!searchQuery) {
+    try {
+      const response = await videoService.getList({
+        limit: 20,
+        page: 1,
+        lang: "th",
+        sort: "views",
+        order: "desc",
+        category: "censored-jav",
+      });
+      recommended = response.data || [];
+    } catch (e) {
+      console.error("Failed to fetch recommended:", e);
+    }
+  }
+
   return (
     <div>
       {searchQuery && (
@@ -90,7 +108,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
 
           {videos.length > 0 ? (
             <>
-              <VideoGrid videos={videos} />
+              <VideoGrid videos={videos} cols={5} />
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -105,9 +123,12 @@ export default async function SearchPage({ searchParams }: PageProps) {
           )}
         </>
       ) : (
-        <p className="text-center text-muted-foreground py-8">
-          {dict.search.prompt}
-        </p>
+        <section>
+          <h2 className="text-lg font-semibold mb-4">
+            {dict.search.recommended}
+          </h2>
+          <VideoGrid videos={recommended} cols={5} />
+        </section>
       )}
     </div>
   );

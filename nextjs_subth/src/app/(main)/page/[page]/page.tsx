@@ -30,7 +30,7 @@ export default async function PaginatedHomePage({ params }: PageProps) {
       page: currentPage,
       limit: ITEMS_PER_PAGE,
       lang: "th",
-      sort: "date",
+      sort: "created_at",
       order: "desc",
       category: "censored-jav",
     });

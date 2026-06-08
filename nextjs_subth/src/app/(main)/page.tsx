@@ -68,7 +68,7 @@ export default async function HomePage() {
         limit: ITEMS_PER_SECTION,
         page: 1,
         lang: "th",
-        sort: "date",
+        sort: "created_at",
         order: "desc",
         category: "censored-jav",
       }),

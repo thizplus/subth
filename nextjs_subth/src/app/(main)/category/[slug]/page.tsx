@@ -63,7 +63,7 @@ export default async function CategoryPage({ params }: PageProps) {
       page: 1,
       limit: ITEMS_PER_PAGE,
       lang: "th",
-      sort: "date",
+      sort: "created_at",
       order: "desc",
       category: slug,
     });

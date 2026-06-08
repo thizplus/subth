@@ -43,7 +43,7 @@ export default async function PaginatedCategoryPage({ params }: PageProps) {
       page: currentPage,
       limit: ITEMS_PER_PAGE,
       lang: "th",
-      sort: "date",
+      sort: "created_at",
       order: "desc",
       category: slug,
     });

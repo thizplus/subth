@@ -239,6 +239,9 @@ export default async function VideoDetailPage({ params }: PageProps) {
           </div>
         )}
       </div>
+
+      {/* Bottom spacing — ป้องกัน chat FAB บัง player */}
+      <div className="h-24" />
     </div>
   );
 }

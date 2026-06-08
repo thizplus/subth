@@ -51,9 +51,19 @@ export default async function HomePage() {
   let popular: VideoListItem[] = [];
   let totalVideos = 0;
 
+  // Random page offset for "Featured" section
+  const randomPage = Math.floor(Math.random() * 50) + 2;
+
   try {
     const [featuredRes, latestRes, popularRes] = await Promise.all([
-      videoService.getRandom(ITEMS_PER_SECTION, "th"),
+      videoService.getList({
+        limit: ITEMS_PER_SECTION,
+        page: randomPage,
+        lang: "th",
+        sort: "views",
+        order: "desc",
+        category: "censored-jav",
+      }),
       videoService.getList({
         limit: ITEMS_PER_SECTION,
         page: 1,
@@ -72,7 +82,7 @@ export default async function HomePage() {
       }),
     ]);
 
-    featured = featuredRes || [];
+    featured = featuredRes.data || [];
     latest = latestRes.data || [];
     totalVideos = latestRes.meta?.total || 0;
     popular = popularRes.data || [];

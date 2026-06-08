@@ -17,10 +17,6 @@ interface SearchAutocompleteProps {
   locale: "th" | "en";
 }
 
-interface SearchResult {
-  data: VideoListItem[];
-  meta: { total: number };
-}
 
 export function SearchAutocomplete({ locale }: SearchAutocompleteProps) {
   const router = useRouter();
@@ -50,15 +46,13 @@ export function SearchAutocomplete({ locale }: SearchAutocompleteProps) {
         page: "1",
         lang: locale,
       });
-      // publicGet unwraps { success, data } → returns data
-      // search API: { success, data: [...], meta: {...} } → publicGet returns { data: [...], meta: {...} }
-      const result = await apiClient.publicGet<SearchResult>(
+      // publicGet unwraps { success, data } → returns data directly (array of videos)
+      const videos = await apiClient.publicGet<VideoListItem[]>(
         `${API_ROUTES.VIDEOS.SEARCH}?${params.toString()}`
       );
 
-      const videos = result?.data || [];
-      setResults(videos.slice(0, 8));
-      setIsOpen(videos.length > 0);
+      setResults(videos || []);
+      setIsOpen((videos?.length || 0) > 0);
     } catch {
       setResults([]);
       setIsOpen(false);

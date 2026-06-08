@@ -1,0 +1,162 @@
+import { VideoGrid } from "@/features/video/components";
+import { videoService } from "@/features/video/service";
+import type { VideoListItem } from "@/features/video/types";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { Pagination } from "@/components/ui/pagination";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "JAV Thai Sub - Watch Free, Updated Daily | SubTH",
+  description:
+    "Watch JAV with Thai subtitles for free. Curated from top studios S1, MOODYZ, Prestige, Ideapocket. Updated daily, no ads, all devices.",
+  keywords: [
+    "jav thai sub",
+    "jav subtitle thai",
+    "watch jav thai sub free",
+    "jav censored thai subtitle",
+    "japanese adult video thai sub",
+  ],
+  openGraph: {
+    title: "JAV Thai Sub - Watch Free, Updated Daily | SubTH",
+    description:
+      "Watch JAV with Thai subtitles for free. Updated daily, no ads, all devices.",
+    url: "https://subth.com/en",
+    type: "website",
+    siteName: "SubTH",
+  },
+  alternates: {
+    canonical: "https://subth.com/en",
+    languages: {
+      th: "https://subth.com",
+      en: "https://subth.com/en",
+    },
+  },
+};
+
+const ITEMS_PER_PAGE = 50;
+
+export default async function HomePage() {
+  const dict = await getDictionary("en");
+
+  let videos: VideoListItem[] = [];
+  let totalVideos = 0;
+  let totalPages = 1;
+
+  try {
+    const response = await videoService.getList({
+      limit: ITEMS_PER_PAGE,
+      page: 1,
+      lang: "en",
+      sort: "created_at",
+      order: "desc",
+      category: "censored-jav",
+    });
+    videos = response.data || [];
+    totalVideos = response.meta?.total || 0;
+    totalPages = Math.ceil(totalVideos / ITEMS_PER_PAGE);
+  } catch (e) {
+    console.error("Failed to fetch videos:", e);
+  }
+
+  // Website Schema
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "SubTH - JAV ซับไทย",
+    alternateName: ["SubTH", "ซับไทย", "JAV ซับไทย"],
+    url: "https://subth.com",
+    description: "ดู JAV ซับไทย ฟรี อัปเดตใหม่ทุกวัน ไม่มีโฆษณา",
+    inLanguage: ["th", "en"],
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://subth.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  // FAQ Schema
+  const homeDict = dict.home as Record<string, string>;
+  const faqs = Array.from({ length: 10 }, (_, i) => ({
+    q: homeDict[`faq${i + 1}q`],
+    a: homeDict[`faq${i + 1}a`],
+  })).filter((f) => f.q && f.a);
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
+      {/* H1 + Intro */}
+      <section className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+          {dict.home.h1}
+        </h1>
+        <p className="text-muted-foreground max-w-3xl">
+          {dict.home.intro}
+        </p>
+      </section>
+
+      {/* Latest JAV ซับไทย */}
+      <section>
+        <h2 className="text-xl font-semibold mb-4">
+          {dict.home.sectionLatest}
+          <span className="text-muted-foreground text-base ml-2">
+            ({totalVideos.toLocaleString()})
+          </span>
+        </h2>
+        <VideoGrid videos={videos} cols={5} />
+
+        <Pagination
+          currentPage={1}
+          totalPages={totalPages}
+          basePath=""
+        />
+      </section>
+
+      {/* FAQ Section */}
+      <section className="mt-12 pt-8 border-t border-border">
+        <h2 className="text-xl font-semibold mb-4">{dict.home.faqTitle}</h2>
+        <div className="space-y-3 max-w-3xl">
+          {faqs.map((faq, i) => (
+            <details key={i} className="group p-4 bg-muted/30 rounded-xl border border-border cursor-pointer">
+              <summary className="font-medium list-none flex justify-between items-center">
+                {faq.q}
+                <span className="text-muted-foreground group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p className="mt-3 text-muted-foreground leading-relaxed">
+                {faq.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer SEO Content */}
+      <section className="mt-10 pt-8 border-t border-border">
+        <h2 className="text-lg font-semibold mb-4">{dict.home.footerTitle}</h2>
+        <div className="space-y-4 text-sm text-muted-foreground leading-relaxed max-w-4xl">
+          <p>{dict.home.footerP1}</p>
+          <p>{dict.home.footerP2}</p>
+          <p>{dict.home.footerP3}</p>
+          <p>{dict.home.footerP4}</p>
+        </div>
+      </section>
+    </>
+  );
+}

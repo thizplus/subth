@@ -812,6 +812,8 @@ func (s *VideoServiceImpl) toVideoResponse(ctx context.Context, video *models.Vi
 		EmbedURL:     video.EmbedURL,
 		Categories:   categoryResponses,
 		ReleaseDate:  releaseDate,
+		Views:        video.Views,
+		Duration:     video.Duration,
 		Maker:        maker,
 		Casts:        casts,
 		Tags:         tags,

@@ -1,10 +1,19 @@
 import { videoService } from "@/features/video/service";
+import { semanticSearchService } from "@/features/semantic-search";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { CDN_URL } from "@/lib/constants";
 import { VideoActivityLogger } from "@/features/activity";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -62,6 +71,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         url: `https://subth.com/videos/${id}`,
         type: "video.other",
         siteName: "SubTH",
+        locale: "th_TH",
+        alternateLocale: ["en_US"],
         images: [
           {
             url: thumbnailUrl,
@@ -79,6 +90,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
       alternates: {
         canonical: `https://subth.com/videos/${id}`,
+        languages: {
+          "th": `https://subth.com/videos/${id}`,
+          "en": `https://subth.com/en/videos/${id}`,
+        },
       },
     };
   } catch {
@@ -115,6 +130,18 @@ export default async function VideoDetailPage({ params }: PageProps) {
       : `${CDN_URL}/thumbnails/${videoCode}.jpg`,
     uploadDate: video.createdAt,
     ...(video.releaseDate && { datePublished: video.releaseDate }),
+    ...(video.embedUrl && { embedUrl: video.embedUrl }),
+    ...(video.duration && video.duration > 0 && {
+      duration: `PT${Math.floor(video.duration / 60)}M${video.duration % 60}S`,
+    }),
+    ...(video.views != null && {
+      interactionStatistic: {
+        "@type": "InteractionCounter",
+        interactionType: "https://schema.org/WatchAction",
+        userInteractionCount: video.views,
+      },
+    }),
+    inLanguage: "th",
     publisher: {
       "@type": "Organization",
       name: "SubTH",
@@ -122,13 +149,56 @@ export default async function VideoDetailPage({ params }: PageProps) {
     },
   };
 
+  // BreadcrumbList Schema for SEO
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "หน้าแรก",
+        item: "https://subth.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "วิดีโอ",
+        item: "https://subth.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: video.title,
+        item: `https://subth.com/videos/${id}`,
+      },
+    ],
+  };
+
   return (
     <div className="max-w-6xl mx-auto">
       {/* Structured Data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([videoSchema, breadcrumbSchema]) }}
       />
+
+      {/* Breadcrumb */}
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild><Link href="/">{dict.common.home}</Link></BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild><Link href="/">{dict.common.videos}</Link></BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage className="line-clamp-1 max-w-[200px] sm:max-w-[400px]">{videoCode}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       {/* Activity Logger - Fire & Forget */}
       <VideoActivityLogger videoId={video.id} />
@@ -240,8 +310,46 @@ export default async function VideoDetailPage({ params }: PageProps) {
         )}
       </div>
 
+      {/* Related Videos */}
+      <RelatedVideos videoId={video.id} label={dict.video.related} />
+
       {/* Bottom spacing — ป้องกัน chat FAB บัง player */}
       <div className="h-24" />
+    </div>
+  );
+}
+
+async function RelatedVideos({ videoId, label }: { videoId: string; label: string }) {
+  let videos: { id: string; title: string; thumbnail: string }[] = [];
+  try {
+    const result = await semanticSearchService.getSimilarVideos(videoId, 8);
+    videos = result.videos || [];
+  } catch {
+    // Semantic service อาจยังไม่มี embedding สำหรับ video นี้
+    return null;
+  }
+
+  if (videos.length === 0) return null;
+
+  return (
+    <div className="mt-8">
+      <h2 className="text-lg font-semibold mb-4">{label}</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        {videos.map((v) => (
+          <Link key={v.id} href={`/videos/${v.id}`} className="group">
+            <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-muted">
+              <Image
+                src={v.thumbnail ? `${CDN_URL}${v.thumbnail}` : `${CDN_URL}/thumbnails/default.jpg`}
+                alt={v.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform"
+                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+              />
+            </div>
+            <p className="mt-1 text-sm line-clamp-2 group-hover:text-primary transition-colors">{v.title}</p>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

@@ -11,6 +11,7 @@ export async function GET() {
 
   const sitemaps = [
     { loc: `${SITE_URL}/sitemap/static.xml`, lastmod: now },
+    { loc: `${SITE_URL}/sitemap/videos.xml`, lastmod: now },
     { loc: `${SITE_URL}/sitemap/articles.xml`, lastmod: now },
     { loc: `${SITE_URL}/sitemap/casts.xml`, lastmod: now },
     { loc: `${SITE_URL}/sitemap/tags.xml`, lastmod: now },

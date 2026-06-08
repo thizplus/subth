@@ -24,6 +24,8 @@ export interface Video {
   embedUrl?: string;
   categories?: Category[]; // Multi-category support
   releaseDate?: string | null;
+  views?: number;
+  duration?: number; // Duration in seconds
   maker?: Maker;
   casts?: Cast[];
   tags?: Tag[];

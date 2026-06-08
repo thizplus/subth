@@ -5,6 +5,7 @@ import { AuthProvider } from "@/features/auth";
 import { QueryProvider } from "@/providers/query-provider";
 import { XPNotificationProvider } from "@/features/engagement";
 import { GoogleTagManager, GoogleTagManagerNoScript } from "@/components/analytics";
+import { headers } from "next/headers";
 import "./globals.css";
 
 // Organization Schema for E-E-A-T
@@ -100,8 +101,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const locale = headersList.get("x-locale") || "th";
+
   return (
-    <html lang="th" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         {/* DNS prefetch for CDN and analytics */}
         <link rel="dns-prefetch" href="https://files.subth.com" />

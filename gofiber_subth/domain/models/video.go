@@ -16,6 +16,7 @@ type Video struct {
 	ReleaseDate *time.Time     `gorm:"type:date"`
 	MakerID     *uuid.UUID     `gorm:"type:uuid"`
 	Views       int            `gorm:"default:0"`
+	Duration    int            `gorm:"default:0"` // Duration in seconds
 	AutoTags    pq.StringArray `gorm:"type:text[]"`
 
 	// Reel fields (from reel worker)

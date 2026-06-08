@@ -1,29 +1,34 @@
 import { videoService } from "@/features/video/service";
+import { semanticSearchService } from "@/features/semantic-search";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { CDN_URL } from "@/lib/constants";
 import { VideoActivityLogger } from "@/features/activity";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 import type { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-// Format date สำหรับภาษาไทย
-const THAI_MONTHS = [
-  "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-  "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-];
-
-function formatThaiDate(dateString?: string | null): string {
+// Format date for English
+function formatEnglishDate(dateString?: string | null): string {
   if (!dateString) return "";
   const date = new Date(dateString);
-  const day = date.getDate();
-  const month = THAI_MONTHS[date.getMonth()];
-  const year = date.getFullYear() + 543;
-  return `${day} ${month} ${year}`;
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 // Dynamic SEO metadata
@@ -31,16 +36,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
 
   try {
-    const video = await videoService.getById(id, "th");
+    const video = await videoService.getById(id, "en");
     if (!video) return {};
 
     const videoCode = video.title.split(" ")[0];
     const castNames = video.casts?.map((c) => c.name).join(", ") || "";
     const makerName = video.maker?.name || "";
-    const categoryNames = video.categories?.map((c) => c.name).join(", ") || "";
 
-    const title = `${video.title} | ดู JAV ซับไทย`;
-    const description = `ดู ${videoCode} ซับไทย${castNames ? ` นำแสดงโดย ${castNames}` : ""}${makerName ? ` จากค่าย ${makerName}` : ""} พร้อมข้อมูลครบ`;
+    const title = `${video.title} | Watch JAV with Subtitles`;
+    const description = `Watch ${videoCode}${castNames ? ` starring ${castNames}` : ""}${makerName ? ` from ${makerName}` : ""} with subtitles. Full details and streaming.`;
 
     const thumbnailUrl = video.thumbnail
       ? `${CDN_URL}${video.thumbnail}`
@@ -50,18 +54,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       keywords: [
-        `${videoCode} ซับไทย`,
+        `${videoCode} subtitles`,
         videoCode,
         ...video.casts?.map((c) => c.name) || [],
         makerName,
-        "jav ซับไทย",
+        "jav subtitles",
       ].filter(Boolean),
       openGraph: {
         title,
         description,
-        url: `https://subth.com/videos/${id}`,
+        url: `https://subth.com/en/videos/${id}`,
         type: "video.other",
         siteName: "SubTH",
+        locale: "en_US",
+        alternateLocale: ["th_TH"],
         images: [
           {
             url: thumbnailUrl,
@@ -78,7 +84,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         images: [thumbnailUrl],
       },
       alternates: {
-        canonical: `https://subth.com/videos/${id}`,
+        canonical: `https://subth.com/en/videos/${id}`,
+        languages: {
+          "th": `https://subth.com/videos/${id}`,
+          "en": `https://subth.com/en/videos/${id}`,
+        },
       },
     };
   } catch {
@@ -92,7 +102,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
 
   let video;
   try {
-    video = await videoService.getById(id, "th");
+    video = await videoService.getById(id, "en");
   } catch {
     notFound();
   }
@@ -101,7 +111,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // ดึง video code จาก title (เช่น "RBD-856 ..." -> "RBD-856")
+  // Extract video code from title (e.g., "RBD-856 ..." -> "RBD-856")
   const videoCode = video.title.split(" ")[0];
 
   // VideoObject Schema for SEO
@@ -109,12 +119,24 @@ export default async function VideoDetailPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     name: video.title,
-    description: `${videoCode} ซับไทย${video.casts?.length ? ` - ${video.casts.map((c) => c.name).join(", ")}` : ""}`,
+    description: `${videoCode}${video.casts?.length ? ` - ${video.casts.map((c) => c.name).join(", ")}` : ""}`,
     thumbnailUrl: video.thumbnail
       ? `${CDN_URL}${video.thumbnail}`
       : `${CDN_URL}/thumbnails/${videoCode}.jpg`,
     uploadDate: video.createdAt,
     ...(video.releaseDate && { datePublished: video.releaseDate }),
+    ...(video.embedUrl && { embedUrl: video.embedUrl }),
+    ...(video.duration && video.duration > 0 && {
+      duration: `PT${Math.floor(video.duration / 60)}M${video.duration % 60}S`,
+    }),
+    ...(video.views != null && {
+      interactionStatistic: {
+        "@type": "InteractionCounter",
+        interactionType: "https://schema.org/WatchAction",
+        userInteractionCount: video.views,
+      },
+    }),
+    inLanguage: "en",
     publisher: {
       "@type": "Organization",
       name: "SubTH",
@@ -122,13 +144,56 @@ export default async function VideoDetailPage({ params }: PageProps) {
     },
   };
 
+  // BreadcrumbList Schema for SEO
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://subth.com/en",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Videos",
+        item: "https://subth.com/en",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: video.title,
+        item: `https://subth.com/en/videos/${id}`,
+      },
+    ],
+  };
+
   return (
     <div className="max-w-6xl mx-auto">
       {/* Structured Data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([videoSchema, breadcrumbSchema]) }}
       />
+
+      {/* Breadcrumb */}
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild><Link href="/en">{dict.common.home}</Link></BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild><Link href="/en">{dict.common.videos}</Link></BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage className="line-clamp-1 max-w-[200px] sm:max-w-[400px]">{videoCode}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       {/* Activity Logger - Fire & Forget */}
       <VideoActivityLogger videoId={video.id} />
@@ -156,14 +221,14 @@ export default async function VideoDetailPage({ params }: PageProps) {
           {/* Meta Info */}
           <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
             {video.releaseDate && (
-              <span>{formatThaiDate(video.releaseDate)}</span>
+              <span>{formatEnglishDate(video.releaseDate)}</span>
             )}
             {video.categories && video.categories.length > 0 && (
               <>
                 <span>•</span>
                 {video.categories.map((cat, idx) => (
                   <span key={cat.id}>
-                    <Link href={`/category/${cat.slug}`} className="hover:underline">
+                    <Link href={`/en/category/${cat.slug}`} className="hover:underline">
                       {cat.name}
                     </Link>
                     {idx < video.categories!.length - 1 && ", "}
@@ -178,7 +243,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
             <div>
               <h2 className="text-sm font-semibold text-muted-foreground mb-1">{dict.video.maker}</h2>
               <Link
-                href={`/makers/${video.maker.slug}`}
+                href={`/en/makers/${video.maker.slug}`}
                 className="inline-block px-3 py-1 bg-secondary text-secondary-foreground text-sm rounded-full hover:bg-secondary/80 transition-colors"
               >
                 {video.maker.name}
@@ -194,7 +259,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
                 {video.casts.map((cast) => (
                   <Link
                     key={cast.id}
-                    href={`/casts/${cast.slug}`}
+                    href={`/en/casts/${cast.slug}`}
                     className="px-2 py-1 bg-secondary text-secondary-foreground text-sm rounded-full hover:bg-secondary/80 transition-colors"
                   >
                     {cast.name}
@@ -212,7 +277,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
                 {video.tags.map((tag) => (
                   <Link
                     key={tag.id}
-                    href={`/tags/${tag.slug}`}
+                    href={`/en/tags/${tag.slug}`}
                     className="px-2 py-1 bg-muted text-muted-foreground text-sm rounded-full hover:bg-muted/80 transition-colors"
                   >
                     {tag.name}
@@ -224,7 +289,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Video Player — ใต้เนื้อหา */}
+      {/* Video Player */}
       <div className="relative aspect-video w-full bg-muted overflow-hidden rounded-lg">
         {video.embedUrl ? (
           <iframe
@@ -235,13 +300,50 @@ export default async function VideoDetailPage({ params }: PageProps) {
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-muted-foreground">กำลังประมวลผล...</span>
+            <span className="text-muted-foreground">{dict.common.loading}</span>
           </div>
         )}
       </div>
 
-      {/* Bottom spacing — ป้องกัน chat FAB บัง player */}
+      {/* Related Videos */}
+      <RelatedVideos videoId={video.id} label={dict.video.related} />
+
+      {/* Bottom spacing */}
       <div className="h-24" />
+    </div>
+  );
+}
+
+async function RelatedVideos({ videoId, label }: { videoId: string; label: string }) {
+  let videos: { id: string; title: string; thumbnail: string }[] = [];
+  try {
+    const result = await semanticSearchService.getSimilarVideos(videoId, 8);
+    videos = result.videos || [];
+  } catch {
+    return null;
+  }
+
+  if (videos.length === 0) return null;
+
+  return (
+    <div className="mt-8">
+      <h2 className="text-lg font-semibold mb-4">{label}</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        {videos.map((v) => (
+          <Link key={v.id} href={`/en/videos/${v.id}`} className="group">
+            <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-muted">
+              <Image
+                src={v.thumbnail ? `${CDN_URL}${v.thumbnail}` : `${CDN_URL}/thumbnails/default.jpg`}
+                alt={v.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform"
+                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+              />
+            </div>
+            <p className="mt-1 text-sm line-clamp-2 group-hover:text-primary transition-colors">{v.title}</p>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

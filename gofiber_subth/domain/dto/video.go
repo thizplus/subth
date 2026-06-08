@@ -77,6 +77,8 @@ type VideoResponse struct {
 	EmbedURL     string              `json:"embedUrl,omitempty"`
 	Categories   []CategoryResponse  `json:"categories,omitempty"` // Multi-category
 	ReleaseDate  string              `json:"releaseDate,omitempty"` // Format: YYYY-MM-DD
+	Views        int                 `json:"views"`
+	Duration     int                 `json:"duration"` // Duration in seconds
 	Maker        *MakerResponse      `json:"maker,omitempty"`
 	Casts        []CastResponse      `json:"casts,omitempty"`
 	Tags         []TagResponse       `json:"tags,omitempty"`

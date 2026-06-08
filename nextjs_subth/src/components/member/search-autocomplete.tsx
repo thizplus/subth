@@ -2,7 +2,7 @@
 
 import { Search, Loader2 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ interface SearchAutocompleteProps {
 
 export function SearchAutocomplete({ locale }: SearchAutocompleteProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { getLocalizedPath } = useDictionary();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<VideoListItem[]>([]);
@@ -73,6 +74,9 @@ export function SearchAutocomplete({ locale }: SearchAutocompleteProps) {
     e.preventDefault();
     if (query.trim()) {
       setIsOpen(false);
+      setResults([]);
+      setIsLoading(false);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
       router.push(`${basePath}/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
@@ -99,6 +103,14 @@ export function SearchAutocomplete({ locale }: SearchAutocompleteProps) {
       setIsOpen(false);
     }
   };
+
+  // Reset on route change
+  useEffect(() => {
+    setIsOpen(false);
+    setResults([]);
+    setIsLoading(false);
+    setSelectedIndex(-1);
+  }, [pathname]);
 
   // Close on click outside
   useEffect(() => {

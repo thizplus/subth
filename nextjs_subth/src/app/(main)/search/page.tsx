@@ -1,12 +1,10 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { VideoGrid } from "@/features/video/components";
 import { videoService } from "@/features/video/service";
 import type { VideoListItem } from "@/features/video/types";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { Pagination } from "@/components/ui/pagination";
-import { SearchInput } from "@/components/ui/search-input";
 import { PageActivityLogger } from "@/features/activity";
+import { SearchPageClient } from "./search-client";
 import type { Metadata } from "next";
 
 const ITEMS_PER_PAGE = 30;
@@ -57,12 +55,12 @@ export default async function SearchPage({ searchParams }: PageProps) {
     }
   }
 
-  // ถ้าไม่มี query → แสดงเรื่องแนะนำ
+  // ถ้าไม่มี query → แสดงเรื่องแนะนำ 10 เรื่อง
   let recommended: VideoListItem[] = [];
   if (!searchQuery) {
     try {
       const response = await videoService.getList({
-        limit: 20,
+        limit: 10,
         page: 1,
         lang: "th",
         sort: "views",
@@ -81,27 +79,15 @@ export default async function SearchPage({ searchParams }: PageProps) {
         <PageActivityLogger pageType="search" metadata={{ query: searchQuery }} />
       )}
 
-      <div className="flex items-center gap-3 mb-4">
-        <Link
-          href="/"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-muted hover:bg-muted/80 transition-colors"
-          aria-label={dict.common.back}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Link>
-        <h1 className="text-2xl font-bold">{dict.common.search}</h1>
-      </div>
-
-      <div className="mb-6">
-        <SearchInput
-          placeholder={dict.search.placeholder}
-          defaultValue={searchQuery}
-          basePath="/search"
-        />
-      </div>
-
       {searchQuery ? (
         <>
+          {/* มี query → แสดงผลลัพธ์ */}
+          <h1 className="text-2xl font-bold mb-4">{dict.common.search}</h1>
+
+          <div className="mb-6">
+            <SearchPageClient locale="th" defaultValue={searchQuery} />
+          </div>
+
           <p className="text-muted-foreground mb-4">
             {dict.search.found} {totalVideos.toLocaleString()} {dict.search.results} &quot;{searchQuery}&quot;
           </p>
@@ -123,12 +109,25 @@ export default async function SearchPage({ searchParams }: PageProps) {
           )}
         </>
       ) : (
-        <section>
-          <h2 className="text-lg font-semibold mb-4">
-            {dict.search.recommended}
-          </h2>
-          <VideoGrid videos={recommended} cols={5} />
-        </section>
+        <>
+          {/* ไม่มี query → หน้า search สวยๆ */}
+          <div className="flex flex-col items-center pt-8 pb-10">
+            <h1 className="text-3xl font-bold mb-2">{dict.common.search}</h1>
+            <p className="text-muted-foreground mb-6">{dict.search.prompt}</p>
+
+            <div className="w-full max-w-lg">
+              <SearchPageClient locale="th" />
+            </div>
+          </div>
+
+          {/* เรื่องแนะนำ */}
+          <section>
+            <h2 className="text-lg font-semibold mb-4">
+              {dict.search.recommended}
+            </h2>
+            <VideoGrid videos={recommended} cols={5} />
+          </section>
+        </>
       )}
     </div>
   );

@@ -133,24 +133,8 @@ export default async function VideoDetailPage({ params }: PageProps) {
       {/* Activity Logger - Fire & Forget */}
       <VideoActivityLogger videoId={video.id} />
 
-      {/* Video Player Area */}
-      <div className="relative aspect-video w-full mb-6 bg-muted overflow-hidden">
-        {video.embedUrl ? (
-          <iframe
-            src={video.embedUrl}
-            className="absolute inset-0 w-full h-full"
-            allowFullScreen
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-muted-foreground">กำลังประมวลผล...</span>
-          </div>
-        )}
-      </div>
-
-      {/* Content: 2 columns 50/50 on desktop */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Content: 2 columns 50/50 on desktop — Thumbnail + Info */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Left: Thumbnail (50%) */}
         <div>
           <Image
@@ -158,7 +142,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
             alt={video.title}
             width={800}
             height={538}
-            className="w-full h-auto"
+            className="w-full h-auto rounded-lg"
             priority
             fetchPriority="high"
           />
@@ -238,6 +222,22 @@ export default async function VideoDetailPage({ params }: PageProps) {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Video Player — ใต้เนื้อหา */}
+      <div className="relative aspect-video w-full bg-muted overflow-hidden rounded-lg">
+        {video.embedUrl ? (
+          <iframe
+            src={video.embedUrl}
+            className="absolute inset-0 w-full h-full"
+            allowFullScreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-muted-foreground">กำลังประมวลผล...</span>
+          </div>
+        )}
       </div>
     </div>
   );

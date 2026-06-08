@@ -32,6 +32,7 @@ export default async function PaginatedHomePage({ params }: PageProps) {
       lang: "th",
       sort: "date",
       order: "desc",
+      category: "censored-jav",
     });
     latestVideos = response.data;
     totalVideos = response.meta.total;

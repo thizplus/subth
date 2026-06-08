@@ -1,16 +1,17 @@
 import { VideoGrid } from "@/features/video/components";
 import { videoService } from "@/features/video/service";
-import type { CategoryWithVideos } from "@/features/video/types";
+import type { VideoListItem } from "@/features/video/types";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Flame, Clock, Sparkles } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Pagination } from "@/components/ui/pagination";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "JAV ซับไทย ดูฟรี อัปเดตทุกวัน | SubTH",
   description:
-    "ดู JAV ซับไทย ฟรี คัดสรรจากค่ายดัง S1, MOODYZ, Prestige, Ideapocket อัปเดตใหม่ทุกวัน จัดหมวดหมู่ครบ ค้นหาตามนักแสดง AV ค่ายผลิต แท็กได้ง่าย",
+    "ดู JAV ซับไทย ฟรี คัดสรรจากค่ายดัง S1, MOODYZ, Prestige, Ideapocket อัปเดตใหม่ทุกวัน จัดหมวดหมู่ครบ ค้นหาตามนักแสดง AV ค่ายผลิต แท็กได้ง่าย ไม่มีโฆษณา",
   keywords: [
     "jav ซับไทย",
     "jav subtitle thai",
@@ -20,11 +21,12 @@ export const metadata: Metadata = {
     "หนัง av ซับไทย ใหม่ล่าสุด",
     "jav ซับไทย 2025",
     "ดู av ซับไทย ออนไลน์",
+    "jav censored ซับไทย",
   ],
   openGraph: {
     title: "JAV ซับไทย ดูฟรี อัปเดตทุกวัน | SubTH",
     description:
-      "ดู JAV ซับไทย ฟรี คัดสรรจากค่ายดัง อัปเดตใหม่ทุกวัน จัดหมวดหมู่ครบ",
+      "ดู JAV ซับไทย ฟรี คัดสรรจากค่ายดัง อัปเดตใหม่ทุกวัน ไม่มีโฆษณา รองรับทุกอุปกรณ์",
     url: "https://subth.com",
     type: "website",
     siteName: "SubTH",
@@ -38,19 +40,47 @@ export const metadata: Metadata = {
   },
 };
 
+const ITEMS_PER_SECTION = 12;
+
 export default async function HomePage() {
   const dict = await getDictionary("th");
 
-  let categoryGroups: CategoryWithVideos[] = [];
+  // Fetch multiple sections in parallel — censored-jav only
+  let featured: VideoListItem[] = [];
+  let latest: VideoListItem[] = [];
+  let popular: VideoListItem[] = [];
+  let totalVideos = 0;
 
   try {
-    categoryGroups = await videoService.getByCategories({
-      limit: 6,
-      lang: "th",
-    });
+    const [featuredRes, latestRes, popularRes] = await Promise.all([
+      videoService.getRandom(ITEMS_PER_SECTION, "th"),
+      videoService.getList({
+        limit: ITEMS_PER_SECTION,
+        page: 1,
+        lang: "th",
+        sort: "date",
+        order: "desc",
+        category: "censored-jav",
+      }),
+      videoService.getList({
+        limit: ITEMS_PER_SECTION,
+        page: 1,
+        lang: "th",
+        sort: "views",
+        order: "desc",
+        category: "censored-jav",
+      }),
+    ]);
+
+    featured = featuredRes || [];
+    latest = latestRes.data || [];
+    totalVideos = latestRes.meta?.total || 0;
+    popular = popularRes.data || [];
   } catch (e) {
-    console.error("Failed to fetch videos by categories:", e);
+    console.error("Failed to fetch homepage videos:", e);
   }
+
+  const totalPages = Math.ceil(totalVideos / 30);
 
   // Website Schema
   const websiteSchema = {
@@ -59,7 +89,7 @@ export default async function HomePage() {
     name: "SubTH - JAV ซับไทย",
     alternateName: ["SubTH", "ซับไทย", "JAV ซับไทย"],
     url: "https://subth.com",
-    description: "ดู JAV ซับไทย ฟรี อัปเดตใหม่ทุกวัน จากค่ายดังทั่วโลก",
+    description: "ดู JAV ซับไทย ฟรี อัปเดตใหม่ทุกวัน ไม่มีโฆษณา",
     inLanguage: ["th", "en"],
     potentialAction: {
       "@type": "SearchAction",
@@ -69,23 +99,21 @@ export default async function HomePage() {
   };
 
   // FAQ Schema
+  const homeDict = dict.home as Record<string, string>;
+  const faqs = Array.from({ length: 10 }, (_, i) => ({
+    q: homeDict[`faq${i + 1}q`],
+    a: homeDict[`faq${i + 1}a`],
+  })).filter((f) => f.q && f.a);
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [
-      { "@type": "Question", name: dict.home.faq1q, acceptedAnswer: { "@type": "Answer", text: dict.home.faq1a } },
-      { "@type": "Question", name: dict.home.faq2q, acceptedAnswer: { "@type": "Answer", text: dict.home.faq2a } },
-      { "@type": "Question", name: dict.home.faq3q, acceptedAnswer: { "@type": "Answer", text: dict.home.faq3a } },
-      { "@type": "Question", name: dict.home.faq4q, acceptedAnswer: { "@type": "Answer", text: dict.home.faq4a } },
-    ],
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
   };
-
-  const faqs = [
-    { q: dict.home.faq1q, a: dict.home.faq1a },
-    { q: dict.home.faq2q, a: dict.home.faq2a },
-    { q: dict.home.faq3q, a: dict.home.faq3a },
-    { q: dict.home.faq4q, a: dict.home.faq4a },
-  ];
 
   return (
     <>
@@ -108,38 +136,65 @@ export default async function HomePage() {
         </p>
       </section>
 
-      {/* Video Grid by Category */}
-      <div className="space-y-6">
-        {categoryGroups.map((group, index) => (
-          <section key={group.category.id}>
-            {index > 0 && <Separator className="mb-6" />}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-semibold">
-                {group.category.name}{" "}
-                <span className="text-muted-foreground">
-                  ({group.category.videoCount.toLocaleString()})
+      {/* Section: Featured / แนะนำประจำวัน */}
+      {featured.length > 0 && (
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-semibold">{dict.home.sectionFeatured}</h2>
+          </div>
+          <VideoGrid videos={featured} cols={6} />
+        </section>
+      )}
+
+      <Separator className="my-8" />
+
+      {/* Section: Latest / ใหม่ล่าสุด */}
+      {latest.length > 0 && (
+        <section className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-primary" />
+              <h2 className="text-xl font-semibold">
+                {dict.home.sectionLatest}
+                <span className="text-muted-foreground text-base ml-2">
+                  ({totalVideos.toLocaleString()})
                 </span>
               </h2>
-              <Link
-                href={`/category/${group.category.slug}`}
-                className="flex items-center gap-1 text-sm text-primary hover:underline"
-              >
-                {dict.common.viewAll}
-                <ChevronRight className="w-4 h-4" />
-              </Link>
             </div>
-            <VideoGrid videos={group.videos} cols={6} />
-          </section>
-        ))}
-
-        {categoryGroups.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
-            {dict.common.noData}
+            <Link
+              href="/page/2"
+              className="flex items-center gap-1 text-sm text-primary hover:underline"
+            >
+              {dict.common.viewAll}
+              <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
-        )}
-      </div>
+          <VideoGrid videos={latest} cols={6} />
+        </section>
+      )}
 
-      {/* FAQ Section - ล่างสุด สำหรับ SEO */}
+      <Separator className="my-8" />
+
+      {/* Section: Popular / ยอดนิยม */}
+      {popular.length > 0 && (
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Flame className="w-5 h-5 text-destructive" />
+            <h2 className="text-xl font-semibold">{dict.home.sectionPopular}</h2>
+          </div>
+          <VideoGrid videos={popular} cols={6} />
+        </section>
+      )}
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={1}
+        totalPages={totalPages}
+        basePath=""
+      />
+
+      {/* FAQ Section */}
       <section className="mt-12 pt-8 border-t border-border">
         <h2 className="text-xl font-semibold mb-4">{dict.home.faqTitle}</h2>
         <div className="space-y-3 max-w-3xl">
@@ -154,6 +209,17 @@ export default async function HomePage() {
               </p>
             </details>
           ))}
+        </div>
+      </section>
+
+      {/* Footer SEO Content */}
+      <section className="mt-10 pt-8 border-t border-border">
+        <h2 className="text-lg font-semibold mb-4">{dict.home.footerTitle}</h2>
+        <div className="space-y-4 text-sm text-muted-foreground leading-relaxed max-w-4xl">
+          <p>{dict.home.footerP1}</p>
+          <p>{dict.home.footerP2}</p>
+          <p>{dict.home.footerP3}</p>
+          <p>{dict.home.footerP4}</p>
         </div>
       </section>
     </>

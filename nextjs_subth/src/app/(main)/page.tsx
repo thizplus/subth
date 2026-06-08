@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
 };
 
-const ITEMS_PER_SECTION = 12;
+const ITEMS_PER_SECTION = 10;
 
 export default async function HomePage() {
   const dict = await getDictionary("th");
@@ -65,7 +65,7 @@ export default async function HomePage() {
         category: "censored-jav",
       }),
       videoService.getList({
-        limit: ITEMS_PER_SECTION,
+        limit: 40,
         page: 1,
         lang: "th",
         sort: "created_at",
@@ -153,7 +153,7 @@ export default async function HomePage() {
             <Sparkles className="w-5 h-5 text-primary" />
             <h2 className="text-xl font-semibold">{dict.home.sectionFeatured}</h2>
           </div>
-          <VideoGrid videos={featured} cols={6} />
+          <VideoGrid videos={featured} cols={5} />
         </section>
       )}
 
@@ -180,7 +180,7 @@ export default async function HomePage() {
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
-          <VideoGrid videos={latest} cols={6} />
+          <VideoGrid videos={latest} cols={5} />
         </section>
       )}
 
@@ -193,7 +193,7 @@ export default async function HomePage() {
             <Flame className="w-5 h-5 text-destructive" />
             <h2 className="text-xl font-semibold">{dict.home.sectionPopular}</h2>
           </div>
-          <VideoGrid videos={popular} cols={6} />
+          <VideoGrid videos={popular} cols={5} />
         </section>
       )}
 

@@ -2,9 +2,6 @@ import { VideoGrid } from "@/features/video/components";
 import { videoService } from "@/features/video/service";
 import type { VideoListItem } from "@/features/video/types";
 import { getDictionary } from "@/lib/i18n/dictionaries";
-import Link from "next/link";
-import { ChevronRight, Flame, Clock, Sparkles } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { Pagination } from "@/components/ui/pagination";
 import type { Metadata } from "next";
 
@@ -40,57 +37,30 @@ export const metadata: Metadata = {
   },
 };
 
-const ITEMS_PER_SECTION = 10;
+const ITEMS_PER_PAGE = 50;
 
 export default async function HomePage() {
   const dict = await getDictionary("th");
 
-  // Fetch multiple sections in parallel — censored-jav only
-  let featured: VideoListItem[] = [];
-  let latest: VideoListItem[] = [];
-  let popular: VideoListItem[] = [];
+  let videos: VideoListItem[] = [];
   let totalVideos = 0;
-
-  // Random page offset for "Featured" section
-  const randomPage = Math.floor(Math.random() * 50) + 2;
+  let totalPages = 1;
 
   try {
-    const [featuredRes, latestRes, popularRes] = await Promise.all([
-      videoService.getList({
-        limit: ITEMS_PER_SECTION,
-        page: randomPage,
-        lang: "th",
-        sort: "views",
-        order: "desc",
-        category: "censored-jav",
-      }),
-      videoService.getList({
-        limit: 40,
-        page: 1,
-        lang: "th",
-        sort: "created_at",
-        order: "desc",
-        category: "censored-jav",
-      }),
-      videoService.getList({
-        limit: ITEMS_PER_SECTION,
-        page: 1,
-        lang: "th",
-        sort: "views",
-        order: "desc",
-        category: "censored-jav",
-      }),
-    ]);
-
-    featured = featuredRes.data || [];
-    latest = latestRes.data || [];
-    totalVideos = latestRes.meta?.total || 0;
-    popular = popularRes.data || [];
+    const response = await videoService.getList({
+      limit: ITEMS_PER_PAGE,
+      page: 1,
+      lang: "th",
+      sort: "created_at",
+      order: "desc",
+      category: "censored-jav",
+    });
+    videos = response.data || [];
+    totalVideos = response.meta?.total || 0;
+    totalPages = Math.ceil(totalVideos / ITEMS_PER_PAGE);
   } catch (e) {
-    console.error("Failed to fetch homepage videos:", e);
+    console.error("Failed to fetch videos:", e);
   }
-
-  const totalPages = Math.ceil(totalVideos / 30);
 
   // Website Schema
   const websiteSchema = {
@@ -146,63 +116,22 @@ export default async function HomePage() {
         </p>
       </section>
 
-      {/* Section: Featured / แนะนำประจำวัน */}
-      {featured.length > 0 && (
-        <section className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-semibold">{dict.home.sectionFeatured}</h2>
-          </div>
-          <VideoGrid videos={featured} cols={5} />
-        </section>
-      )}
+      {/* Latest JAV ซับไทย */}
+      <section>
+        <h2 className="text-xl font-semibold mb-4">
+          {dict.home.sectionLatest}
+          <span className="text-muted-foreground text-base ml-2">
+            ({totalVideos.toLocaleString()})
+          </span>
+        </h2>
+        <VideoGrid videos={videos} cols={5} />
 
-      <Separator className="my-8" />
-
-      {/* Section: Latest / ใหม่ล่าสุด */}
-      {latest.length > 0 && (
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-semibold">
-                {dict.home.sectionLatest}
-                <span className="text-muted-foreground text-base ml-2">
-                  ({totalVideos.toLocaleString()})
-                </span>
-              </h2>
-            </div>
-            <Link
-              href="/page/2"
-              className="flex items-center gap-1 text-sm text-primary hover:underline"
-            >
-              {dict.common.viewAll}
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <VideoGrid videos={latest} cols={5} />
-        </section>
-      )}
-
-      <Separator className="my-8" />
-
-      {/* Section: Popular / ยอดนิยม */}
-      {popular.length > 0 && (
-        <section className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Flame className="w-5 h-5 text-destructive" />
-            <h2 className="text-xl font-semibold">{dict.home.sectionPopular}</h2>
-          </div>
-          <VideoGrid videos={popular} cols={5} />
-        </section>
-      )}
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={1}
-        totalPages={totalPages}
-        basePath=""
-      />
+        <Pagination
+          currentPage={1}
+          totalPages={totalPages}
+          basePath=""
+        />
+      </section>
 
       {/* FAQ Section */}
       <section className="mt-12 pt-8 border-t border-border">

@@ -63,6 +63,8 @@ export const videoService = {
     if (customPath) {
       formData.append('custom_path', customPath)
     }
-    return apiClient.post<UploadFileResponse>(FILE_ROUTES.UPLOAD, formData)
+    return apiClient.post<UploadFileResponse>(FILE_ROUTES.UPLOAD, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
   },
 }

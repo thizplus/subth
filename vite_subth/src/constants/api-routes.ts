@@ -106,6 +106,10 @@ export const ARTICLE_ROUTES = {
   CLEAR_CACHE: (type: string, slug: string) => `/api/v1/articles/${type}/${slug}/cache`,
 }
 
+export const FILE_ROUTES = {
+  UPLOAD: '/api/v1/files/upload',
+}
+
 export const SITE_SETTING_ROUTES = {
   GET: '/api/v1/settings',
   UPDATE: '/api/v1/settings',

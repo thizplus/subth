@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ImagePlus, X, Link, Upload } from 'lucide-react'
+import { ImagePlus, X, Link, Upload, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,6 +12,7 @@ import {
 interface ImageInputProps {
   value: string
   onChange: (value: string) => void
+  onFileSelect?: (file: File) => Promise<string>
   placeholder?: string
   className?: string
   previewClassName?: string
@@ -22,6 +23,7 @@ interface ImageInputProps {
 export function ImageInput({
   value,
   onChange,
+  onFileSelect,
   placeholder = 'URL รูปภาพ',
   className,
   previewClassName,
@@ -31,6 +33,7 @@ export function ImageInput({
   const [urlInput, setUrlInput] = React.useState('')
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
   const [imageError, setImageError] = React.useState(false)
+  const [isUploading, setIsUploading] = React.useState(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
 
   const aspectRatioClass = {
@@ -48,17 +51,23 @@ export function ImageInput({
     }
   }
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      // Convert to base64 for preview (or upload to server)
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        const result = event.target?.result as string
-        onChange(result)
-        setImageError(false)
-      }
-      reader.readAsDataURL(file)
+    if (!file) return
+
+    if (!onFileSelect) return
+
+    setIsUploading(true)
+    setImageError(false)
+
+    try {
+      const path = await onFileSelect(file)
+      onChange(path)
+    } catch {
+      setImageError(true)
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
@@ -166,14 +175,21 @@ export function ImageInput({
                       </div>
                     </PopoverContent>
                   </Popover>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="h-4 w-4 mr-1" />
-                    Browse
-                  </Button>
+                  {onFileSelect && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                    >
+                      {isUploading ? (
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                      ) : (
+                        <Upload className="h-4 w-4 mr-1" />
+                      )}
+                      {isUploading ? 'กำลังอัพโหลด...' : 'Browse'}
+                    </Button>
+                  )}
                 </div>
               </>
             )}

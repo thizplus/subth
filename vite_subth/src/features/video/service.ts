@@ -1,5 +1,5 @@
 import { apiClient, type PaginationMeta } from '@/lib/api-client'
-import { VIDEO_ROUTES } from '@/constants/api-routes'
+import { VIDEO_ROUTES, FILE_ROUTES } from '@/constants/api-routes'
 import type {
   Video,
   VideoDetail,
@@ -8,6 +8,7 @@ import type {
   UpdateVideoPayload,
   BatchCreateVideoPayload,
   BatchCreateResult,
+  UploadFileResponse,
 } from './types'
 
 export const videoService = {
@@ -54,5 +55,14 @@ export const videoService = {
 
   async delete(id: string): Promise<void> {
     return apiClient.delete(VIDEO_ROUTES.BY_ID(id))
+  },
+
+  async uploadFile(file: File, customPath?: string): Promise<UploadFileResponse> {
+    const formData = new FormData()
+    formData.append('file', file)
+    if (customPath) {
+      formData.append('custom_path', customPath)
+    }
+    return apiClient.post<UploadFileResponse>(FILE_ROUTES.UPLOAD, formData)
   },
 }

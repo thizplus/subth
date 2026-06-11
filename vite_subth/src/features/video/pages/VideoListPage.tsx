@@ -73,6 +73,7 @@ import {
   useCreateVideo,
   useUpdateVideo,
   useDeleteVideo,
+  videoService,
   type Video as VideoType,
   type VideoListParams,
 } from '@/features/video'
@@ -312,6 +313,10 @@ export function VideoListPage() {
         <ImageInput
           value={formThumbnail ? getCdnUrl(formThumbnail) : ''}
           onChange={(v) => setFormThumbnail(v)}
+          onFileSelect={async (file) => {
+            const result = await videoService.uploadFile(file, 'thumbnails')
+            return result.cdnPath
+          }}
           placeholder="เลือกรูป Thumbnail"
           aspectRatio="video"
           previewClassName="rounded-none"

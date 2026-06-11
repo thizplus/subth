@@ -87,3 +87,13 @@ export interface BatchCreateResult {
     error?: string
   }[]
 }
+
+export interface UploadFileResponse {
+  fileId: string
+  fileName: string
+  url: string
+  cdnPath: string
+  fileSize: number
+  mimeType: string
+  pathType: string
+}

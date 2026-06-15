@@ -10,12 +10,11 @@ import {
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import type { VideoListItem } from "../types";
+import { cdnUrl } from "@/lib/constants";
 
 interface VideoCardProps {
   video: VideoListItem;
 }
-
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || "https://files.subth.com";
 
 const THAI_MONTHS = [
   "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
@@ -49,10 +48,8 @@ function isToday(dateString?: string | null): boolean {
 
 export function VideoCard({ video }: VideoCardProps) {
   const { getLocalizedPath, locale } = useDictionary();
-  const thumbnailUrl = video.thumbnail?.startsWith("http")
-    ? video.thumbnail
-    : video.thumbnail
-    ? `${CDN_URL}${video.thumbnail}`
+  const thumbnailUrl = video.thumbnail
+    ? cdnUrl(video.thumbnail)
     : "/placeholder-video.jpg";
 
   // Check if title has "และอีก X คน"

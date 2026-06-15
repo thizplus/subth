@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Play, Pause, Volume2, VolumeX, RotateCcw } from "lucide-react";
-import { CDN_URL } from "@/lib/constants";
+import { cdnUrl } from "@/lib/constants";
 import { useDictionary } from "@/components/dictionary-provider";
 
 interface AudioPlayerProps {
@@ -19,8 +19,7 @@ function formatTime(seconds: number): string {
 
 function getFullAudioUrl(url?: string): string | undefined {
   if (!url) return undefined;
-  if (url.startsWith("http")) return url;
-  return `${CDN_URL}${url}`;
+  return cdnUrl(url);
 }
 
 export function AudioPlayer({ audioUrl, audioDuration, title }: AudioPlayerProps) {

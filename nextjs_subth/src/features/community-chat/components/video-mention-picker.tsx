@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Film, Loader2 } from "lucide-react";
 import { searchVideosForMention, type VideoSearchResult } from "../service";
-import { CDN_URL } from "@/lib/constants";
+import { cdnUrl } from "@/lib/constants";
 
 interface VideoMentionPickerProps {
   query: string;
@@ -130,7 +130,7 @@ export function VideoMentionPicker({
               }`}
             >
               <img
-                src={`${CDN_URL}${video.thumbnail.startsWith('/') ? '' : '/'}${video.thumbnail}`}
+                src={cdnUrl(video.thumbnail)}
                 alt={video.title}
                 className="h-10 w-14 rounded object-cover bg-muted"
               />

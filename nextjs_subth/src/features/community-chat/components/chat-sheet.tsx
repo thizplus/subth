@@ -6,7 +6,7 @@ import { th, enUS } from "date-fns/locale";
 import { Send, Loader2, X, Reply, MessageCircle, Film } from "lucide-react";
 import Link from "next/link";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
-import { CDN_URL } from "@/lib/constants";
+import { cdnUrl } from "@/lib/constants";
 import {
   Sheet,
   SheetContent,
@@ -410,9 +410,7 @@ function ChatMessageItem({
             >
               {message.mentionedVideo.thumbnail && (
                 <img
-                  src={message.mentionedVideo.thumbnail.startsWith('http')
-                    ? message.mentionedVideo.thumbnail
-                    : `${CDN_URL}${message.mentionedVideo.thumbnail}`}
+                  src={cdnUrl(message.mentionedVideo.thumbnail)}
                   alt={message.mentionedVideo.code || message.mentionedVideo.title}
                   className="w-full aspect-video rounded object-cover bg-muted"
                 />

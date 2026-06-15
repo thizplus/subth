@@ -4,7 +4,7 @@ import { getDictionary } from "@/lib/i18n/dictionaries";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { CDN_URL } from "@/lib/constants";
+import { cdnUrl } from "@/lib/constants";
 import { VideoActivityLogger } from "@/features/activity";
 import {
   Breadcrumb,
@@ -52,8 +52,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const description = `ดู ${videoCode} ซับไทย${castNames ? ` นำแสดงโดย ${castNames}` : ""}${makerName ? ` จากค่าย ${makerName}` : ""} พร้อมข้อมูลครบ`;
 
     const thumbnailUrl = video.thumbnail
-      ? `${CDN_URL}${video.thumbnail}`
-      : `${CDN_URL}/thumbnails/${videoCode}.jpg`;
+      ? cdnUrl(video.thumbnail)
+      : cdnUrl(`/thumbnails/${videoCode}.jpg`);
 
     return {
       title,
@@ -126,8 +126,8 @@ export default async function VideoDetailPage({ params }: PageProps) {
     name: video.title,
     description: `${videoCode} ซับไทย${video.casts?.length ? ` - ${video.casts.map((c) => c.name).join(", ")}` : ""}`,
     thumbnailUrl: video.thumbnail
-      ? `${CDN_URL}${video.thumbnail}`
-      : `${CDN_URL}/thumbnails/${videoCode}.jpg`,
+      ? cdnUrl(video.thumbnail)
+      : cdnUrl(`/thumbnails/${videoCode}.jpg`),
     uploadDate: video.createdAt,
     ...(video.releaseDate && { datePublished: video.releaseDate }),
     ...(video.embedUrl && { embedUrl: video.embedUrl }),
@@ -208,7 +208,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
         {/* Left: Thumbnail (50%) */}
         <div>
           <Image
-            src={video.thumbnail ? `${CDN_URL}${video.thumbnail}` : `${CDN_URL}/thumbnails/${videoCode}.jpg`}
+            src={video.thumbnail ? cdnUrl(video.thumbnail) : cdnUrl(`/thumbnails/${videoCode}.jpg`)}
             alt={video.title}
             width={800}
             height={538}
@@ -339,7 +339,7 @@ async function RelatedVideos({ videoId, label }: { videoId: string; label: strin
           <Link key={v.id} href={`/videos/${v.id}`} className="group">
             <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-muted">
               <Image
-                src={v.thumbnail ? `${CDN_URL}${v.thumbnail}` : `${CDN_URL}/thumbnails/default.jpg`}
+                src={v.thumbnail ? cdnUrl(v.thumbnail) : cdnUrl("/thumbnails/default.jpg")}
                 alt={v.title}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform"

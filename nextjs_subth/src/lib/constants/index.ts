@@ -10,6 +10,13 @@ export const API_URL =
 export const CDN_URL =
   process.env.NEXT_PUBLIC_CDN_URL || "https://files.subth.com";
 
+/** Build CDN URL — ensures path always has leading "/" */
+export function cdnUrl(path: string): string {
+  if (!path) return "";
+  if (path.startsWith("http")) return path;
+  return `${CDN_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
 // API Routes
 export const API_ROUTES = {
   // Auth

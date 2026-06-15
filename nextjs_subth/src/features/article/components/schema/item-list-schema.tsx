@@ -1,4 +1,4 @@
-import { CDN_URL } from "@/lib/constants";
+import { cdnUrl } from "@/lib/constants";
 import type { ArticleSummary } from "../../types";
 
 interface ItemListSchemaProps {
@@ -34,9 +34,7 @@ export function ItemListSchema({
         "@type": "Article",
         name: article.title,
         url: `${baseUrl}${pathPrefix}/articles/review/${article.slug}`,
-        image: article.thumbnailUrl?.startsWith("http")
-          ? article.thumbnailUrl
-          : `${CDN_URL}/${article.thumbnailUrl}`,
+        image: article.thumbnailUrl ? cdnUrl(article.thumbnailUrl) : undefined,
         datePublished: article.publishedAt,
         description: article.metaDescription,
       },

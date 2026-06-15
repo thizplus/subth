@@ -7,11 +7,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { apiClient } from "@/lib/api-client";
-import { API_ROUTES } from "@/lib/constants";
+import { API_ROUTES, cdnUrl } from "@/lib/constants";
 import type { VideoListItem } from "@/features/video/types";
 import { useDictionary } from "@/components/dictionary-provider";
-
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || "https://files.subth.com";
 
 interface SearchAutocompleteProps {
   locale: "th" | "en";
@@ -132,9 +130,7 @@ export function SearchAutocomplete({ locale }: SearchAutocompleteProps) {
 
   const getThumbnail = (video: VideoListItem) => {
     if (!video.thumbnail) return "/placeholder-video.jpg";
-    return video.thumbnail.startsWith("http")
-      ? video.thumbnail
-      : `${CDN_URL}${video.thumbnail}`;
+    return cdnUrl(video.thumbnail);
   };
 
   return (

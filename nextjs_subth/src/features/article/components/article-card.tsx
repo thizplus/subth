@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { CDN_URL } from "@/lib/constants";
+import { cdnUrl } from "@/lib/constants";
 import { useDictionary } from "@/components/dictionary-provider";
 import type { ArticleSummary } from "../types";
 import { StarRating } from "./star-rating";
@@ -15,8 +15,7 @@ interface ArticleCardProps {
 // Build full thumbnail URL
 function getThumbnailUrl(url?: string): string {
   if (!url) return "/placeholder-video.jpg";
-  if (url.startsWith("http")) return url;
-  return `${CDN_URL}${url}`;
+  return cdnUrl(url);
 }
 
 export function ArticleCard({ article, priority = false }: ArticleCardProps) {

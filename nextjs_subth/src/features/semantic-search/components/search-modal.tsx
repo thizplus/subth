@@ -16,7 +16,7 @@ import { useSemanticSearchStore } from "../store";
 import { semanticSearchService } from "../service";
 import { useDictionary } from "@/components/dictionary-provider";
 import Image from "next/image";
-import { CDN_URL } from "@/lib/constants";
+import { cdnUrl } from "@/lib/constants";
 
 const EXAMPLE_PROMPTS_TH = [
   "พยาบาล",
@@ -235,7 +235,7 @@ export function SearchModal() {
                 >
                   {video.thumbnail ? (
                     <Image
-                      src={video.thumbnail.startsWith("http") ? video.thumbnail : `${CDN_URL}${video.thumbnail}`}
+                      src={cdnUrl(video.thumbnail)}
                       alt={video.title || "Video thumbnail"}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform"

@@ -8,6 +8,7 @@ import type { SemanticSearchResult } from "@/features/semantic-search/types";
 import { VirtuosoGrid } from "react-virtuoso";
 import Image from "next/image";
 import Link from "next/link";
+import { cdnUrl } from "@/lib/constants";
 
 // Typing effect hook
 function useTypingEffect(text: string, speed: number = 30) {
@@ -51,14 +52,10 @@ const EXAMPLE_PROMPTS = [
   "maid",
 ];
 
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || "https://files.subth.com";
-
 // Video Card for Virtual Grid - use memo to prevent re-render
 const VideoItem = React.memo(function VideoItem({ video }: { video: SemanticSearchResult }) {
-  const thumbnailUrl = video.thumbnail?.startsWith("http")
-    ? video.thumbnail
-    : video.thumbnail
-    ? `${CDN_URL}${video.thumbnail}`
+  const thumbnailUrl = video.thumbnail
+    ? cdnUrl(video.thumbnail)
     : "/placeholder-video.jpg";
 
   return (

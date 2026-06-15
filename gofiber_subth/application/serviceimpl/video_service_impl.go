@@ -18,6 +18,14 @@ import (
 	"gofiber-template/pkg/utils"
 )
 
+// normalizePath ensures storage paths always start with "/"
+func normalizePath(path string) string {
+	if path == "" || strings.HasPrefix(path, "/") || strings.HasPrefix(path, "http") {
+		return path
+	}
+	return "/" + path
+}
+
 type VideoServiceImpl struct {
 	videoRepo    repositories.VideoRepository
 	makerRepo    repositories.MakerRepository
@@ -99,7 +107,7 @@ func (s *VideoServiceImpl) CreateVideo(ctx context.Context, req *dto.CreateVideo
 	// Create video
 	video := &models.Video{
 		Code:        code,
-		Thumbnail:   req.Thumbnail,
+		Thumbnail:   normalizePath(req.Thumbnail),
 		EmbedURL:    req.EmbedURL,
 		ReleaseDate: releaseDate,
 		MakerID:     makerID,
@@ -262,7 +270,7 @@ func (s *VideoServiceImpl) createVideoInternal(ctx context.Context, req *dto.Cre
 	// Create video
 	video := &models.Video{
 		Code:        code,
-		Thumbnail:   req.Thumbnail,
+		Thumbnail:   normalizePath(req.Thumbnail),
 		EmbedURL:    req.EmbedURL,
 		ReleaseDate: releaseDate,
 		MakerID:     makerID,
@@ -355,7 +363,7 @@ func (s *VideoServiceImpl) UpdateVideo(ctx context.Context, id uuid.UUID, req *d
 	oldCategories := video.Categories
 
 	if req.Thumbnail != nil {
-		video.Thumbnail = *req.Thumbnail
+		video.Thumbnail = normalizePath(*req.Thumbnail)
 	}
 	// ถ้าใส่ Code มาตรงๆ ให้ใช้ค่านั้น
 	if req.Code != nil {

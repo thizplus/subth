@@ -91,6 +91,10 @@ func (s *FileServiceImpl) UploadFile(ctx context.Context, userID uuid.UUID, file
 
 	// Normalize path separators for storage
 	cdnPath = strings.ReplaceAll(cdnPath, "\\", "/")
+	// Ensure leading slash for consistent CDN URL construction
+	if !strings.HasPrefix(cdnPath, "/") {
+		cdnPath = "/" + cdnPath
+	}
 
 	logger.InfoContext(ctx, "Uploading file to storage", "user_id", userID, "cdn_path", cdnPath, "size", fileHeader.Size)
 
